@@ -1,8 +1,8 @@
 import React from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import Navbar from "components/navbar";
-import Sidebar from "components/sidebar";
-import Footer from "components/footer/Footer";
+import Navbar from "core/components/navbar";
+import Sidebar from "core/components/sidebar";
+import Footer from "core/components/footer/Footer";
 import routes from "routes";
 
 export default function Admin(props: { [x: string]: any }) {

@@ -1,6 +1,6 @@
-import PieChart from "components/charts/PieChart";
-import { pieChartData, pieChartOptions } from "variables/charts";
-import Card from "components/card";
+import PieChart from "core/components/charts/PieChart";
+import { pieChartData, pieChartOptions } from "core/variables/charts";
+import Card from "core/components/card";
 
 const PieChartCard = () => {
   return (

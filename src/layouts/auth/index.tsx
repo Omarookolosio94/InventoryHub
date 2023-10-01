@@ -1,7 +1,7 @@
-import Footer from "components/footer/FooterAuthDefault";
 import { Routes, Route, Navigate } from "react-router-dom";
 import routes from "routes";
-import FixedPlugin from "components/fixedPlugin/FixedPlugin";
+import Footer from "core/components/footer/FooterAuthDefault";
+import FixedPlugin from "core/components/fixedPlugin/FixedPlugin";
 
 export default function Auth() {
   const getRoutes = (routes: RoutesType[]): any => {
@@ -32,7 +32,7 @@ export default function Auth() {
                   />
                 </Routes>
                 <div className="absolute right-0 hidden h-full min-h-screen md:block lg:w-[49vw] 2xl:w-[44vw]">
-                  <div className="absolute flex h-full w-full items-end justify-center bg-navy-500 bg-cover bg-center lg:rounded-bl-[120px] xl:rounded-bl-[200px] dark:bg-brand-400 dark:text-white  dark:active:bg-brand-200" />
+                  <div className="absolute flex h-full w-full items-end justify-center bg-navy-500 bg-cover bg-center dark:bg-brand-400 dark:text-white dark:active:bg-brand-200 lg:rounded-bl-[120px]  xl:rounded-bl-[200px]" />
                 </div>
               </div>
               <Footer />

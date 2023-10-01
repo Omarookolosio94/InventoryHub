@@ -1,9 +1,9 @@
-import Card from "components/card";
-import BarChart from "components/charts/BarChart";
+import Card from "core/components/card";
+import BarChart from "core/components/charts/BarChart";
 import {
   barChartDataWeeklyRevenue,
   barChartOptionsWeeklyRevenue,
-} from "variables/charts";
+} from "core/variables/charts";
 import { MdBarChart } from "react-icons/md";
 
 const WeeklyRevenue = () => {

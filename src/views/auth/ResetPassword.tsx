@@ -1,5 +1,5 @@
-import InputField from "components/fields/InputField";
 import { Link } from "react-router-dom";
+import InputField from "core/components/fields/InputField";
 
 export default function ResetPassword() {
   return (

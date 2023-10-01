@@ -3,12 +3,12 @@ import {
   MdOutlineCalendarToday,
   MdBarChart,
 } from "react-icons/md";
-import Card from "components/card";
+import Card from "core/components/card";
 import {
   lineChartDataTotalSpent,
   lineChartOptionsTotalSpent,
-} from "variables/charts";
-import LineChart from "components/charts/LineChart";
+} from "core/variables/charts";
+import LineChart from "core/components/charts/LineChart";
 
 const TotalSpent = () => {
   return (
