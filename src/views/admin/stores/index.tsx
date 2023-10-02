@@ -370,7 +370,9 @@ const Stores = () => {
       {openForm && (
         <Modal styling="w-3/6 p-5" onClose={() => setOpenForm(false)}>
           <form onSubmit={(e) => addStore(e)}>
-            <p className="text-black mb-5">New Store Information</p>
+            <p className="text-black mb-5 dark:text-white">
+              New Store Information
+            </p>
             <InputField
               variant="auth"
               extra="mb-3"
@@ -483,7 +485,7 @@ const Stores = () => {
               </div>
             </div>
             <div className="flex gap-3">
-              <div className="flex w-1/2 gap-2">
+              <div className="flex w-1/2 gap-2 dark:text-white">
                 <span>Is Active:</span>
                 <span>
                   <CheckField
@@ -506,11 +508,11 @@ const Stores = () => {
                   />
                 </span>
               </div>
-              <div className="flex w-1/2 gap-3">
+              <div className="flex w-1/2 gap-3 dark:text-white">
                 <span>Is Warehouse:</span>
                 <span>
                   <CheckField
-                    styling="mr-6 inline-block"
+                    styling="mr-6 inline-block cursor-not-allowed"
                     checked={storeForm.isWareHouse === true}
                     sublabel="yes"
                     type="radio"
@@ -520,7 +522,7 @@ const Stores = () => {
                     onChange={handleChange}
                   />
                   <CheckField
-                    styling="inline-block"
+                    styling="inline-block cursor-not-allowed"
                     checked={storeForm.isWareHouse === false}
                     sublabel="no"
                     type="radio"
@@ -718,10 +720,12 @@ const Stores = () => {
           }}
         >
           <form onSubmit={(e) => updateStoreStatus(e)}>
-            <p className="text-black mb-5">Update Store Status</p>
+            <p className="text-black mb-5 dark:text-white">
+              Update Store Status
+            </p>
 
             <div className="flex gap-3">
-              <div className="flex gap-2">
+              <div className="flex gap-2 dark:text-white">
                 <span>Is Active:</span>
                 <span>
                   <CheckField
@@ -749,7 +753,7 @@ const Stores = () => {
                 <span>Is Warehouse:</span>
                 <span>
                   <CheckField
-                    styling="mr-6 inline-block"
+                    styling="mr-6 inline-block cursor-not-allowed"
                     checked={updateStatusForm.isWareHouse === true}
                     sublabel="yes"
                     type="radio"
@@ -759,7 +763,7 @@ const Stores = () => {
                     onChange={handleUpdateStatusChange}
                   />
                   <CheckField
-                    styling="inline-block"
+                    styling="inline-block cursor-not-allowed"
                     checked={updateStatusForm.isWareHouse === false}
                     sublabel="no"
                     type="radio"

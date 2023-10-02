@@ -22,7 +22,7 @@ export default function Modal({
           </button>
         </div>
         <div
-          className={`${styling || "w-10/12 max-w-sm p-5"} rounded bg-white`}
+          className={`${styling || "w-10/12 max-w-sm p-5"} rounded bg-white dark:bg-navy-600 darK:text-gray-500`}
         >
           {children}
         </div>

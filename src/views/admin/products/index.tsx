@@ -270,7 +270,7 @@ const Products = () => {
       {openAddForm && (
         <Modal styling="w-3/6 p-5" onClose={() => setOpenAddForm(false)}>
           <form onSubmit={(e) => addProduct(e)}>
-            <p className="text-black mb-5">New Product Information</p>
+            <p className="text-black dark:text-white mb-5">New Product Information</p>
             <InputField
               variant="auth"
               extra="mb-3"
@@ -429,7 +429,7 @@ const Products = () => {
                   onChange={(e: any) => onFormChange(e, "product")}
                 />
               </div>
-              <div className="flex w-1/3 flex-col justify-items-center gap-2">
+              <div className="flex w-1/3 flex-col justify-items-center gap-2 dark:text-white">
                 <span>List on Shelf:</span>
                 <span>
                   <CheckField
