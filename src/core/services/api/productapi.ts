@@ -1,63 +1,60 @@
 import { apicall } from "./apicall";
 
-export const login = (email: string, password: string, isEmployer: boolean) =>
+export const getProducts = (ownerId: string, param: SearchParam) =>
   apicall({
-    endpoint: isEmployer ? "loginEmployer" : "loginEmployee",
-    body: {
-      email,
-      password,
-    },
-    method: "POST",
-  });
-
-export const deleteStore = (storeId: string, token: string) =>
-  apicall({
-    endpoint: "store",
-    param: storeId,
-    method: "DELETE",
-    token,
-  });
-
-export const getStore = (storeId: string) =>
-  apicall({
-    endpoint: "store",
-    param: storeId,
-    method: "GET",
-  });
-
-export const getStores = (ownerId: string) =>
-  apicall({
-    endpoint: "getStores",
+    endpoint: "products",
     param: ownerId,
+    pQuery: {
+      category: param?.category,
+      page: param?.page,
+      count: param?.count,
+    },
     method: "GET",
   });
 
-export const addStore = (store: any, token: string) =>
+export const addProducts = (product: NewProduct, token: string) =>
   apicall({
-    endpoint: "store",
-    body: { ...store },
+    endpoint: "products",
+    body: { ...product },
     method: "POST",
     token,
   });
 
-export const updateStore = (store: any, storeId: string, token: string) =>
+export const updateProductDetails = (
+  details: ProductDetail,
+  productId: string,
+  token: string
+) =>
   apicall({
-    endpoint: "store",
-    body: { ...store },
-    param: storeId,
+    endpoint: "products",
+    body: { ...details },
+    param: productId,
     method: "PUT",
     token,
   });
 
-export const updateStatus = (
-  storeStatus: any,
-  storeId: string,
+export const updateProductPrice = (
+  price: ProductPrice,
+  productId: string,
   token: string
 ) =>
   apicall({
-    endpoint: "store",
-    body: { ...storeStatus },
-    param: `${storeId}/status`,
+    endpoint: "products",
+    body: { ...price },
+    param: `${productId}/price`,
+    method: "PUT",
+    token,
+  });
+
+export const updateProductListing = (
+  listing: ProductListing,
+  productId: string,
+  token: string
+) =>
+  apicall({
+    endpoint: "products",
+    body: { ...listing },
+    param: `${productId}/listing`,
     method: "PUT",
     token,
   });

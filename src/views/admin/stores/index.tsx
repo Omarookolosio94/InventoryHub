@@ -22,7 +22,6 @@ const Stores = () => {
   const [expandedRows, setExpandedRows]: any = useState([]);
   const [expandState, setExpandState] = useState({});
   const shops = useShopStore((store) => store.shops);
-  const isEmployeer = useShopStore((store) => store.isEmployer);
   const user = useShopStore((store) => store.user);
   const getShops = useShopStore((store) => store.getShops);
   const errors = useShopStore((store) => store.errors);
@@ -159,13 +158,8 @@ const Stores = () => {
   };
 
   useEffect(() => {
-    console.log("call shop");
     if (shops?.length < 1) {
-      if (isEmployeer) {
-        getShops(user?.id);
-      } else {
-        getShops(user?.employerId);
-      }
+      getShops(user?.employerId);
     }
   }, []);
 
@@ -556,7 +550,7 @@ const Stores = () => {
               >
                 Cancel
               </Button>
-              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200 text-xs">
+              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
                 Add Store
               </button>
             </div>
@@ -707,7 +701,7 @@ const Stores = () => {
               >
                 Cancel
               </Button>
-              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200 text-xs">
+              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
                 Update Store
               </button>
             </div>
@@ -790,7 +784,7 @@ const Stores = () => {
               >
                 Cancel
               </Button>
-              <button className="text-xs linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
+              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
                 Update Status
               </button>
             </div>
