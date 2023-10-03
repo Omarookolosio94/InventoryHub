@@ -14,11 +14,17 @@ import useShopStore from "core/services/stores/useShopStore";
 import Modal from "core/components/modal/Modal";
 import InputField from "core/components/fields/InputField";
 import CheckField from "core/components/fields/CheckField";
-import { BsFillCaretDownFill, BsFillCaretUpFill } from "react-icons/bs";
+import {
+  BsChevronDoubleLeft,
+  BsChevronDoubleRight,
+  BsFillCaretDownFill,
+  BsFillCaretUpFill,
+} from "react-icons/bs";
 import { AiFillEdit } from "react-icons/ai";
 import { FiDelete } from "react-icons/fi";
 import useProductStore from "core/services/stores/useProductStore";
 import SelectField from "core/components/fields/SelectField";
+import { RiPriceTag3Fill } from "react-icons/ri";
 
 const Products = () => {
   // TODO: Add access control
@@ -57,6 +63,8 @@ const Products = () => {
     manufacturingDate: "",
     expiringDate: "",
   });
+
+  const [category, setCategory] = useState("");
 
   const [updateDetailForm, setUpdateDetailForm] = useState({
     name: "",
@@ -178,9 +186,9 @@ const Products = () => {
   useEffect(() => {
     if (productList?.items?.length < 1) {
       getProducts(user?.employerId, {
-        category: "",
-        count: 20,
+        category,
         page: 1,
+        count: 20,
       });
     }
   }, []);
@@ -196,29 +204,35 @@ const Products = () => {
         <SimpleTable
           headers={[
             "Name",
-            "Description",
-            "Selling Price",
             "Category",
-            "Last Updated",
+            "Cost Price",
+            "Selling Price",
+            "Discount (%)",
             "On Shelf",
             "Actions",
           ]}
         >
-          {productList != null &&
-            productList?.items?.length > 0 &&
+          {productList != null && productList?.items?.length > 0 ? (
             productList.items.map((product: any) => (
               <>
                 <tr key={product?.id}>
                   <TableRowData value={product?.name} />
-                  <TableRowData value={product?.description} />
+                  <TableRowData
+                    value={product?.category ? product.category : "no category"}
+                  />
+                  <TableRowData value={formatCurrency(product?.costPrice)} />
                   <TableRowData value={formatCurrency(product?.sellingPrice)} />
-                  <TableRowData value={product?.category} />
-                  <TableRowData value={getDate(product?.lastUpdated)} />
-                  <ActionRowData>
+                  <TableRowData
+                    value={product?.discountPercent}
+                    style="min-w-[50px]"
+                  />
+                  <ActionRowData style="min-w-[50px]">
                     <div
                       className="flex cursor-pointer"
                       onClick={() => {
                         setSelected({ ...product });
+                        setIsListed(product?.isListed);
+                        setOpenUpdateListingForm(true);
                       }}
                     >
                       {product?.isListed ? (
@@ -255,22 +269,188 @@ const Products = () => {
                       style="flex gap-1 justify-items-center items-center bg-brand-500 hover:bg-brand-600 dark:text-white-300"
                       onClick={() => {
                         setSelected({ ...product });
+                        setUpdateDetailForm({ ...product });
+                        setOpenUpdateDetailForm(true);
                       }}
                     >
                       <AiFillEdit />
                       <span className="text-xs">Edit</span>
                     </Button>
+                    <Button
+                      style="flex gap-1 justify-items-center items-center bg-green-500 hover:bg-green-600 dark:text-white-300"
+                      onClick={() => {
+                        setSelected({ ...product });
+                        setUpdatePriceForm({
+                          ...product,
+                        });
+                        setOpenUpdatePriceForm(true);
+                      }}
+                    >
+                      <RiPriceTag3Fill />
+                      <span className="text-xs">Pricing</span>
+                    </Button>
                   </ActionRowData>
                 </tr>
+                {expandedRows.includes(product?.id) ? (
+                  <tr>
+                    <td
+                      className="border-[1px] border-gray-200 text-sm"
+                      colSpan={7}
+                    >
+                      <ul className="p-5">
+                        <li className="mb-5 flex gap-3">
+                          <div className="w-1/4">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Added By:
+                            </span>
+                            <span>{product?.addedBy}</span>
+                          </div>
+                          <div className="w-1/4">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Date Added:
+                            </span>
+                            <span>
+                              {getDate(product?.dateAdded, true, false)}
+                            </span>
+                          </div>
+                          <div className="w-1/4">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Last Updated By:
+                            </span>
+                            <span>{product?.updatedBy}</span>
+                          </div>
+                          <div className="w-1/4">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Last Update Date:
+                            </span>
+                            <span>
+                              {getDate(product?.lastUpdated, true, false)}
+                            </span>
+                          </div>
+                        </li>
+                        <li className="mb-5 flex gap-3">
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Tags:
+                            </span>
+                            <span>{product?.tags ?? "no tags"}</span>
+                          </div>
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Size:
+                            </span>
+                            <span>{product?.size}</span>
+                          </div>
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Color:
+                            </span>
+                            <span>{product?.color}</span>
+                          </div>
+                        </li>
+                        <li className="mb-5 flex gap-3">
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Manufactured By:
+                            </span>
+                            <span>{product?.manufacturedBy}</span>
+                          </div>
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Manufacturing Date:
+                            </span>
+                            <span>
+                              {getDate(product?.manufacturingDate, true, false)}
+                            </span>
+                          </div>
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Expiry Date:
+                            </span>
+                            <span>
+                              {getDate(product?.expiringDate, true, false)}
+                            </span>
+                          </div>
+                        </li>
+                        <li className="mb-5 flex gap-3">
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Description:
+                            </span>
+                            <span>
+                              {product?.description ?? "no desciption"}
+                            </span>
+                          </div>
+                        </li>
+                        <li className="mb-5 flex gap-3">
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Comments:
+                            </span>
+                            <span>{product?.comments}</span>
+                          </div>
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+                ) : (
+                  <tr></tr>
+                )}
               </>
-            ))}
+            ))
+          ) : (
+            <tr>
+              <TableRowData colSpan={7} value="No data yet" />
+            </tr>
+          )}
+
+          <tr>
+            <TableRowData colSpan={5} value="Showing 20 entries" />
+            <ActionRowData colSpan={2}>
+              <Button
+                disabled={productList?.currentPage === 1}
+                style="flex gap-1 justify-items-center items-center"
+                onClick={() => {
+                  getProducts(user?.employerId, {
+                    category,
+                    page: productList?.currentPage - 1,
+                    count: 20,
+                  });
+                }}
+              >
+                <BsChevronDoubleLeft className="" />
+                <span className="text-xs">Prev</span>
+              </Button>
+              <Button style="flex gap-1 bg-green-500 hover:bg-green-600">
+                <span className="text-xs">
+                  {productList?.currentPage} / {productList?.totalPage}
+                </span>
+              </Button>
+              <Button
+                disabled={productList?.currentPage === productList?.totalPage}
+                style="flex gap-1 justify-items-center items-center"
+                onClick={() => {
+                  getProducts(user?.employerId, {
+                    category,
+                    page: productList?.currentPage + 1,
+                    count: 20,
+                  });
+                }}
+              >
+                <span className="text-xs">Next</span>
+                <BsChevronDoubleRight className="text-xs" />
+              </Button>
+            </ActionRowData>
+          </tr>
         </SimpleTable>
       </Card>
 
       {openAddForm && (
         <Modal styling="w-3/6 p-5" onClose={() => setOpenAddForm(false)}>
           <form onSubmit={(e) => addProduct(e)}>
-            <p className="text-black dark:text-white mb-5">New Product Information</p>
+            <p className="text-black mb-5 dark:text-white">
+              New Product Information
+            </p>
             <InputField
               variant="auth"
               extra="mb-3"
@@ -499,6 +679,306 @@ const Products = () => {
               </Button>
               <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
                 Add Product
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {openUpdateDetailForm && (
+        <Modal
+          styling="w-3/6 p-5"
+          onClose={() => {
+            setOpenUpdateDetailForm(false);
+            setSelected({});
+          }}
+        >
+          <form onSubmit={(e) => updateProductDetail(e)}>
+            <p className="text-black mb-5 dark:text-white">
+              Update Product Detail
+            </p>
+            <InputField
+              variant="auth"
+              extra="mb-3"
+              label="Name*"
+              id="name"
+              type="text"
+              name="name"
+              value={updateDetailForm?.name}
+              onChange={(e: any) => onFormChange(e, "updateDetail")}
+              onFocus={() => {
+                if (errors?.Name && errors?.Name?.length > 0) {
+                  updateError("Name");
+                }
+              }}
+              error={errors?.Name}
+            />
+            <InputField
+              variant="auth"
+              extra="mb-3"
+              label="Description"
+              id="description"
+              type="text"
+              name="description"
+              value={updateDetailForm?.description}
+              onChange={(e: any) => onFormChange(e, "updateDetail")}
+              onFocus={() => {
+                if (errors?.Description && errors?.Description?.length > 0) {
+                  updateError("Description");
+                }
+              }}
+              error={errors?.Address}
+            />
+            <div className="flex gap-3">
+              <div className="w-1/2">
+                <SelectField
+                  label="Choose Category"
+                  extra="mb-3"
+                  defaultName="Select Product Category"
+                  defaultValue="0"
+                  name="categoryId"
+                  options={[
+                    {
+                      name: "Shoping",
+                      value: "1",
+                    },
+                    {
+                      name: "Electronics",
+                      value: "2",
+                    },
+                  ]}
+                  value={updateDetailForm?.categoryId}
+                  onChange={(e: any) => onFormChange(e, "updateDetail")}
+                  showLabel={true}
+                />
+              </div>
+              <div className="w-1/2">
+                <InputField
+                  variant="auth"
+                  extra="mb-3"
+                  label="Tags"
+                  id="tags"
+                  type="text"
+                  name="tags"
+                  value={updateDetailForm?.tags}
+                  onChange={(e: any) => onFormChange(e, "updateDetail")}
+                  error={errors?.Tags}
+                />
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-1/2">
+                <InputField
+                  variant="auth"
+                  extra="mb-3"
+                  label="Size"
+                  placeholder=""
+                  id="size"
+                  type="text"
+                  name="size"
+                  value={updateDetailForm?.size}
+                  onChange={(e: any) => onFormChange(e, "updateDetail")}
+                />
+              </div>
+              <div className="w-1/2">
+                <InputField
+                  variant="auth"
+                  extra="mb-3"
+                  label="Color"
+                  placeholder="red, green, blue"
+                  id="color"
+                  type="text"
+                  name="color"
+                  value={updateDetailForm?.color}
+                  onChange={(e: any) => onFormChange(e, "updateDetail")}
+                />
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-1/2">
+                <InputField
+                  variant="auth"
+                  extra="mb-3"
+                  label="Manufacturing Date"
+                  id="manufacturingDate"
+                  type="date"
+                  name="manufacturingDate"
+                  value={updateDetailForm?.manufacturingDate}
+                  onChange={(e: any) => onFormChange(e, "updateDetail")}
+                />
+              </div>
+              <div className="w-1/2">
+                <InputField
+                  variant="auth"
+                  extra="mb-3"
+                  label="Expiring Date"
+                  id="expiringDate"
+                  type="date"
+                  name="expiringDate"
+                  value={updateDetailForm?.expiringDate}
+                  onChange={(e: any) => onFormChange(e, "updateDetail")}
+                />
+              </div>
+            </div>
+            <InputField
+              variant="auth"
+              extra="mb-3"
+              label="Additional Comments"
+              id="comments"
+              type="text"
+              name="comments"
+              value={updateDetailForm?.comments}
+              onChange={(e: any) => onFormChange(e, "updateDetail")}
+            />
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                onClick={() => {
+                  setOpenUpdateDetailForm(false);
+                  setSelected({});
+                }}
+                style="linear mb-5 mt-3 w-full rounded-xl bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
+              >
+                Cancel
+              </Button>
+              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
+                Update Detail
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {openUpdatePriceForm && (
+        <Modal
+          styling="1/5 p-5"
+          onClose={() => {
+            setOpenUpdatePriceForm(false);
+            setSelected({});
+          }}
+        >
+          <form onSubmit={(e) => updateProductPrice(e)}>
+            <p className="text-black mb-5 dark:text-white">
+              Update Price Detail
+            </p>
+
+            <InputField
+              variant="auth"
+              extra="mb-3"
+              label="Cost Price"
+              id="costPrice"
+              type="number"
+              name="costPrice"
+              value={updatePriceForm?.costPrice}
+              onChange={(e: any) => onFormChange(e, "updatePrice")}
+              onFocus={() => {
+                if (errors?.CostPrice && errors?.CostPrice?.length > 0) {
+                  updateError("CostPrice");
+                }
+              }}
+              error={errors?.CostPrice}
+            />
+            <InputField
+              variant="auth"
+              extra="mb-3"
+              label="Selling Price"
+              id="sellingPrice"
+              type="number"
+              name="sellingPrice"
+              value={updatePriceForm?.sellingPrice}
+              onChange={(e: any) => onFormChange(e, "updatePrice")}
+              onFocus={() => {
+                if (errors?.SellingPrice && errors?.SellingPrice?.length > 0) {
+                  updateError("SellingPrice");
+                }
+              }}
+              error={errors?.SellingPrice}
+            />
+            <InputField
+              variant="auth"
+              extra="mb-3"
+              label="Discount Percent"
+              id="discountPercent"
+              type="number"
+              name="discountPercent"
+              value={updatePriceForm?.discountPercent}
+              onChange={(e: any) => onFormChange(e, "updatePrice")}
+              onFocus={() => {
+                if (
+                  errors?.DiscountPercent &&
+                  errors?.DiscountPercent?.length > 0
+                ) {
+                  updateError("DiscountPercent");
+                }
+              }}
+              error={errors?.DiscountPercent}
+            />
+
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                onClick={() => {
+                  setOpenUpdatePriceForm(false);
+                  setSelected({});
+                }}
+                style="linear mb-5 mt-3 w-full rounded-xl bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
+              >
+                Cancel
+              </Button>
+              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
+                Update Pricing
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {openUpdateListingForm && (
+        <Modal
+          styling="1/5 p-5"
+          onClose={() => {
+            setOpenUpdateListingForm(false);
+            setSelected({});
+          }}
+        >
+          <form onSubmit={(e) => updateProductListing(e)}>
+            <p className="text-black mb-5 dark:text-white">Update Listing?</p>
+            <div className="flex w-1/3 flex-col justify-items-center gap-2 dark:text-white">
+              <span>List on Shelf:</span>
+              <span>
+                <CheckField
+                  styling="mr-6 inline-block"
+                  checked={isListed === true}
+                  sublabel="yes"
+                  type="radio"
+                  value="true"
+                  name="isListed"
+                  onChange={(e: any) => onFormChange(e, "updateListing")}
+                />
+                <CheckField
+                  styling="inline-block"
+                  checked={isListed === false}
+                  sublabel="no"
+                  type="radio"
+                  value="false"
+                  name="isListed"
+                  onChange={(e: any) => onFormChange(e, "updateListing")}
+                />
+              </span>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                onClick={() => {
+                  setOpenUpdateListingForm(false);
+                  setSelected({});
+                }}
+                style="linear mb-5 mt-3 w-full rounded-xl bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
+              >
+                Cancel
+              </Button>
+              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
+                Update Listing
               </button>
             </div>
           </form>

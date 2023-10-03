@@ -22,8 +22,8 @@ const timeFormat12Hour = (date: any) => {
   h = h ? h : 12;
 
   m = m.toString().padStart(2, "0");
- const formatedTimeString = h + ":" + m + " " + ampm;
- return formatedTimeString;
+  const formatedTimeString = h + ":" + m + " " + ampm;
+  return formatedTimeString;
 };
 
 const appendLeadZero = (val: any) => (Number(val) > 9 ? val : `0${val}`);
@@ -86,16 +86,21 @@ export const isToday = (date: any) => {
  * @param {String} dateString
  * @returns {String} Format: Tues, 24 Sept 2019
  */
-export const getDate = (dateString: any, showYear = true) => {
-  const date = new Date(dateString);
-
-  if (showYear) {
-    return `${
-      MONTHS[date.getMonth()]
-    } ${date.getDate()}, ${date.getFullYear()} ${timeFormat12Hour(date)}`;
-  } else {
-    return `${MONTHS[date.getMonth()]} ${date.getDate()}`;
+export const getDate = (
+  inputtedDate: string,
+  showYear = true,
+  showTime = true
+) => {
+  if (inputtedDate == null || inputtedDate?.length < 0) {
+    return "";
   }
+
+  const date = new Date(inputtedDate);
+  var formattedDate = `${MONTHS[date.getMonth()]} ${date.getDate()}`;
+  if (showYear) formattedDate += ` ${date.getFullYear()}`;
+  if (showTime) formattedDate += ` ${timeFormat12Hour(date)}`;
+
+  return formattedDate;
 };
 
 export const expandRow = (uniqueId: string, expandedRows: any) => {
