@@ -5,6 +5,7 @@ declare global {
    * Now declare things that go in the global namespace,
    * or augment existing declarations in the global namespace.
    */
+
   interface RoutesType {
     name: string;
     layout: string;
@@ -41,6 +42,22 @@ declare global {
     updatedBy: string;
     dateAdded: string;
     lastUpdated: string;
+  }
+
+  interface AddCatalog extends UpdateCatalog {
+    productId: string;
+    storeId: string;
+  }
+
+  interface UpdateCatalog {
+    stock: number;
+    differentialPercent: number;
+    isListed: boolean;
+  }
+
+  interface SelectOptions {
+    name: string;
+    value: string;
   }
 
   interface ProductDetail {

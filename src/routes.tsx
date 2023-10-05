@@ -12,15 +12,18 @@ import Stores from "views/admin/stores";
 import Products from "views/admin/products";
 import Employees from "views/admin/employees";
 import Sales from "views/admin/sales";
+import Categories from "views/admin/categories";
 
 // Icon Imports
 import {
+  MdCategory,
   MdHome,
   MdOutlineProductionQuantityLimits,
   MdStore,
 } from "react-icons/md";
 import { FaUsers, FaUserCircle } from "react-icons/fa";
 import { GiPayMoney } from "react-icons/gi";
+import Catalogs from "views/admin/stores/components/Catalogs";
 
 const routes = [
   {
@@ -59,11 +62,11 @@ const routes = [
     component: <Stores />,
   },
   {
-    name: "Profile",
+    name: "Catalogs",
     layout: "/admin",
-    path: "profile",
-    icon: <FaUserCircle className="h-6 w-6" />,
-    component: <Profile />,
+    path: "store/:storeId",
+    icon: "",
+    component: <Catalogs />,
   },
   {
     name: "Products",
@@ -72,19 +75,34 @@ const routes = [
     icon: <MdOutlineProductionQuantityLimits className="h-6 w-6" />,
     component: <Products />,
   },
-  {
-    name: "Employees",
-    layout: "/admin",
-    path: "employees",
-    icon: <FaUsers className="h-6 w-6" />,
-    component: <Employees />,
-  },
+
   {
     name: "Sales",
     layout: "/admin",
     path: "sales",
     icon: <GiPayMoney className="h-6 w-6" />,
     component: <Sales />,
+  },
+  {
+    name: "Categories",
+    layout: "/admin",
+    path: "categories",
+    icon: <MdCategory className="h-6 w-6" />,
+    component: <Categories />,
+  },
+  {
+    name: "Profile",
+    layout: "/admin",
+    path: "profile",
+    icon: <FaUserCircle className="h-6 w-6" />,
+    component: <Profile />,
+  },
+  {
+    name: "Employees",
+    layout: "/admin",
+    path: "employees",
+    icon: <FaUsers className="h-6 w-6" />,
+    component: <Employees />,
   },
 ];
 export default routes;

@@ -138,7 +138,9 @@ const useCategoryStore = create<CategoryState>()(
             const { success, statusCode, data, message } = response;
             if (success) {
               set((state) => ({
-                categories: state.categories.filter((cat: any) => cat.id !== categoryId),
+                categories: state.categories.filter(
+                  (cat: any) => cat.id !== categoryId
+                ),
               }));
               notification({
                 title: "",

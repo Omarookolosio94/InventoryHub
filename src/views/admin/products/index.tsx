@@ -31,6 +31,8 @@ import { FiDelete } from "react-icons/fi";
 import useProductStore from "core/services/stores/useProductStore";
 import SelectField from "core/components/fields/SelectField";
 import { RiPriceTag3Fill } from "react-icons/ri";
+import TextField from "core/components/fields/TextField";
+import useCategoryStore from "core/services/stores/useCategoryStore";
 
 const Products = () => {
   // TODO: Add access control
@@ -43,6 +45,8 @@ const Products = () => {
   const productList = useProductStore((store) => store.productList);
   const getProducts = useProductStore((store) => store.getProducts);
   const addProductAction = useProductStore((store) => store.addProduct);
+  const categories = useCategoryStore((store) => store.categories);
+  const getCategory = useCategoryStore((store) => store.getCategory);
   const updateProductDetailAction = useProductStore(
     (store) => store.updateProductDetail
   );
@@ -191,13 +195,14 @@ const Products = () => {
   };
 
   useEffect(() => {
-    if (productList?.items?.length < 1) {
+    productList?.items?.length < 1 &&
       getProducts(user?.employerId, {
         category,
         page: 1,
         count: 20,
       });
-    }
+
+    categories?.length < 1 && getCategory(user?.employerId);
   }, []);
 
   return (
@@ -225,7 +230,11 @@ const Products = () => {
                 <tr key={product?.id}>
                   <TableRowData value={product?.name} />
                   <TableRowData
-                    value={product?.category ? product.category : "no category"}
+                    value={
+                      product?.category
+                        ? product?.category?.name
+                        : "no category"
+                    }
                   />
                   <TableRowData value={formatCurrency(product?.costPrice)} />
                   <TableRowData value={formatCurrency(product?.sellingPrice)} />
@@ -386,20 +395,22 @@ const Products = () => {
                           </div>
                         </li>
                         <li className="mb-5 flex gap-3">
-                          <div className="w-1/3">
+                          <div className="w-3/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
                               Description:
-                            </span>
+                            </span>{" "}
+                            <br />
                             <span>
                               {product?.description ?? "no desciption"}
                             </span>
                           </div>
                         </li>
                         <li className="mb-5 flex gap-3">
-                          <div className="w-1/3">
+                          <div className="w-3/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
                               Comments:
-                            </span>
+                            </span>{" "}
+                            <br />
                             <span>{product?.comments}</span>
                           </div>
                         </li>
@@ -485,22 +496,20 @@ const Products = () => {
               }}
               error={errors?.Name}
             />
-            <InputField
-              variant="auth"
+
+            <TextField
+              ref={null}
               extra="mb-3"
+              rows={5}
+              variant="auth"
               label="Description"
               id="description"
               type="text"
               name="description"
               value={productForm?.description}
               onChange={(e: any) => onFormChange(e, "product")}
-              onFocus={() => {
-                if (errors?.Description && errors?.Description?.length > 0) {
-                  updateError("Description");
-                }
-              }}
-              error={errors?.Address}
             />
+
             <div className="flex gap-3">
               <div className="w-1/3">
                 <InputField
@@ -571,16 +580,18 @@ const Products = () => {
                   defaultName="Select Product Category"
                   defaultValue="0"
                   name="categoryId"
-                  options={[
-                    {
-                      name: "Shoping",
-                      value: "1",
-                    },
-                    {
-                      name: "Electronics",
-                      value: "2",
-                    },
-                  ]}
+                  options={
+                    categories?.length > 0
+                      ? [
+                          ...categories?.map((cat: Category) => {
+                            return {
+                              name: cat?.name,
+                              value: cat?.id,
+                            };
+                          }),
+                        ]
+                      : []
+                  }
                   value={productForm?.categoryId}
                   onChange={(e: any) => onFormChange(e, "product")}
                   showLabel={true}
@@ -695,9 +706,12 @@ const Products = () => {
                 />
               </div>
             </div>
-            <InputField
-              variant="auth"
+
+            <TextField
+              ref={null}
               extra="mb-3"
+              rows={5}
+              variant="auth"
               label="Additional Comments"
               id="comments"
               type="text"
@@ -705,6 +719,7 @@ const Products = () => {
               value={productForm?.comments}
               onChange={(e: any) => onFormChange(e, "product")}
             />
+
             <div className="flex gap-3">
               <Button
                 type="button"
@@ -753,22 +768,20 @@ const Products = () => {
               }}
               error={errors?.Name}
             />
-            <InputField
-              variant="auth"
+
+            <TextField
+              ref={null}
               extra="mb-3"
+              rows={5}
+              variant="auth"
               label="Description"
               id="description"
               type="text"
               name="description"
               value={updateDetailForm?.description}
               onChange={(e: any) => onFormChange(e, "updateDetail")}
-              onFocus={() => {
-                if (errors?.Description && errors?.Description?.length > 0) {
-                  updateError("Description");
-                }
-              }}
-              error={errors?.Address}
             />
+
             <div className="flex gap-3">
               <div className="w-1/2">
                 <SelectField
@@ -777,16 +790,18 @@ const Products = () => {
                   defaultName="Select Product Category"
                   defaultValue="0"
                   name="categoryId"
-                  options={[
-                    {
-                      name: "Shoping",
-                      value: "1",
-                    },
-                    {
-                      name: "Electronics",
-                      value: "2",
-                    },
-                  ]}
+                  options={
+                    categories?.length > 0
+                      ? [
+                          ...categories?.map((cat: Category) => {
+                            return {
+                              name: cat?.name,
+                              value: cat?.id,
+                            };
+                          }),
+                        ]
+                      : []
+                  }
                   value={updateDetailForm?.categoryId}
                   onChange={(e: any) => onFormChange(e, "updateDetail")}
                   showLabel={true}
@@ -878,9 +893,12 @@ const Products = () => {
                 />
               </div>
             </div>
-            <InputField
-              variant="auth"
+
+            <TextField
+              ref={null}
               extra="mb-3"
+              rows={5}
+              variant="auth"
               label="Additional Comments"
               id="comments"
               type="text"
@@ -888,6 +906,7 @@ const Products = () => {
               value={updateDetailForm?.comments}
               onChange={(e: any) => onFormChange(e, "updateDetail")}
             />
+
             <div className="flex gap-3">
               <Button
                 type="button"

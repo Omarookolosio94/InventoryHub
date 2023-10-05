@@ -17,6 +17,9 @@ import CheckField from "core/components/fields/CheckField";
 import { BsFillCaretDownFill, BsFillCaretUpFill } from "react-icons/bs";
 import { AiFillEdit } from "react-icons/ai";
 import { FiDelete } from "react-icons/fi";
+import { FaClipboardList } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { customBtn } from "core/const/const";
 
 const Stores = () => {
   const [expandedRows, setExpandedRows]: any = useState([]);
@@ -193,7 +196,7 @@ const Stores = () => {
                   <TableRowData value={store?.address} />
                   <TableRowData value={store?.employer?.name} />
                   <TableRowData value={getDate(store?.lastUpdated)} />
-                  <ActionRowData>
+                  <ActionRowData style="min-w-[50px]">
                     <div
                       className="flex cursor-pointer"
                       onClick={() => {
@@ -236,6 +239,13 @@ const Stores = () => {
                         </>
                       )}
                     </Button>
+                    <Link
+                      to={`/admin/store/${store?.id}`}
+                      className={`${customBtn} dark:text-white-300 flex items-center justify-items-center gap-1 bg-green-500 hover:bg-green-600`}
+                    >
+                      <FaClipboardList />
+                      <span className="text-xs">Catalog</span>
+                    </Link>
                     <Button
                       style="flex gap-1 justify-items-center items-center bg-brand-500 hover:bg-brand-600 dark:text-white-300"
                       onClick={() => {
