@@ -32,23 +32,12 @@ The frontend application is built using the following tech stacks:
 The project folder structure is as follows:
 
 <code>
-/src
-├── components
-│   └── [component name]
-│       ├── [component name].tsx
-│       └── [component name].scss
-├── reducers
-│   └── [reducer name].ts
-├── store
-│   └── index.ts
-└── views
-├── Homepage.tsx
-├── Login.tsx
-├── Dashboard.tsx
-├── UserProfile.tsx
-├── Product.tsx
-├── Cart.tsx
-└── Checkout.tsx
-├── package.json
-└── README.md
+├── /src
+│   └── assets
+│   └── core
+│   └── layouts
+│   └── views
+│   └── App.tsx
+│   └── index.css
+│   └── routes.tsx
 </code>
