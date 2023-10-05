@@ -8,29 +8,30 @@ An application that helps businesses manage sales and staff as well as the produ
 
 The frontend application is built using the following tech stacks:
 
-* React
-* Zustand
-* TypeScript
-* Tailwind
-* Horizon UI Template
+- React
+- Zustand
+- TypeScript
+- Tailwind
+- Horizon UI Template
 
 ### Views
 
-* Registration
-* Login
-* Reset Password
-* Dashboard
-* User
-* Stores
-* Profiles
-* Products
-* Sales
-* Profile
+- Registration
+- Login
+- Reset Password
+- Dashboard
+- User
+- Stores
+- Profiles
+- Products
+- Sales
+- Profile
 
 ### Project Folder Structure
 
 The project folder structure is as follows:
 
+<code>
 /src
 ├── components
 │   └── [component name]
@@ -50,3 +51,4 @@ The project folder structure is as follows:
 └── Checkout.tsx
 ├── package.json
 └── README.md
+</code>
