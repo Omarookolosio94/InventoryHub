@@ -15,6 +15,7 @@ type ProductState = {
   errors: any | {};
   productList: ProductList;
   updateError: (name: string) => void;
+  clearError: () => void;
   getProducts: (ownerId: string, param: SearchParam) => void;
   addProduct: (product: NewProduct, token: string) => void;
   updateProductDetail: (
@@ -53,6 +54,9 @@ const useProductStore = create<ProductState>()(
               [name]: "",
             },
           })),
+        clearError: () => {
+          set({ errors: {} });
+        },
         getProducts: async (ownerId, SearchParam) => {
           set({ isLoading: true });
           const response = await getProducts(ownerId, SearchParam);

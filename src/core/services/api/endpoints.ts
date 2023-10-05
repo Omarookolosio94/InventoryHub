@@ -4,4 +4,5 @@ export const ENDPOINTS: any = {
   getStores: "/stores/owners",
   store: "/stores",
   products: "/products",
+  categories: "/categories",
 } as const;

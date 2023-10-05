@@ -27,6 +27,22 @@ declare global {
 
   interface NewProduct extends ProductDetail, ProductPrice, ProductListing {}
 
+  interface AddCategory {
+    name: string;
+    description: string;
+  }
+
+  interface Category {
+    id: string;
+    employerId: string;
+    name: string;
+    description: string;
+    addedBy: string;
+    updatedBy: string;
+    dateAdded: string;
+    lastUpdated: string;
+  }
+
   interface ProductDetail {
     name: string;
     description: string;

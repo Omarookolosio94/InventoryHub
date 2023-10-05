@@ -4,13 +4,7 @@
 import { useEffect, useState } from "react";
 import SimpleTable from "core/components/table/SimpleTable";
 import TableRowData from "core/components/table/TableRowData";
-import {
-  expandRow,
-  formatCurrency,
-  formatSimpleDate,
-  formatToFormDate,
-  getDate,
-} from "core/services/helpers";
+import { expandRow, formatCurrency, getDate } from "core/services/helpers";
 import Button from "core/components/button/Button";
 import ActionRowData from "core/components/table/ActionRowData";
 import { MdCancel, MdCheckCircle } from "react-icons/md";
@@ -39,7 +33,6 @@ const Products = () => {
   const user = useShopStore((store) => store.user);
   const errors = useProductStore((store) => store.errors);
   const updateError = useProductStore((store) => store.updateError);
-  const clearError = useProductStore((store) => store.clearError);
   const productList = useProductStore((store) => store.productList);
   const getProducts = useProductStore((store) => store.getProducts);
   const addProductAction = useProductStore((store) => store.addProduct);
@@ -276,13 +269,7 @@ const Products = () => {
                       style="flex gap-1 justify-items-center items-center bg-brand-500 hover:bg-brand-600 dark:text-white-300"
                       onClick={() => {
                         setSelected({ ...product });
-                        setUpdateDetailForm({
-                          ...product,
-                          expiringDate: formatToFormDate(product?.expiringDate),
-                          manufacturingDate: formatToFormDate(
-                            product?.manufacturingDate
-                          ),
-                        });
+                        setUpdateDetailForm({ ...product });
                         setOpenUpdateDetailForm(true);
                       }}
                     >
@@ -460,12 +447,7 @@ const Products = () => {
 
       {openAddForm && (
         <Modal styling="w-3/6 p-5" onClose={() => setOpenAddForm(false)}>
-          <form
-            onSubmit={(e) => {
-              addProduct(e);
-              clearError();
-            }}
-          >
+          <form onSubmit={(e) => addProduct(e)}>
             <p className="text-black mb-5 dark:text-white">
               New Product Information
             </p>
@@ -662,15 +644,6 @@ const Products = () => {
                   name="manufacturingDate"
                   value={productForm?.manufacturingDate}
                   onChange={(e: any) => onFormChange(e, "product")}
-                  onFocus={() => {
-                    if (
-                      errors?.ManufacturingDate &&
-                      errors?.ManufacturingDate?.length > 0
-                    ) {
-                      updateError("ManufacturingDate");
-                    }
-                  }}
-                  error={errors?.ManufacturingDate}
                 />
               </div>
               <div className="w-1/2">
@@ -683,15 +656,6 @@ const Products = () => {
                   name="expiringDate"
                   value={productForm?.expiringDate}
                   onChange={(e: any) => onFormChange(e, "product")}
-                  onFocus={() => {
-                    if (
-                      errors?.ExpiringDate &&
-                      errors?.ExpiringDate?.length > 0
-                    ) {
-                      updateError("ExpiringDate");
-                    }
-                  }}
-                  error={errors?.ExpiringDate}
                 />
               </div>
             </div>
@@ -708,10 +672,7 @@ const Products = () => {
             <div className="flex gap-3">
               <Button
                 type="button"
-                onClick={() => {
-                  setOpenAddForm(false);
-                  clearError();
-                }}
+                onClick={() => setOpenAddForm(false)}
                 style="linear mb-5 mt-3 w-full rounded-md bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
               >
                 Cancel
@@ -730,7 +691,6 @@ const Products = () => {
           onClose={() => {
             setOpenUpdateDetailForm(false);
             setSelected({});
-            clearError();
           }}
         >
           <form onSubmit={(e) => updateProductDetail(e)}>
@@ -845,15 +805,6 @@ const Products = () => {
                   name="manufacturingDate"
                   value={updateDetailForm?.manufacturingDate}
                   onChange={(e: any) => onFormChange(e, "updateDetail")}
-                  onFocus={() => {
-                    if (
-                      errors?.ManufacturingDate &&
-                      errors?.ManufacturingDate?.length > 0
-                    ) {
-                      updateError("ManufacturingDate");
-                    }
-                  }}
-                  error={errors?.ManufacturingDate}
                 />
               </div>
               <div className="w-1/2">
@@ -866,15 +817,6 @@ const Products = () => {
                   name="expiringDate"
                   value={updateDetailForm?.expiringDate}
                   onChange={(e: any) => onFormChange(e, "updateDetail")}
-                  onFocus={() => {
-                    if (
-                      errors?.ExpiringDate &&
-                      errors?.ExpiringDate?.length > 0
-                    ) {
-                      updateError("ExpiringDate");
-                    }
-                  }}
-                  error={errors?.ExpiringDate}
                 />
               </div>
             </div>
@@ -894,7 +836,6 @@ const Products = () => {
                 onClick={() => {
                   setOpenUpdateDetailForm(false);
                   setSelected({});
-                  clearError();
                 }}
                 style="linear mb-5 mt-3 w-full rounded-md bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
               >
@@ -914,7 +855,6 @@ const Products = () => {
           onClose={() => {
             setOpenUpdatePriceForm(false);
             setSelected({});
-            clearError();
           }}
         >
           <form onSubmit={(e) => updateProductPrice(e)}>
@@ -980,7 +920,6 @@ const Products = () => {
                 onClick={() => {
                   setOpenUpdatePriceForm(false);
                   setSelected({});
-                  clearError();
                 }}
                 style="linear mb-5 mt-3 w-full rounded-md bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
               >
@@ -1000,7 +939,6 @@ const Products = () => {
           onClose={() => {
             setOpenUpdateListingForm(false);
             setSelected({});
-            clearError();
           }}
         >
           <form onSubmit={(e) => updateProductListing(e)}>
@@ -1034,7 +972,6 @@ const Products = () => {
                 onClick={() => {
                   setOpenUpdateListingForm(false);
                   setSelected({});
-                  clearError();
                 }}
                 style="linear mb-5 mt-3 w-full rounded-md bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
               >

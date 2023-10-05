@@ -2,15 +2,28 @@ export const formatSimpleDate = (date: any, isDash = false) => {
   const d = new Date(date);
   if (d.toString() === "Invalid Date") return null;
 
+  var formattedDate = "";
   if (!isDash) {
-    return `${appendLeadZero(d.getDate())}/${appendLeadZero(
+    formattedDate = `${appendLeadZero(d.getDate())}/${appendLeadZero(
       d.getMonth() + 1
     )}/${d.getFullYear()}`;
   } else {
-    return `${appendLeadZero(d.getDate())}-${appendLeadZero(
+    formattedDate = `${appendLeadZero(d.getDate())}-${appendLeadZero(
       d.getMonth() + 1
     )}-${d.getFullYear()}`;
   }
+  return formattedDate;
+};
+
+export const formatToFormDate = (date: any, isDash = false) => {
+  if (date == null || date?.length < 1) return "";
+  const d = new Date(date);
+
+  var formattedDate = `${d.getFullYear()}-${appendLeadZero(
+    d.getMonth() + 1
+  )}-${appendLeadZero(d.getDate())}`;
+
+  return formattedDate;
 };
 
 const timeFormat12Hour = (date: any) => {
