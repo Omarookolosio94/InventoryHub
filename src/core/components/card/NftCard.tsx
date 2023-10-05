@@ -21,7 +21,7 @@ const NftCard = (props: {
         <div className="relative w-full">
           <img
             src={image}
-            className="mb-3 h-full w-full rounded-xl 3xl:h-full 3xl:w-full"
+            className="mb-3 h-full w-full rounded-md 3xl:h-full 3xl:w-full"
             alt=""
           />
           <button

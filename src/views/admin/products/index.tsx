@@ -673,11 +673,11 @@ const Products = () => {
               <Button
                 type="button"
                 onClick={() => setOpenAddForm(false)}
-                style="linear mb-5 mt-3 w-full rounded-xl bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
+                style="linear mb-5 mt-3 w-full rounded-md bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
               >
                 Cancel
               </Button>
-              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
+              <button className="linear mb-5 mt-3 w-full rounded-md bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
                 Add Product
               </button>
             </div>
@@ -837,11 +837,11 @@ const Products = () => {
                   setOpenUpdateDetailForm(false);
                   setSelected({});
                 }}
-                style="linear mb-5 mt-3 w-full rounded-xl bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
+                style="linear mb-5 mt-3 w-full rounded-md bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
               >
                 Cancel
               </Button>
-              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
+              <button className="linear mb-5 mt-3 w-full rounded-md bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
                 Update Detail
               </button>
             </div>
@@ -851,7 +851,7 @@ const Products = () => {
 
       {openUpdatePriceForm && (
         <Modal
-          styling="1/5 p-5"
+          styling="w-1/5 p-5"
           onClose={() => {
             setOpenUpdatePriceForm(false);
             setSelected({});
@@ -921,11 +921,11 @@ const Products = () => {
                   setOpenUpdatePriceForm(false);
                   setSelected({});
                 }}
-                style="linear mb-5 mt-3 w-full rounded-xl bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
+                style="linear mb-5 mt-3 w-full rounded-md bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
               >
                 Cancel
               </Button>
-              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
+              <button className="linear mb-5 mt-3 w-full rounded-md bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
                 Update Pricing
               </button>
             </div>
@@ -935,7 +935,7 @@ const Products = () => {
 
       {openUpdateListingForm && (
         <Modal
-          styling="1/5 p-5"
+          styling="w-1/5 p-5"
           onClose={() => {
             setOpenUpdateListingForm(false);
             setSelected({});
@@ -943,7 +943,7 @@ const Products = () => {
         >
           <form onSubmit={(e) => updateProductListing(e)}>
             <p className="text-black mb-5 dark:text-white">Update Listing?</p>
-            <div className="flex w-1/3 flex-col justify-items-center gap-2 dark:text-white">
+            <div className="flex flex-col justify-items-center gap-2 dark:text-white">
               <span>List on Shelf:</span>
               <span>
                 <CheckField
@@ -973,11 +973,11 @@ const Products = () => {
                   setOpenUpdateListingForm(false);
                   setSelected({});
                 }}
-                style="linear mb-5 mt-3 w-full rounded-xl bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
+                style="linear mb-5 mt-3 w-full rounded-md bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
               >
                 Cancel
               </Button>
-              <button className="linear mb-5 mt-3 w-full rounded-xl bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
+              <button className="linear mb-5 mt-3 w-full rounded-md bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
                 Update Listing
               </button>
             </div>
