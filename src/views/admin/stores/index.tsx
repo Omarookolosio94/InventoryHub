@@ -224,7 +224,7 @@ const Stores = () => {
                   </ActionRowData>
                   <ActionRowData>
                     <Button
-                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
+                      style="flex gap-1 justify-items-center items-center bg-gray-500 hover:bg-gray-600 dark:text-white-300"
                       onClick={(e: any) => handleExpandRow(e, store?.id)}
                     >
                       {!expandedRows.includes(store?.id) ? (
@@ -247,7 +247,7 @@ const Stores = () => {
                       <span className="text-xs">Catalog</span>
                     </Link>
                     <Button
-                      style="flex gap-1 justify-items-center items-center bg-brand-500 hover:bg-brand-600 dark:text-white-300"
+                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
                       onClick={() => {
                         setSelected({ ...store });
                         setUpdateStoreForm({ ...store });

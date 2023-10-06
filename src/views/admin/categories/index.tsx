@@ -143,7 +143,7 @@ const Categories = () => {
                   <TableRowData value={getDate(category?.lastUpdated)} />
                   <ActionRowData>
                     <Button
-                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
+                      style="flex gap-1 justify-items-center items-center bg-gray-500 hover:bg-gray-600 dark:text-white-300"
                       onClick={(e: any) => handleExpandRow(e, category?.id)}
                     >
                       {!expandedRows.includes(category?.id) ? (
@@ -159,7 +159,7 @@ const Categories = () => {
                       )}
                     </Button>
                     <Button
-                      style="flex gap-1 justify-items-center items-center bg-brand-500 hover:bg-brand-600 dark:text-white-300"
+                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
                       onClick={() => {
                         setSelected({ ...category });
                         setUpdateCategoryForm({

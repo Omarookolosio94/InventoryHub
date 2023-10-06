@@ -7,8 +7,6 @@ import TableRowData from "core/components/table/TableRowData";
 import {
   expandRow,
   formatCurrency,
-  formatSimpleDate,
-  formatToFormDate,
   getDate,
 } from "core/services/helpers";
 import Button from "core/components/button/Button";
@@ -27,14 +25,9 @@ import {
   BsFillCaretUpFill,
 } from "react-icons/bs";
 import { AiFillEdit } from "react-icons/ai";
-import { FiDelete } from "react-icons/fi";
-import useProductStore from "core/services/stores/useProductStore";
-import SelectField from "core/components/fields/SelectField";
-import { RiPriceTag3Fill } from "react-icons/ri";
-import TextField from "core/components/fields/TextField";
 import useCategoryStore from "core/services/stores/useCategoryStore";
-import useCatalogStore from "core/services/stores/useCatatlogStore";
 import { useNavigate, useParams } from "react-router-dom";
+import useCatalogStore from "core/services/stores/useCatalogStore";
 
 const Catalogs = () => {
   // TODO: Add access control
@@ -123,12 +116,13 @@ const Catalogs = () => {
         />
         <SimpleTable
           headers={[
-            "Name",
+            "Product Name",
             "Category",
             "Selling Price",
             "Stock",
-            "Differential Percent (%)",
+            "Differential (%)",
             "On Shelf",
+            "On Warehouse",
             "Actions",
           ]}
         >
@@ -145,8 +139,11 @@ const Catalogs = () => {
                     }
                   />
                   <TableRowData value={formatCurrency(catalog?.sellingPrice)} />
-                  <TableRowData value={catalog?.stock} />
-                  <TableRowData value={catalog?.differentialPercent} />
+                  <TableRowData style="min-w-[50px]" value={catalog?.stock} />
+                  <TableRowData
+                    style="min-w-[50px]"
+                    value={catalog?.differentialPercent}
+                  />
                   <ActionRowData style="min-w-[50px]">
                     <div className="flex cursor-pointer">
                       {catalog?.isListed ? (
@@ -162,9 +159,24 @@ const Catalogs = () => {
                       )}
                     </div>
                   </ActionRowData>
+                  <ActionRowData style="min-w-[50px]">
+                    <div className="flex cursor-pointer">
+                      {catalog?.product?.isListed ? (
+                        <>
+                          <MdCheckCircle className="me-1 text-green-500 dark:text-green-300" />
+                          <span className="text-xs text-green-600">yes</span>
+                        </>
+                      ) : (
+                        <>
+                          <MdCancel className="me-1 text-red-500 dark:text-red-300" />
+                          <span className="text-xs text-red-600">no</span>
+                        </>
+                      )}
+                    </div>
+                  </ActionRowData>
                   <ActionRowData>
                     <Button
-                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
+                      style="flex gap-1 justify-items-center items-center bg-gray-500 hover:bg-gray-600 dark:text-white-300"
                       onClick={(e: any) => handleExpandRow(e, catalog?.id)}
                     >
                       {!expandedRows.includes(catalog?.id) ? (
@@ -180,7 +192,7 @@ const Catalogs = () => {
                       )}
                     </Button>
                     <Button
-                      style="flex gap-1 justify-items-center items-center bg-brand-500 hover:bg-brand-600 dark:text-white-300"
+                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
                       onClick={() => {
                         setSelected({ ...catalog });
                         setUpdateCatalogForm({
@@ -200,7 +212,7 @@ const Catalogs = () => {
                   <tr>
                     <td
                       className="border-[1px] border-gray-200 text-sm"
-                      colSpan={7}
+                      colSpan={8}
                     >
                       <ul className="p-5">
                         <li className="mb-5 flex gap-3">
@@ -233,7 +245,27 @@ const Catalogs = () => {
                             </span>
                           </div>
                         </li>
-
+                        <li className="mb-5 border-b p-1 border-gry-500"></li>
+                        <li className="mb-5 flex gap-3">
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Cost Price:
+                            </span>
+                            <span>{formatCurrency(catalog?.product?.costPrice)}</span>
+                          </div>
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Selling Price:
+                            </span>
+                            <span>{formatCurrency(catalog?.product?.sellingPrice)}</span>
+                          </div>
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Discount Percent:
+                            </span>
+                            <span>{catalog?.product?.discountPercent}</span>
+                          </div>
+                        </li>
                         <li className="mb-5 flex gap-3">
                           <div className="w-1/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
@@ -316,12 +348,12 @@ const Catalogs = () => {
             ))
           ) : (
             <tr>
-              <TableRowData colSpan={7} value="No data yet" />
+              <TableRowData colSpan={8} value="No catalog yet" />
             </tr>
           )}
 
           <tr>
-            <TableRowData colSpan={5} value="Showing 20 entries" />
+            <TableRowData colSpan={6} value="Showing 20 entries" />
             <ActionRowData colSpan={2}>
               <Button
                 disabled={catalogList?.currentPage === 1}

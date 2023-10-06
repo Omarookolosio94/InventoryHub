@@ -7,7 +7,6 @@ import TableRowData from "core/components/table/TableRowData";
 import {
   expandRow,
   formatCurrency,
-  formatSimpleDate,
   formatToFormDate,
   getDate,
 } from "core/services/helpers";
@@ -27,12 +26,13 @@ import {
   BsFillCaretUpFill,
 } from "react-icons/bs";
 import { AiFillEdit } from "react-icons/ai";
-import { FiDelete } from "react-icons/fi";
 import useProductStore from "core/services/stores/useProductStore";
 import SelectField from "core/components/fields/SelectField";
 import { RiPriceTag3Fill } from "react-icons/ri";
 import TextField from "core/components/fields/TextField";
 import useCategoryStore from "core/services/stores/useCategoryStore";
+import { FaClipboardList } from "react-icons/fa";
+import useCatalogStore from "core/services/stores/useCatalogStore";
 
 const Products = () => {
   // TODO: Add access control
@@ -56,6 +56,10 @@ const Products = () => {
   const updateProductListingAction = useProductStore(
     (store) => store.updateProductListing
   );
+
+  const shops = useShopStore((store) => store.shops);
+  const getShops = useShopStore((store) => store.getShops);
+  const addCatalogAction = useCatalogStore((store) => store.addCatalog);
 
   const [selected, setSelected]: any = useState({});
   const [productForm, setProductForm] = useState({
@@ -96,7 +100,16 @@ const Products = () => {
     discountPercent: 0,
   });
 
+  const [catalogForm, setCatalogForm] = useState({
+    stock: 0,
+    differentialPercent: 0,
+    isListed: true,
+    productId: "",
+    storeId: "",
+  });
+
   const [openAddForm, setOpenAddForm] = useState(false);
+  const [openCatalogForm, setOpenCatalogForm] = useState(false);
   const [openUpdateDetailForm, setOpenUpdateDetailForm] = useState(false);
   const [openUpdatePriceForm, setOpenUpdatePriceForm] = useState(false);
   const [openUpdateListingForm, setOpenUpdateListingForm] = useState(false);
@@ -126,6 +139,12 @@ const Products = () => {
       case "updateListing":
         setIsListed(value == "true");
         break;
+      case "catalog":
+        setCatalogForm({
+          ...catalogForm,
+          [name]: name === "isListed" ? value == "true" : value,
+        });
+        break;
       default:
         break;
     }
@@ -152,6 +171,21 @@ const Products = () => {
         expiringDate: "",
       });
       setOpenAddForm(false);
+    }
+  };
+
+  const addCatalog = async (e: any) => {
+    e.preventDefault();
+    var status: any = await addCatalogAction({ ...catalogForm }, user?.token);
+    if (status) {
+      setCatalogForm({
+        stock: 0,
+        differentialPercent: 0,
+        isListed: true,
+        productId: "",
+        storeId: "",
+      });
+      setOpenCatalogForm(false);
     }
   };
 
@@ -202,6 +236,10 @@ const Products = () => {
         count: 20,
       });
 
+    if (shops?.length < 1) {
+      getShops(user?.employerId);
+    }
+
     categories?.length < 1 && getCategory(user?.employerId);
   }, []);
 
@@ -236,8 +274,46 @@ const Products = () => {
                         : "no category"
                     }
                   />
-                  <TableRowData value={formatCurrency(product?.costPrice)} />
-                  <TableRowData value={formatCurrency(product?.sellingPrice)} />
+                  <ActionRowData style="min-w-[50px]">
+                    <div
+                      className="flex cursor-pointer hover:text-brand-500 dark:hover:text-white"
+                      onClick={() => {
+                        setSelected({ ...product });
+                        setUpdatePriceForm({
+                          ...product,
+                        });
+                        setOpenUpdatePriceForm(true);
+                      }}
+                    >
+                      <>
+                        <RiPriceTag3Fill className="mr-1" />
+                        <span className="text-xs">
+                          {formatCurrency(product?.costPrice)}
+                        </span>
+                      </>
+                    </div>
+                  </ActionRowData>
+
+                  <ActionRowData style="min-w-[50px]">
+                    <div
+                      className="flex cursor-pointer hover:text-brand-500 dark:hover:text-white"
+                      onClick={() => {
+                        setSelected({ ...product });
+                        setUpdatePriceForm({
+                          ...product,
+                        });
+                        setOpenUpdatePriceForm(true);
+                      }}
+                    >
+                      <>
+                        <RiPriceTag3Fill className="mr-1" />
+                        <span className="text-xs">
+                          {formatCurrency(product?.sellingPrice)}
+                        </span>
+                      </>
+                    </div>
+                  </ActionRowData>
+
                   <TableRowData
                     value={product?.discountPercent}
                     style="min-w-[50px]"
@@ -253,7 +329,7 @@ const Products = () => {
                     >
                       {product?.isListed ? (
                         <>
-                          <MdCheckCircle className="me-1 text-green-500 dark:text-green-300" />
+                          <MdCheckCircle className="mr-1 text-green-500 dark:text-green-300" />
                           <span className="text-xs text-green-600">yes</span>
                         </>
                       ) : (
@@ -266,7 +342,7 @@ const Products = () => {
                   </ActionRowData>
                   <ActionRowData>
                     <Button
-                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
+                      style="flex gap-1 justify-items-center items-center bg-gray-500 hover:bg-gray-600 dark:text-white-300"
                       onClick={(e: any) => handleExpandRow(e, product?.id)}
                     >
                       {!expandedRows.includes(product?.id) ? (
@@ -282,7 +358,7 @@ const Products = () => {
                       )}
                     </Button>
                     <Button
-                      style="flex gap-1 justify-items-center items-center bg-brand-500 hover:bg-brand-600 dark:text-white-300"
+                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
                       onClick={() => {
                         setSelected({ ...product });
                         setUpdateDetailForm({
@@ -302,14 +378,15 @@ const Products = () => {
                       style="flex gap-1 justify-items-center items-center bg-green-500 hover:bg-green-600 dark:text-white-300"
                       onClick={() => {
                         setSelected({ ...product });
-                        setUpdatePriceForm({
-                          ...product,
+                        setCatalogForm({
+                          ...catalogForm,
+                          productId: product?.id,
                         });
-                        setOpenUpdatePriceForm(true);
+                        setOpenCatalogForm(true);
                       }}
                     >
-                      <RiPriceTag3Fill />
-                      <span className="text-xs">Pricing</span>
+                      <FaClipboardList />
+                      <span className="text-xs">Catalog Item</span>
                     </Button>
                   </ActionRowData>
                 </tr>
@@ -1061,6 +1138,124 @@ const Products = () => {
               </Button>
               <button className="linear mb-5 mt-3 w-full rounded-md bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
                 Update Listing
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {openCatalogForm && (
+        <Modal
+          styling="w-2/6 p-5"
+          onClose={() => {
+            setOpenCatalogForm(false);
+            setSelected({});
+            clearError();
+          }}
+        >
+          <form onSubmit={(e) => addCatalog(e)}>
+            <p className="text-black mb-5 font-bold dark:text-white">
+              Add Product To Store Catalog
+            </p>
+
+            <SelectField
+              label="Choose Shop"
+              extra="mb-3"
+              defaultName="Select Shop"
+              defaultValue="0"
+              name="storeId"
+              options={
+                shops?.length > 0
+                  ? [
+                      ...shops?.map((shop: any) => {
+                        return {
+                          name: shop?.name,
+                          value: shop?.id,
+                        };
+                      }),
+                    ]
+                  : []
+              }
+              value={catalogForm?.storeId}
+              onChange={(e: any) => onFormChange(e, "catalog")}
+              showLabel={true}
+            />
+
+            <InputField
+              variant="auth"
+              extra="mb-3"
+              label="Stock"
+              id="stock"
+              type="number"
+              name="stock"
+              value={catalogForm?.stock}
+              onChange={(e: any) => onFormChange(e, "catalog")}
+              onFocus={() => {
+                if (errors?.Stock && errors?.Stock?.length > 0) {
+                  updateError("Stock");
+                }
+              }}
+              error={errors?.Stock}
+            />
+
+            <InputField
+              variant="auth"
+              extra="mb-3"
+              label="Differential Percent"
+              id="differentialPercent"
+              type="number"
+              name="differentialPercent"
+              value={catalogForm?.differentialPercent}
+              onChange={(e: any) => onFormChange(e, "catalog")}
+              onFocus={() => {
+                if (
+                  errors?.DifferentialPercent &&
+                  errors?.DifferentialPercent?.length > 0
+                ) {
+                  updateError("DifferentialPercent");
+                }
+              }}
+              error={errors?.DifferentialPercent}
+            />
+
+            <div className="flex flex-col justify-items-center gap-2 dark:text-white">
+              <span>List In Shop:</span>
+              <span>
+                <CheckField
+                  styling="mr-6 inline-block"
+                  checked={catalogForm?.isListed === true}
+                  sublabel="yes"
+                  type="radio"
+                  value="true"
+                  name="isListed"
+                  onChange={(e: any) => onFormChange(e, "catalog")}
+                />
+                <CheckField
+                  styling="inline-block"
+                  checked={catalogForm?.isListed === false}
+                  sublabel="no"
+                  type="radio"
+                  value="false"
+                  name="isListed"
+                  onChange={(e: any) => onFormChange(e, "catalog")}
+                />
+              </span>
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                onClick={() => {
+                  setOpenCatalogForm(false);
+                  setSelected({});
+                  clearError();
+                }}
+                style="linear mb-5 mt-3 w-full rounded-md bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
+              >
+                Cancel
+              </Button>
+              <button className="linear mb-5 mt-3 w-full rounded-md bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
+                Add To Catalog
               </button>
             </div>
           </form>

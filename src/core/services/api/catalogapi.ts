@@ -26,7 +26,7 @@ export const updateCatalog = (
   token: string
 ) =>
   apicall({
-    endpoint: "catalog",
+    endpoint: "catalogs",
     body: { ...catalog },
     param: catalogId,
     method: "PUT",
