@@ -39,7 +39,6 @@ export default function Admin(props: { [x: string]: any }) {
       if (
         window.location.href.indexOf(routes[i].layout + routes[i].path) !== -1
       ) {
-        console.log(routes);
         return routes[i].secondary;
       }
     }

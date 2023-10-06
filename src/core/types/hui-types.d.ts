@@ -88,4 +88,13 @@ declare global {
     page: number;
     count: number;
   }
+
+  interface Catalog {}
+
+  interface CatalogList {
+    items: Catalog[];
+    totalPage: number;
+    currentPage: number;
+    totalItem: number;
+  }
 }
