@@ -22,8 +22,9 @@ import {
   MdStore,
 } from "react-icons/md";
 import { FaUsers, FaUserCircle } from "react-icons/fa";
-import { GiPayMoney } from "react-icons/gi";
+import { GiReceiveMoney, GiWallet } from "react-icons/gi";
 import Catalogs from "views/admin/stores/components/Catalogs";
+import PointOfSale from "views/admin/pos";
 
 const routes = [
   {
@@ -68,6 +69,21 @@ const routes = [
     icon: "",
     component: <Catalogs />,
   },
+
+  {
+    name: "Point Of Sale (POS)",
+    layout: "/admin",
+    path: "pos",
+    icon: <GiReceiveMoney className="h-6 w-6" />,
+    component: <PointOfSale />,
+  },
+  {
+    name: "Sales",
+    layout: "/admin",
+    path: "sales",
+    icon: <GiWallet className="h-6 w-6" />,
+    component: <Sales />,
+  },
   {
     name: "Products",
     layout: "/admin",
@@ -76,13 +92,6 @@ const routes = [
     component: <Products />,
   },
 
-  {
-    name: "Sales",
-    layout: "/admin",
-    path: "sales",
-    icon: <GiPayMoney className="h-6 w-6" />,
-    component: <Sales />,
-  },
   {
     name: "Categories",
     layout: "/admin",

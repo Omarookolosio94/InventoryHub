@@ -89,6 +89,13 @@ declare global {
     count: number;
   }
 
+  interface StoreSearch {
+    storeId: string;
+    status: string;
+    page: number;
+    count: number;
+  }
+
   interface Catalog {}
 
   interface CatalogList {
@@ -96,5 +103,21 @@ declare global {
     totalPage: number;
     currentPage: number;
     totalItem: number;
+  }
+
+  interface Invoice {
+    storeId: string;
+    paymentMethod: string;
+    billType: string;
+    carts: Cart[];
+    customerName: string;
+    customerAddress: string;
+    customerEmail: string;
+    customerPhone: string;
+  }
+
+  interface Cart {
+    catalogId: string;
+    quantity: number;
   }
 }

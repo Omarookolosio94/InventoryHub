@@ -3,6 +3,7 @@ import { devtools, persist } from "zustand/middleware";
 import {
   addStore,
   deleteStore,
+  getStore,
   getStores,
   login,
   updateStatus,
@@ -17,9 +18,11 @@ type ShopState = {
   errors: any | {};
   user: any | {};
   shops: Shop[];
+  shop: {};
   login: (email: string, password: string, isEmployeer: boolean) => void;
   updateError: (name: string) => void;
   getShops: (employerId: string) => void;
+  getShop: (storeId: string) => void;
   addStore: (store: any) => void;
   updateStore: (store: any, storeId: string) => void;
   updateStoreStatus: (status: any, storeId: string) => void;
@@ -35,6 +38,7 @@ const useShopStore = create<ShopState>()(
         user: {},
         errors: {},
         shops: [],
+        shop: {},
         updateError: (name) =>
           set((state) => ({
             errors: {
@@ -83,6 +87,12 @@ const useShopStore = create<ShopState>()(
         getShops: async (employerId: string) => {
           set({ isLoading: true });
           const response = await getStores(employerId);
+          set({ shops: response?.data });
+          set({ isLoading: false });
+        },
+        getShop: async (storeId: string) => {
+          set({ isLoading: true });
+          const response = await getStore(storeId);
           set({ shops: response?.data });
           set({ isLoading: false });
         },

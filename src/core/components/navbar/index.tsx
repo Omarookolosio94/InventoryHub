@@ -97,6 +97,10 @@ const Navbar = (props: {
 
                 <Link
                   to="/auth/sign-in"
+                  onClick={() => {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                  }}
                   className="mt-3 text-sm font-medium text-red-500 hover:text-red-500"
                 >
                   Log Out

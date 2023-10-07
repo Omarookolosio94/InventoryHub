@@ -6,4 +6,5 @@ export const ENDPOINTS: any = {
   products: "/products",
   categories: "/categories",
   catelogs: "/catalogs",
+  sales: "/sales",
 } as const;

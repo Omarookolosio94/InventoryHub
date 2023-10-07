@@ -46,6 +46,7 @@ function InputField(props: {
         disabled={disabled}
         type={type}
         id={id}
+        autoComplete="on"
         name={name}
         onChange={onChange}
         onFocus={onFocus}
