@@ -17,22 +17,10 @@ type ProductState = {
   updateError: (name: string) => void;
   clearError: () => void;
   getProducts: (ownerId: string, param: SearchParam) => void;
-  addProduct: (product: NewProduct, token: string) => void;
-  updateProductDetail: (
-    detail: ProductDetail,
-    productId: string,
-    token: string
-  ) => void;
-  updateProductPrice: (
-    price: ProductPrice,
-    productId: string,
-    token: string
-  ) => void;
-  updateProductListing: (
-    listing: ProductListing,
-    productId: string,
-    token: string
-  ) => void;
+  addProduct: (product: NewProduct) => void;
+  updateProductDetail: (detail: ProductDetail, productId: string) => void;
+  updateProductPrice: (price: ProductPrice, productId: string) => void;
+  updateProductListing: (listing: ProductListing, productId: string) => void;
 };
 
 const useProductStore = create<ProductState>()(
@@ -66,15 +54,16 @@ const useProductStore = create<ProductState>()(
           }
           set({ isLoading: false });
         },
-        addProduct: async (product, token) => {
+        addProduct: async (product) => {
           try {
             set({ isLoading: true });
-            const response = await addProducts(product, token);
+            const response = await addProducts(product);
             const { success, statusCode, data, message } = response;
             if (success) {
               set((state) => ({
                 productList: {
                   ...state.productList,
+                  totalItem: state.productList.totalItem + 1,
                   items: [
                     {
                       ...data,
@@ -108,14 +97,10 @@ const useProductStore = create<ProductState>()(
             return false;
           }
         },
-        updateProductDetail: async (detail, productId, token) => {
+        updateProductDetail: async (detail, productId) => {
           try {
             set({ isLoading: true });
-            const response = await updateProductDetails(
-              detail,
-              productId,
-              token
-            );
+            const response = await updateProductDetails(detail, productId);
 
             const { success, statusCode, data, message } = response;
             if (success) {
@@ -152,14 +137,10 @@ const useProductStore = create<ProductState>()(
             return false;
           }
         },
-        updateProductListing: async (listing, productId, token) => {
+        updateProductListing: async (listing, productId) => {
           try {
             set({ isLoading: true });
-            const response = await updateProductListing(
-              listing,
-              productId,
-              token
-            );
+            const response = await updateProductListing(listing, productId);
 
             const { success, statusCode, data, message } = response;
             if (success) {
@@ -196,10 +177,10 @@ const useProductStore = create<ProductState>()(
             return false;
           }
         },
-        updateProductPrice: async (price, productId, token) => {
+        updateProductPrice: async (price, productId) => {
           try {
             set({ isLoading: true });
-            const response = await updateProductPrice(price, productId, token);
+            const response = await updateProductPrice(price, productId);
 
             const { success, statusCode, data, message } = response;
             if (success) {

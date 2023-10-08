@@ -11,10 +11,12 @@ export default function SelectField(props: {
   showLabel?: boolean;
   value: string | number;
   onChange?: any;
+  onFocus?: any;
   name: string;
   defaultValue?: string | number;
   defaultName?: string;
   options?: any | [];
+  error?: any;
 }) {
   const {
     label,
@@ -23,6 +25,7 @@ export default function SelectField(props: {
     value,
     name,
     onChange,
+    onFocus,
     defaultValue,
     defaultName,
     options,
@@ -30,6 +33,7 @@ export default function SelectField(props: {
     state,
     disabled,
     showLabel,
+    error,
   } = props;
 
   return (
@@ -50,6 +54,7 @@ export default function SelectField(props: {
         id={id}
         name={name}
         onChange={onChange}
+        onFocus={onFocus}
         className={`mt-2 flex h-12 w-full items-center justify-center rounded-md border bg-white/0 p-3 text-sm outline-none ${
           disabled === true
             ? "!border-none !bg-gray-100 dark:!bg-white/5 dark:placeholder:!text-[rgba(255,255,255,0.15)]"
@@ -69,6 +74,7 @@ export default function SelectField(props: {
           </option>
         ))}
       </select>
+      <span className="text-red-500 ">{error}</span>
     </div>
   );
 }

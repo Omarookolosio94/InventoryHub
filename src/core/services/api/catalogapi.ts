@@ -12,23 +12,30 @@ export const getCatalog = (storeId: string, param: SearchParam) =>
     method: "GET",
   });
 
-export const addCatalog = (catalog: AddCatalog, token: string) =>
+export const searchCatalog = (storeId: string, name: string) =>
+  apicall({
+    endpoint: "catalogs",
+    param: "search",
+    pQuery: {
+      storeId,
+      name,
+    },
+    method: "GET",
+  });
+
+export const addCatalog = (catalog: AddCatalog) =>
   apicall({
     endpoint: "catalogs",
     body: { ...catalog },
     method: "POST",
-    token,
+    auth: true,
   });
 
-export const updateCatalog = (
-  catalog: UpdateCatalog,
-  catalogId: string,
-  token: string
-) =>
+export const updateCatalog = (catalog: UpdateCatalog, catalogId: string) =>
   apicall({
     endpoint: "catalogs",
     body: { ...catalog },
     param: catalogId,
     method: "PUT",
-    token,
+    auth: true,
   });

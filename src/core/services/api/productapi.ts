@@ -12,49 +12,43 @@ export const getProducts = (ownerId: string, param: SearchParam) =>
     method: "GET",
   });
 
-export const addProducts = (product: NewProduct, token: string) =>
+export const addProducts = (product: NewProduct) =>
   apicall({
     endpoint: "products",
     body: { ...product },
     method: "POST",
-    token,
+    auth: true,
   });
 
 export const updateProductDetails = (
   details: ProductDetail,
-  productId: string,
-  token: string
+  productId: string
 ) =>
   apicall({
     endpoint: "products",
     body: { ...details },
     param: productId,
     method: "PUT",
-    token,
+    auth: true,
   });
 
-export const updateProductPrice = (
-  price: ProductPrice,
-  productId: string,
-  token: string
-) =>
+export const updateProductPrice = (price: ProductPrice, productId: string) =>
   apicall({
     endpoint: "products",
     body: { ...price },
     param: `${productId}/price`,
     method: "PUT",
-    token,
+    auth: true,
   });
 
 export const updateProductListing = (
   listing: ProductListing,
-  productId: string,
-  token: string
+  productId: string
 ) =>
   apicall({
     endpoint: "products",
     body: { ...listing },
     param: `${productId}/listing`,
     method: "PUT",
-    token,
+    auth: true,
   });

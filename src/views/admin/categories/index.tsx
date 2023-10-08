@@ -9,7 +9,6 @@ import Button from "core/components/button/Button";
 import ActionRowData from "core/components/table/ActionRowData";
 import SubHeader from "core/components/subHeader";
 import Card from "core/components/card";
-import useShopStore from "core/services/stores/useShopStore";
 import Modal from "core/components/modal/Modal";
 import InputField from "core/components/fields/InputField";
 import { AiFillEdit } from "react-icons/ai";
@@ -18,16 +17,18 @@ import useCategoryStore from "core/services/stores/useCategoryStore";
 import { getCategories } from "core/services/api/categoryapi";
 import TextField from "core/components/fields/TextField";
 import { BsFillCaretDownFill, BsFillCaretUpFill } from "react-icons/bs";
+import useUserStore from "core/services/stores/useUserStore";
 
 const Categories = () => {
   // TODO: Add access control
   const [expandedRows, setExpandedRows]: any = useState([]);
   const [expandState, setExpandState] = useState({});
   const textfieldRef = useRef(null);
-  const user = useShopStore((store) => store.user);
+  const user = useUserStore((state) => state.user);
   const errors = useCategoryStore((store) => store.errors);
   const updateError = useCategoryStore((store) => store.updateError);
   const categories = useCategoryStore((store) => store.categories);
+  const getCategoryAction = useCategoryStore((store) => store.getCategory);
   const addCategoryAction = useCategoryStore((store) => store.addCategory);
   const updateCategoryAction = useCategoryStore(
     (store) => store.updateCategory
@@ -71,7 +72,7 @@ const Categories = () => {
 
   const addCategory = async (e: any) => {
     e.preventDefault();
-    var status: any = await addCategoryAction({ ...categoryForm }, user?.token);
+    var status: any = await addCategoryAction({ ...categoryForm });
     if (status) {
       setCategoryForm({
         name: "",
@@ -87,8 +88,7 @@ const Categories = () => {
       {
         ...updateCategoryForm,
       },
-      selected?.id,
-      user?.token
+      selected?.id
     );
   };
 
@@ -99,7 +99,7 @@ const Categories = () => {
     );
 
     if (!response) return;
-    await deleteCategoryAction(storeId, user?.token);
+    await deleteCategoryAction(storeId);
   };
 
   const handleExpandRow = async (event: any, id: string) => {
@@ -109,8 +109,8 @@ const Categories = () => {
   };
 
   useEffect(() => {
-    if (categories.length < 1) {
-      getCategories(user?.employerId);
+    if (categories?.length < 1) {
+      getCategoryAction(user?.employerId);
     }
   }, []);
 
@@ -118,7 +118,7 @@ const Categories = () => {
     <div className="mt-3">
       <Card extra={"w-full h-full mx-4 px-6 pb-6 sm:overflow-x-auto"}>
         <SubHeader
-          title="Product Categories"
+          title="Categories"
           action="Add Category"
           actionFunc={() => setOpenAddForm(true)}
         />

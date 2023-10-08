@@ -4,17 +4,12 @@
 import { useEffect, useState } from "react";
 import SimpleTable from "core/components/table/SimpleTable";
 import TableRowData from "core/components/table/TableRowData";
-import {
-  expandRow,
-  formatCurrency,
-  getDate,
-} from "core/services/helpers";
+import { expandRow, formatCurrency, getDate } from "core/services/helpers";
 import Button from "core/components/button/Button";
 import ActionRowData from "core/components/table/ActionRowData";
 import { MdCancel, MdCheckCircle } from "react-icons/md";
 import SubHeader from "core/components/subHeader";
 import Card from "core/components/card";
-import useShopStore from "core/services/stores/useShopStore";
 import Modal from "core/components/modal/Modal";
 import InputField from "core/components/fields/InputField";
 import CheckField from "core/components/fields/CheckField";
@@ -28,6 +23,7 @@ import { AiFillEdit } from "react-icons/ai";
 import useCategoryStore from "core/services/stores/useCategoryStore";
 import { useNavigate, useParams } from "react-router-dom";
 import useCatalogStore from "core/services/stores/useCatalogStore";
+import useUserStore from "core/services/stores/useUserStore";
 
 const Catalogs = () => {
   // TODO: Add access control
@@ -35,7 +31,7 @@ const Catalogs = () => {
   const { storeId } = useParams();
   const navigate = useNavigate();
   const [expandState, setExpandState] = useState({});
-  const user = useShopStore((store) => store.user);
+  const user = useUserStore((store) => store.user);
   const errors = useCatalogStore((store) => store.errors);
   const updateError = useCatalogStore((store) => store.updateError);
   const clearError = useCatalogStore((store) => store.clearError);
@@ -76,8 +72,7 @@ const Catalogs = () => {
       {
         ...updateCatalogForm,
       },
-      selected?.id,
-      user?.token
+      selected?.id
     );
   };
 
@@ -86,6 +81,8 @@ const Catalogs = () => {
     setExpandState(newRows?.obj);
     setExpandedRows(newRows?.newExpandedRows);
   };
+
+  // TODO: Add identifiers for out of stock and instock
 
   useEffect(() => {
     getCatalogs(storeId, {
@@ -109,7 +106,7 @@ const Catalogs = () => {
               : "Catalog"
           }`}
           actionFunc={() => {
-            navigate("/admin/store");
+            navigate(-1);
           }}
           action="Back"
           icon={<BsChevronDoubleLeft />}
@@ -130,7 +127,13 @@ const Catalogs = () => {
             catalogList.items.map((catalog: any) => (
               <>
                 <tr key={catalog?.id}>
-                  <TableRowData value={catalog?.product?.name} />
+                  <TableRowData
+                    enableAction={true}
+                    onClick={() => {
+                      navigate("/admin/products");
+                    }}
+                    value={catalog?.product?.name}
+                  />
                   <TableRowData
                     value={
                       catalog?.product
@@ -245,19 +248,23 @@ const Catalogs = () => {
                             </span>
                           </div>
                         </li>
-                        <li className="mb-5 border-b p-1 border-gry-500"></li>
+                        <li className="border-gry-500 mb-5 border-b p-1"></li>
                         <li className="mb-5 flex gap-3">
                           <div className="w-1/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
                               Cost Price:
                             </span>
-                            <span>{formatCurrency(catalog?.product?.costPrice)}</span>
+                            <span>
+                              {formatCurrency(catalog?.product?.costPrice)}
+                            </span>
                           </div>
                           <div className="w-1/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
                               Selling Price:
                             </span>
-                            <span>{formatCurrency(catalog?.product?.sellingPrice)}</span>
+                            <span>
+                              {formatCurrency(catalog?.product?.sellingPrice)}
+                            </span>
                           </div>
                           <div className="w-1/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">

@@ -18,6 +18,7 @@ function TextField(props: {
   onFocus?: any;
   value?: string | number;
   error?: string;
+  placeholder?: string;
 }) {
   const {
     name,
@@ -34,6 +35,7 @@ function TextField(props: {
     state,
     disabled,
     value,
+    placeholder,
   } = props;
 
   const textAreaRef = useRef(ref);
@@ -70,6 +72,7 @@ function TextField(props: {
           onFocus={onFocus}
           onChange={onChange}
           disabled={disabled}
+          placeholder={placeholder}
         />
       </div>
     </div>
@@ -77,6 +80,5 @@ function TextField(props: {
 }
 
 export default TextField;
-
 
 // TODO: Fix the default row sizing of text inputs

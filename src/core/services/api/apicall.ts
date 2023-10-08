@@ -12,7 +12,7 @@ export const apicall = async ({
   param = "",
   multipart = false,
   responseType = null,
-  token = "",
+  auth = false,
 }: {
   endpoint: string;
   extra?: any;
@@ -22,7 +22,7 @@ export const apicall = async ({
   param?: string;
   multipart?: boolean;
   responseType?: any;
-  token?: any;
+  auth?: boolean;
 }) => {
   const headers: any = {
     "Content-Type": multipart ? "multipart/form-data" : "application/json",
@@ -48,9 +48,12 @@ export const apicall = async ({
     paramsArray = paramsArray.filter((item) => item);
     url += `?${paramsArray.join("&")}`;
   }
-
-  if (token != null && token?.length > 0) {
-    headers.Authorization = `Bearer ${token}`;
+  
+  if (auth) {
+    var token = localStorage.getItem("token");
+    if (token != null && token?.length > 0) {
+      headers.Authorization = `Bearer ${token}`;
+    }
   }
 
   const options: any = {

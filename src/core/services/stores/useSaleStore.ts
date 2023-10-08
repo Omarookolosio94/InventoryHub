@@ -4,6 +4,7 @@ import notification from "core/services/notification";
 import {
   generateSales,
   getBusinessSales,
+  getSalesById,
   getStoreSales,
   updateSaleStatus,
 } from "../api/salesapi";
@@ -12,13 +13,15 @@ import {
 type SaleState = {
   isLoading: boolean;
   errors: any | {};
-  salesList: CatalogList;
+  salesList: SaleList;
+  sale: Sale;
   updateError: (name: string) => void;
   clearError: () => void;
-  getBusinessSales: (param: StoreSearch, token: string) => void;
-  getStoreSales: (storeId: string, param: StoreSearch, token: string) => void;
-  generateSales: (invoice: Invoice, storeId: string, token: string) => void;
-  updateSaleStatus: (status: string, salesId: string, token: string) => void;
+  getBusinessSales: (param: StoreSearch) => void;
+  getStoreSales: (storeId: string, param: StoreSearch) => void;
+  generateSales: (invoice: Invoice, storeId: string) => void;
+  updateSaleStatus: (status: string, salesId: string) => void;
+  getSalesById: (invoiceId: string) => void;
 };
 
 const useSaleStore = create<SaleState>()(
@@ -33,6 +36,7 @@ const useSaleStore = create<SaleState>()(
           totalItem: 0,
           totalPage: 0,
         },
+        sale: null,
         updateError: (name) =>
           set((state) => ({
             errors: {
@@ -43,33 +47,43 @@ const useSaleStore = create<SaleState>()(
         clearError: () => {
           set({ errors: {} });
         },
-        getBusinessSales: async (param, token) => {
+        getSalesById: async (invoiceId) => {
           set({ isLoading: true });
-          const response = await getBusinessSales(param, token);
+          const response = await getSalesById(invoiceId);
+          const { success, data } = response;
+          if (success) {
+            set({ sale: data });
+          }
+          set({ isLoading: false });
+        },
+        getBusinessSales: async (param) => {
+          set({ isLoading: true });
+          const response = await getBusinessSales(param);
           const { success, data } = response;
           if (success) {
             set({ salesList: data });
           }
           set({ isLoading: false });
         },
-        getStoreSales: async (storeId, param, token) => {
+        getStoreSales: async (storeId, param) => {
           set({ isLoading: true });
-          const response = await getStoreSales(storeId, param, token);
+          const response = await getStoreSales(storeId, param);
           const { success, data } = response;
           if (success) {
             set({ salesList: data });
           }
           set({ isLoading: false });
         },
-        generateSales: async (invoice, storeId, token) => {
+        generateSales: async (invoice, storeId) => {
           try {
             set({ isLoading: true });
-            const response = await generateSales(invoice, storeId, token);
+            const response = await generateSales(invoice, storeId);
             const { success, statusCode, data, message } = response;
             if (success) {
               set((state) => ({
                 salesList: {
                   ...state.salesList,
+                  totalItem: state.salesList.totalItem + 1,
                   items: [
                     {
                       ...data,
@@ -93,20 +107,20 @@ const useSaleStore = create<SaleState>()(
               });
             }
             set({ isLoading: false });
-            return success;
+            return response;
           } catch (err) {
             set({ isLoading: false });
             notification({
               message: "An unknown error occured, please try again later",
               type: "danger",
             });
-            return false;
+            return { success: false, statusCode: 500, data: {}, message: "" };
           }
         },
-        updateSaleStatus: async (status, salesId, token) => {
+        updateSaleStatus: async (status, salesId) => {
           try {
             set({ isLoading: true });
-            const response = await updateSaleStatus(status, salesId, token);
+            const response = await updateSaleStatus(status, salesId);
 
             const { success, statusCode, data, message } = response;
             if (success) {

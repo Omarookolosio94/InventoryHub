@@ -16,13 +16,9 @@ type CategoryState = {
   updateError: (name: string) => void;
   clearError: () => void;
   getCategory: (ownerId: string) => void;
-  addCategory: (category: AddCategory, token: string) => void;
-  updateCategory: (
-    category: AddCategory,
-    categoryId: string,
-    token: string
-  ) => void;
-  deleteCategory: (categoryId: string, token: string) => void;
+  addCategory: (category: AddCategory) => void;
+  updateCategory: (category: AddCategory, categoryId: string) => void;
+  deleteCategory: (categoryId: string) => void;
 };
 
 const useCategoryStore = create<CategoryState>()(
@@ -51,10 +47,10 @@ const useCategoryStore = create<CategoryState>()(
           }
           set({ isLoading: false });
         },
-        addCategory: async (category, token) => {
+        addCategory: async (category) => {
           try {
             set({ isLoading: true });
-            const response = await addCategories(category, token);
+            const response = await addCategories(category);
             const { success, statusCode, data, message } = response;
             if (success) {
               set((state) => ({
@@ -90,10 +86,10 @@ const useCategoryStore = create<CategoryState>()(
             return false;
           }
         },
-        updateCategory: async (category, categoryId, token) => {
+        updateCategory: async (category, categoryId) => {
           try {
             set({ isLoading: true });
-            const response = await updateCategory(category, categoryId, token);
+            const response = await updateCategory(category, categoryId);
 
             const { success, statusCode, data, message } = response;
             if (success) {
@@ -130,10 +126,10 @@ const useCategoryStore = create<CategoryState>()(
             return false;
           }
         },
-        deleteCategory: async (categoryId, token) => {
+        deleteCategory: async (categoryId) => {
           try {
             set({ isLoading: true });
-            const response = await deleteCategory(categoryId, token);
+            const response = await deleteCategory(categoryId);
 
             const { success, statusCode, data, message } = response;
             if (success) {

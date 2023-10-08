@@ -25,6 +25,8 @@ import { FaUsers, FaUserCircle } from "react-icons/fa";
 import { GiReceiveMoney, GiWallet } from "react-icons/gi";
 import Catalogs from "views/admin/stores/components/Catalogs";
 import PointOfSale from "views/admin/pos";
+import Invoice from "views/general/Invoice";
+import About from "views/general/About";
 
 const routes = [
   {
@@ -69,7 +71,6 @@ const routes = [
     icon: "",
     component: <Catalogs />,
   },
-
   {
     name: "Point Of Sale (POS)",
     layout: "/admin",
@@ -112,6 +113,20 @@ const routes = [
     path: "employees",
     icon: <FaUsers className="h-6 w-6" />,
     component: <Employees />,
+  },
+  {
+    name: "Invoice",
+    layout: "/general",
+    path: "invoice/:invoiceId",
+    icon: "",
+    component: <Invoice />,
+  },
+  {
+    name: "About",
+    layout: "/general",
+    path: "about",
+    icon: "",
+    component: <About />,
   },
 ];
 export default routes;

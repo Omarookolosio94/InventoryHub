@@ -120,4 +120,13 @@ declare global {
     catalogId: string;
     quantity: number;
   }
+
+  interface Sale {}
+
+  interface SaleList {
+    items: Sales[];
+    totalPage: number;
+    currentPage: number;
+    totalItem: number;
+  }
 }

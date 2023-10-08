@@ -1,10 +1,6 @@
 import { apicall } from "./apicall";
 
-export const getStoreSales = (
-  storeId: string,
-  param: StoreSearch,
-  token: string
-) =>
+export const getStoreSales = (storeId: string, param: StoreSearch) =>
   apicall({
     endpoint: "sales",
     param: `stores/${storeId}`,
@@ -15,10 +11,10 @@ export const getStoreSales = (
       count: param?.count,
     },
     method: "GET",
-    token,
+    auth: true,
   });
 
-export const getBusinessSales = (param: StoreSearch, token: string) =>
+export const getBusinessSales = (param: StoreSearch) =>
   apicall({
     endpoint: "sales",
     param: "business",
@@ -29,31 +25,30 @@ export const getBusinessSales = (param: StoreSearch, token: string) =>
       count: param?.count,
     },
     method: "GET",
-    token,
+    auth: true,
   });
 
-export const generateSales = (
-  invoice: Invoice,
-  storeId: string,
-  token: string
-) =>
+export const getSalesById = (invoiceId: string) =>
+  apicall({
+    endpoint: "sales",
+    param: invoiceId,
+    method: "GET",
+  });
+
+export const generateSales = (invoice: Invoice, storeId: string) =>
   apicall({
     endpoint: "sales",
     param: storeId,
     body: { ...invoice },
     method: "POST",
-    token,
+    auth: true,
   });
 
-export const updateSaleStatus = (
-  status: string,
-  salesId: string,
-  token: string
-) =>
+export const updateSaleStatus = (status: string, salesId: string) =>
   apicall({
     endpoint: "sales",
     body: { status: status },
     param: `${salesId}/status`,
     method: "PUT",
-    token,
+    auth: true,
   });

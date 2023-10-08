@@ -1,21 +1,11 @@
 import { apicall } from "./apicall";
 
-export const login = (email: string, password: string, isEmployer: boolean) =>
-  apicall({
-    endpoint: isEmployer ? "loginEmployer" : "loginEmployee",
-    body: {
-      email,
-      password,
-    },
-    method: "POST",
-  });
-
-export const deleteStore = (storeId: string, token: string) =>
+export const deleteStore = (storeId: string) =>
   apicall({
     endpoint: "store",
     param: storeId,
     method: "DELETE",
-    token,
+    auth: true,
   });
 
 export const getStore = (storeId: string) =>
@@ -32,32 +22,28 @@ export const getStores = (ownerId: string) =>
     method: "GET",
   });
 
-export const addStore = (store: any, token: string) =>
+export const addStore = (store: any) =>
   apicall({
     endpoint: "store",
     body: { ...store },
     method: "POST",
-    token,
+    auth: true,
   });
 
-export const updateStore = (store: any, storeId: string, token: string) =>
+export const updateStore = (store: any, storeId: string) =>
   apicall({
     endpoint: "store",
     body: { ...store },
     param: storeId,
     method: "PUT",
-    token,
+    auth: true,
   });
 
-export const updateStatus = (
-  storeStatus: any,
-  storeId: string,
-  token: string
-) =>
+export const updateStatus = (storeStatus: any, storeId: string) =>
   apicall({
     endpoint: "store",
     body: { ...storeStatus },
     param: `${storeId}/status`,
     method: "PUT",
-    token,
+    auth: true,
   });

@@ -7,31 +7,31 @@ export const getCategories = (ownerId: string) =>
     method: "GET",
   });
 
-export const addCategories = (category: AddCategory, token: string) =>
+export const addCategories = (category: AddCategory) =>
   apicall({
     endpoint: "categories",
     body: { ...category },
     method: "POST",
-    token,
+    auth: true,
   });
 
 export const updateCategory = (
   category: AddCategory,
   categoryId: string,
-  token: string
+
 ) =>
   apicall({
     endpoint: "categories",
     body: { ...category },
     param: categoryId,
     method: "PUT",
-    token,
+    auth: true,
   });
 
-export const deleteCategory = (categoryId: string, token: string) =>
+export const deleteCategory = (categoryId: string) =>
   apicall({
     endpoint: "categories",
     param: categoryId,
     method: "DELETE",
-    token,
+    auth: true,
   });

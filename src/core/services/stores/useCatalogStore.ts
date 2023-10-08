@@ -1,22 +1,25 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import notification from "core/services/notification";
-import { addCatalog, getCatalog, updateCatalog } from "../api/catalogapi";
+import {
+  addCatalog,
+  getCatalog,
+  searchCatalog,
+  updateCatalog,
+} from "../api/catalogapi";
 
 // Zustand implementation
 type CatalogState = {
   isLoading: boolean;
   errors: any | {};
   catalogList: CatalogList;
+  catalogs: Catalog[];
   updateError: (name: string) => void;
   clearError: () => void;
   getCatalogs: (storeId: string, param: SearchParam) => void;
-  addCatalog: (catalog: AddCatalog, token: string) => void;
-  updateCatalog: (
-    catalog: UpdateCatalog,
-    catalogId: string,
-    token: string
-  ) => void;
+  searchCatalog: (storeId: string, name?: string) => void;
+  addCatalog: (catalog: AddCatalog) => void;
+  updateCatalog: (catalog: UpdateCatalog, catalogId: string) => void;
 };
 
 const useCatalogStore = create<CatalogState>()(
@@ -31,6 +34,7 @@ const useCatalogStore = create<CatalogState>()(
           totalItem: 0,
           totalPage: 0,
         },
+        catalogs: [],
         updateError: (name) =>
           set((state) => ({
             errors: {
@@ -50,15 +54,25 @@ const useCatalogStore = create<CatalogState>()(
           }
           set({ isLoading: false });
         },
-        addCatalog: async (catalog, token) => {
+        searchCatalog: async (storeId, name) => {
+          set({ isLoading: true });
+          const response = await searchCatalog(storeId, name);
+          const { success, data } = response;
+          if (success) {
+            set({ catalogs: data });
+          }
+          set({ isLoading: false });
+        },
+        addCatalog: async (catalog) => {
           try {
             set({ isLoading: true });
-            const response = await addCatalog(catalog, token);
+            const response = await addCatalog(catalog);
             const { success, statusCode, data, message } = response;
             if (success) {
               set((state) => ({
                 catalogList: {
                   ...state.catalogList,
+                  totalItem: state.catalogList.totalItem + 1,
                   items: [
                     {
                       ...data,
@@ -92,14 +106,10 @@ const useCatalogStore = create<CatalogState>()(
             return false;
           }
         },
-        updateCatalog: async (catalog, catalogId, token) => {
+        updateCatalog: async (catalog, catalogId) => {
           try {
             set({ isLoading: true });
-            const response = await updateCatalog(
-              catalog,
-              catalogId,
-              token
-            );
+            const response = await updateCatalog(catalog, catalogId);
 
             const { success, statusCode, data, message } = response;
             if (success) {
@@ -138,7 +148,7 @@ const useCatalogStore = create<CatalogState>()(
         },
       }),
       { name: "catalogstate" }
-    )                                
+    )
   )
 );
 

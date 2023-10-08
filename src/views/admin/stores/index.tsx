@@ -10,7 +10,6 @@ import ActionRowData from "core/components/table/ActionRowData";
 import { MdCancel, MdCheckCircle } from "react-icons/md";
 import SubHeader from "core/components/subHeader";
 import Card from "core/components/card";
-import useShopStore from "core/services/stores/useShopStore";
 import Modal from "core/components/modal/Modal";
 import InputField from "core/components/fields/InputField";
 import CheckField from "core/components/fields/CheckField";
@@ -20,13 +19,15 @@ import { FiDelete } from "react-icons/fi";
 import { FaClipboardList } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { customBtn } from "core/const/const";
+import useUserStore from "core/services/stores/useUserStore";
+import useShopStore from "core/services/stores/useShopStore";
 
 const Stores = () => {
   const [expandedRows, setExpandedRows]: any = useState([]);
   const [expandState, setExpandState] = useState({});
   const shops = useShopStore((store) => store.shops);
-  const user = useShopStore((store) => store.user);
-  const getShops = useShopStore((store) => store.getShops);
+  const user = useUserStore((store) => store.user);
+  const getShopsAction = useShopStore((store) => store.getShops);
   const errors = useShopStore((store) => store.errors);
   const updateError = useShopStore((store) => store.updateError);
   const addNewStore = useShopStore((store) => store.addStore);
@@ -161,8 +162,8 @@ const Stores = () => {
   };
 
   useEffect(() => {
-    if (shops?.length < 1) {
-      getShops(user?.employerId);
+    if (shops != null && shops?.length < 1) {
+      getShopsAction(user?.employerId);
     }
   }, []);
 
@@ -188,8 +189,8 @@ const Stores = () => {
             "Actions",
           ]}
         >
-          {shops.length > 0 &&
-            shops.map((store: any) => (
+          {shops?.length > 0 &&
+            shops?.map((store: any) => (
               <>
                 <tr key={store?.id}>
                   <TableRowData value={store?.name} />

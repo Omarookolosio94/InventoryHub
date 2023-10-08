@@ -7,40 +7,36 @@ import TableRowData from "core/components/table/TableRowData";
 import {
   expandRow,
   formatCurrency,
-  formatToFormDate,
   getDate,
+  openInNewTab,
 } from "core/services/helpers";
 import Button from "core/components/button/Button";
 import ActionRowData from "core/components/table/ActionRowData";
-import { MdCancel, MdCheckCircle } from "react-icons/md";
+import { MdCancel, MdCheckCircle, MdReceiptLong } from "react-icons/md";
 import SubHeader from "core/components/subHeader";
 import Card from "core/components/card";
-import useShopStore from "core/services/stores/useShopStore";
 import Modal from "core/components/modal/Modal";
-import InputField from "core/components/fields/InputField";
-import CheckField from "core/components/fields/CheckField";
 import {
   BsChevronDoubleLeft,
   BsChevronDoubleRight,
   BsFillCaretDownFill,
   BsFillCaretUpFill,
 } from "react-icons/bs";
-import { AiFillEdit } from "react-icons/ai";
 import SelectField from "core/components/fields/SelectField";
 import { RiPriceTag3Fill } from "react-icons/ri";
-import TextField from "core/components/fields/TextField";
-import { FaClipboardList } from "react-icons/fa";
 import useSaleStore from "core/services/stores/useSaleStore";
 import { GiReceiveMoney } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 import { ORDER_STATUS } from "core/const/const";
+import useUserStore from "core/services/stores/useUserStore";
+import useShopStore from "core/services/stores/useShopStore";
 
 const Sales = () => {
   const [expandedRows, setExpandedRows]: any = useState([]);
   const [expandState, setExpandState] = useState({});
   const navigate = useNavigate();
 
-  const user = useShopStore((store) => store.user);
+  const user = useUserStore((store) => store.user);
   const errors = useSaleStore((store) => store.errors);
   const updateError = useSaleStore((store) => store.updateError);
   const clearError = useSaleStore((store) => store.clearError);
@@ -69,7 +65,7 @@ const Sales = () => {
 
   const updateSaleStatus = async (e: any) => {
     e.preventDefault();
-    await updateSalesAction(saleStatus, selected?.id, user?.token);
+    await updateSalesAction(saleStatus, selected?.id);
   };
 
   const handleExpandRow = async (event: any, id: string) => {
@@ -80,15 +76,12 @@ const Sales = () => {
 
   useEffect(() => {
     if (salesList?.items?.length < 1) {
-      getBusinessSalesAction(
-        {
-          storeId: search?.storeId,
-          status: search?.status,
-          count: 20,
-          page: 1,
-        },
-        user?.token
-      );
+      getBusinessSalesAction({
+        storeId: search?.storeId,
+        status: search?.status,
+        count: 20,
+        page: 1,
+      });
     }
 
     if (shops?.length < 1) {
@@ -98,6 +91,7 @@ const Sales = () => {
 
   // TODO: Add action to view product details once they are clicked
   // TODO: Add check for user roles
+  // TODO: Print on page without navigating to url
 
   return (
     <div className="mt-3">
@@ -124,7 +118,14 @@ const Sales = () => {
             salesList.items.map((sale: any) => (
               <>
                 <tr key={sale?.id}>
-                  <TableRowData style="min-w-[50px]" value={sale?.code} />
+                  <TableRowData
+                    onClick={() =>
+                      openInNewTab(`/general/invoice/${sale?.code}`)
+                    }
+                    enableAction
+                    style="min-w-[60px]"
+                    value={sale?.code}
+                  />
                   <TableRowData style="min-w-[50px]" value={sale?.billType} />
                   <ActionRowData style="min-w-[50px]">
                     <div
@@ -200,6 +201,15 @@ const Sales = () => {
                         </>
                       )}
                     </Button>
+                    <Button
+                      style="flex gap-1 justify-items-center items-center bg-green-500 hover:bg-green-600 dark:text-white-300"
+                      onClick={() =>
+                        openInNewTab(`/general/invoice/${sale?.code}`)
+                      }
+                    >
+                      <MdReceiptLong />
+                      <span className="text-xs">Receipt</span>
+                    </Button>
                   </ActionRowData>
                 </tr>
                 {expandedRows.includes(sale?.id) ? (
@@ -231,6 +241,20 @@ const Sales = () => {
                             </span>
                           </div>
                         </li>
+                        <li className="mb-5 flex gap-3">
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Store:
+                            </span>
+                            <span>{sale?.store?.storeName}</span>
+                          </div>
+                          <div className="w-2/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Location:
+                            </span>
+                            <span>{sale?.store?.address}</span>
+                          </div>
+                        </li>
                         <li className="border-gry-500 mb-5 border-b p-1"></li>
                         <li className="mb-5 flex gap-3">
                           <div>
@@ -241,15 +265,18 @@ const Sales = () => {
                             {sale?.carts != null &&
                               sale?.carts?.length > 0 &&
                               sale?.carts?.map((cart: any) => (
-                                <span>
-                                  {`
+                                <>
+                                  <span>
+                                    {`
                                   ${cart?.productName} * ${cart?.quantity} at
                                   ${formatCurrency(cart?.unitPriceAtPurchase)}
                                   =
                                   ${formatCurrency(
                                     cart?.quantity * cart?.unitPriceAtPurchase
                                   )}`}
-                                </span>
+                                  </span>{" "}
+                                  <br />
+                                </>
                               ))}
                           </div>
                         </li>
@@ -305,7 +332,8 @@ const Sales = () => {
                           <div className="w-3/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
                               Address:
-                            </span><br />
+                            </span>
+                            <br />
                             <span>{sale?.customerAddress}</span>
                           </div>
                         </li>
@@ -324,21 +352,21 @@ const Sales = () => {
           )}
 
           <tr>
-            <TableRowData colSpan={6} value="Showing 20 entries" />
+            <TableRowData
+              colSpan={6}
+              value={`Showing ${salesList?.items?.length} of ${salesList?.totalItem} entries`}
+            />
             <ActionRowData colSpan={2}>
               <Button
                 disabled={salesList?.currentPage === 1}
                 style="flex gap-1 justify-items-center items-center"
                 onClick={() => {
-                  getBusinessSalesAction(
-                    {
-                      status: search?.status,
-                      storeId: search?.storeId,
-                      page: salesList?.currentPage - 1,
-                      count: 20,
-                    },
-                    user?.token
-                  );
+                  getBusinessSalesAction({
+                    status: search?.status,
+                    storeId: search?.storeId,
+                    page: salesList?.currentPage - 1,
+                    count: 20,
+                  });
                 }}
               >
                 <BsChevronDoubleLeft className="" />
@@ -353,15 +381,12 @@ const Sales = () => {
                 disabled={salesList?.currentPage === salesList?.totalPage}
                 style="flex gap-1 justify-items-center items-center"
                 onClick={() => {
-                  getBusinessSalesAction(
-                    {
-                      status: search?.status,
-                      storeId: search?.storeId,
-                      page: salesList?.currentPage + 1,
-                      count: 20,
-                    },
-                    user?.token
-                  );
+                  getBusinessSalesAction({
+                    status: search?.status,
+                    storeId: search?.storeId,
+                    page: salesList?.currentPage + 1,
+                    count: 20,
+                  });
                 }}
               >
                 <span className="text-xs">Next</span>

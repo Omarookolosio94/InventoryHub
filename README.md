@@ -41,3 +41,7 @@ The project folder structure is as follows:
 │   └── index.css
 │   └── routes.tsx
 </code>
+
+
+### BackLog 
+- Redesign POS system : https://github1s.com/emsifa/tailwind-pos

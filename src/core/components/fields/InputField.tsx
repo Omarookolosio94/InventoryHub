@@ -13,13 +13,19 @@ function InputField(props: {
   name?: string;
   onChange?: any;
   onFocus?: any;
+  onBlur?: any;
   value?: string | number;
   error?: string;
+  dataList?: any;
+  enableDataList?: boolean;
+  list?: string;
+  showLabel?: boolean;
 }) {
   const {
     name,
     onChange,
     onFocus,
+    onBlur,
     label,
     id,
     extra,
@@ -30,18 +36,24 @@ function InputField(props: {
     disabled,
     value,
     error,
+    dataList = [],
+    enableDataList = false,
+    list,
+    showLabel = true,
   } = props;
 
   return (
     <div className={`${extra}`}>
-      <label
-        htmlFor={id}
-        className={`text-sm text-navy-700 dark:text-white ${
-          variant === "auth" ? "ml-1.5 font-medium" : "ml-3 font-bold"
-        }`}
-      >
-        {label}
-      </label>
+      {showLabel && (
+        <label
+          htmlFor={id}
+          className={`text-sm text-navy-700 dark:text-white ${
+            variant === "auth" ? "ml-1.5 font-medium" : "ml-3 font-bold"
+          }`}
+        >
+          {label}
+        </label>
+      )}
       <input
         disabled={disabled}
         type={type}
@@ -50,8 +62,10 @@ function InputField(props: {
         name={name}
         onChange={onChange}
         onFocus={onFocus}
+        onBlur={onBlur}
         placeholder={placeholder}
         value={value}
+        list={list}
         className={`mt-2 flex h-12 w-full items-center justify-center rounded-md border bg-white/0 p-3 text-sm outline-none ${
           disabled === true
             ? "!border-none !bg-gray-100 dark:!bg-white/5 dark:placeholder:!text-[rgba(255,255,255,0.15)]"
@@ -62,7 +76,13 @@ function InputField(props: {
             : "border-gray-200 dark:!border-white/10 dark:text-white"
         }`}
       />
-
+      {enableDataList && dataList?.length > 0 && (
+        <datalist id={list}>
+          {dataList.map((data: any) => (
+            <option value={data?.value}>{data?.name}</option>
+          ))}
+        </datalist>
+      )}
       <span className="text-red-500 ">{error}</span>
     </div>
   );

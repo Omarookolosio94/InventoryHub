@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import useShopStore from "core/services/stores/useShopStore";
+import useShopStore from "core/services/stores/useUserStore";
 import notification from "core/services/notification";
 import InputField from "core/components/fields/InputField";
 import SelectField from "core/components/fields/SelectField";

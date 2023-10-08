@@ -1,7 +1,7 @@
 import React from "react";
 import Dropdown from "core/components/dropdown";
 import { FiAlignJustify } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RiMoonFill, RiSunFill } from "react-icons/ri";
 import avatar from "assets/img/avatars/avatar4.png";
 
@@ -12,6 +12,7 @@ const Navbar = (props: {
 }) => {
   const { onOpenSidenav, brandText } = props;
   const [darkmode, setDarkmode] = React.useState(false);
+  const navigate = useNavigate();
 
   return (
     <nav className="sticky top-4 z-40 flex flex-row flex-wrap items-center justify-between rounded-md bg-white/10 p-2 backdrop-blur-xl dark:bg-[#0b14374d]">
@@ -95,16 +96,16 @@ const Navbar = (props: {
                   Profile Settings
                 </Link>
 
-                <Link
-                  to="/auth/sign-in"
+                <button
                   onClick={() => {
                     localStorage.clear();
                     sessionStorage.clear();
+                    navigate("/auth/sign-in");
                   }}
-                  className="mt-3 text-sm font-medium text-red-500 hover:text-red-500"
+                  className="text-left mt-3 text-sm font-medium text-red-500 hover:text-red-500"
                 >
                   Log Out
-                </Link>
+                </button>
               </div>
             </div>
           }

@@ -15,7 +15,6 @@ import ActionRowData from "core/components/table/ActionRowData";
 import { MdCancel, MdCheckCircle } from "react-icons/md";
 import SubHeader from "core/components/subHeader";
 import Card from "core/components/card";
-import useShopStore from "core/services/stores/useShopStore";
 import Modal from "core/components/modal/Modal";
 import InputField from "core/components/fields/InputField";
 import CheckField from "core/components/fields/CheckField";
@@ -33,13 +32,15 @@ import TextField from "core/components/fields/TextField";
 import useCategoryStore from "core/services/stores/useCategoryStore";
 import { FaClipboardList } from "react-icons/fa";
 import useCatalogStore from "core/services/stores/useCatalogStore";
+import useShopStore from "core/services/stores/useShopStore";
+import useUserStore from "core/services/stores/useUserStore";
 
 const Products = () => {
   // TODO: Add access control
   const [expandedRows, setExpandedRows]: any = useState([]);
   const [expandState, setExpandState] = useState({});
-  const user = useShopStore((store) => store.user);
   const errors = useProductStore((store) => store.errors);
+  const user = useUserStore((store) => store.user);
   const updateError = useProductStore((store) => store.updateError);
   const clearError = useProductStore((store) => store.clearError);
   const productList = useProductStore((store) => store.productList);
@@ -152,7 +153,7 @@ const Products = () => {
 
   const addProduct = async (e: any) => {
     e.preventDefault();
-    var status: any = await addProductAction({ ...productForm }, user?.token);
+    var status: any = await addProductAction({ ...productForm });
     if (status) {
       setProductForm({
         name: "",
@@ -176,7 +177,7 @@ const Products = () => {
 
   const addCatalog = async (e: any) => {
     e.preventDefault();
-    var status: any = await addCatalogAction({ ...catalogForm }, user?.token);
+    var status: any = await addCatalogAction({ ...catalogForm });
     if (status) {
       setCatalogForm({
         stock: 0,
@@ -196,7 +197,6 @@ const Products = () => {
         ...updateDetailForm,
       },
       selected?.id,
-      user?.token
     );
   };
 
@@ -207,7 +207,6 @@ const Products = () => {
         ...updatePriceForm,
       },
       selected?.id,
-      user?.token
     );
   };
 
@@ -218,7 +217,6 @@ const Products = () => {
         isListed,
       },
       selected?.id,
-      user?.token
     );
   };
 
