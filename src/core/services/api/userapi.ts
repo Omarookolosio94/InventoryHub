@@ -55,12 +55,12 @@ export const verifyEmployer = (email: string, otp: string) => {
   });
 };
 
-export const resetPassword = (
+export const resetUserPassword = (
   resetPassword: ResetPassword,
-  isEmployeer: boolean = true
+  isEmployer: boolean = true
 ) => {
   apicall({
-    endpoint: isEmployeer ? "employers" : "employees",
+    endpoint: isEmployer ? "employers" : "employees",
     param: "auth/reset",
     body: {
       ...resetPassword,

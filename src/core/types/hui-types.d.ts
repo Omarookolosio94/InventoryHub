@@ -149,4 +149,6 @@ declare global {
     roles: string[];
     assignedStoreIds: string[];
   }
+
+  interface Employee {}
 }
