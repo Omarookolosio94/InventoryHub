@@ -23,6 +23,8 @@ export default function Invoice() {
     }
   }, []);
 
+  // TODO: Custom search for invoice
+
   return (
     <div className="fixed left-0 top-0 z-10 flex w-full flex-col flex-wrap content-center justify-center gap-4 p-24">
       {sale != null ? (

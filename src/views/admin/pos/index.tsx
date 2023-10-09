@@ -107,6 +107,8 @@ const PointOfSale = () => {
     }
   };
 
+  //TODO: Set selected store to store state
+
   const clearSale = () => {
     setCarts([
       {
@@ -283,7 +285,14 @@ const PointOfSale = () => {
                 value={salesForm?.customerAddress}
                 onChange={(e: any) => onFormChange(e)}
               />
-              <p className="font-xs text-brand-500">Cart:</p>
+              <p className="font-xs text-brand-500">
+                Cart:
+                {errors?.Carts != null && errors?.Carts?.length > 0 && (
+                  <span className="ml-2 text-xs text-red-500">
+                    {errors?.Carts}
+                  </span>
+                )}
+              </p>
               {carts?.map((cart, index) => (
                 <div className="flex items-center gap-3" key={index}>
                   <div className="w-1/4">
@@ -371,16 +380,23 @@ const PointOfSale = () => {
                       <AiOutlinePlus />
                       <span className="text-xs">Add</span>
                     </Button>
-                    <Button
-                      style="flex gap-1 m-0 justify-items-center items-center bg-red-500 hover:bg-red-600 dark:text-white-300 p-3"
-                      onClick={() => {
-                        removeCartField(index);
-                      }}
-                      disabled={carts?.length == 1}
-                    >
-                      <FiMinus />
-                      <span className="text-xs">Delete</span>
-                    </Button>
+                    {carts?.length > 1 && (
+                      <Button
+                        style="flex gap-1 m-0 justify-items-center items-center bg-red-500 hover:bg-red-600 dark:text-white-300 p-3"
+                        onClick={() => {
+                          removeCartField(index);
+                        }}
+                        disabled={carts?.length == 1}
+                        onFocus={() => {
+                          if (errors?.Carts && errors?.Carts?.length > 0) {
+                            updateError("Carts");
+                          }
+                        }}
+                      >
+                        <FiMinus />
+                        <span className="text-xs">Delete</span>
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))}

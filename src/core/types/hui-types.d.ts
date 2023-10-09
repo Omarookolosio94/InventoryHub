@@ -129,4 +129,24 @@ declare global {
     currentPage: number;
     totalItem: number;
   }
+
+  interface NewEmployer {
+    name: string;
+    email: string;
+    password: string;
+  }
+
+  interface ResetPassword {
+    email: string;
+    newPassword: string;
+    otp: string;
+  }
+
+  interface NewEmployee {
+    name: string;
+    email: string;
+    staffId: string;
+    roles: string[];
+    assignedStoreIds: string[];
+  }
 }

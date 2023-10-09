@@ -9,8 +9,20 @@ type UserState = {
   isEmployer: boolean;
   errors: any | {};
   user: any | {};
-  login: (email: string, password: string, isEmployeer: boolean) => void;
-  updateError: (name: string) => void;
+  login: (email: string, password: string, isEmployer: boolean) => void;
+  getOtp: (email: string) => void;
+  addEmloyer: (employer: NewEmployer) => void;
+  editEmployer: (name: string, about: string) => void;
+  verifyEmployer: (email: string, otp: string) => void;
+  resetPassword: (resetPassword: ResetPassword, isEmployer: string) => void;
+  addEmloyee: (employee: NewEmployee) => void;
+  assignEmployee: (
+    roles: string[],
+    stores: string[],
+    employeeId: string
+  ) => void;
+  updateEmployeeStatus: (isActive: boolean, employeeId: string) => void;
+  deleteEmployee: (employeeId: string) => void;
 };
 
 const useUserStore = create<UserState>()(
@@ -28,10 +40,10 @@ const useUserStore = create<UserState>()(
               [name]: "",
             },
           })),
-        login: async (email, password, isEmployeer) => {
+        login: async (email, password, isEmployer) => {
           try {
             set({ isLoading: true });
-            const response = await login(email, password, isEmployeer);
+            const response = await login(email, password, isEmployer);
             const { success, statusCode, data, message } = response;
             set({ isEmployer: isEmployeer });
             if (success) {

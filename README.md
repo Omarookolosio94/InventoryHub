@@ -45,3 +45,6 @@ The project folder structure is as follows:
 
 ### BackLog 
 - Redesign POS system : https://github1s.com/emsifa/tailwind-pos
+- Add system and audit log pages
+- image upload functionality for products, store and user profiles
+- email notification system for query request

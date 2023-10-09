@@ -4,6 +4,7 @@ import { FiAlignJustify } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { RiMoonFill, RiSunFill } from "react-icons/ri";
 import avatar from "assets/img/avatars/avatar4.png";
+import useUserStore from "core/services/stores/useUserStore";
 
 const Navbar = (props: {
   onOpenSidenav: () => void;
@@ -13,6 +14,7 @@ const Navbar = (props: {
   const { onOpenSidenav, brandText } = props;
   const [darkmode, setDarkmode] = React.useState(false);
   const navigate = useNavigate();
+  const user = useUserStore((state) => state.user);
 
   return (
     <nav className="sticky top-4 z-40 flex flex-row flex-wrap items-center justify-between rounded-md bg-white/10 p-2 backdrop-blur-xl dark:bg-[#0b14374d]">
@@ -74,7 +76,7 @@ const Navbar = (props: {
             <img
               className="h-10 w-10 rounded-full"
               src={avatar}
-              alt="Elon Musk"
+              alt="user"
             />
           }
           children={
@@ -82,7 +84,7 @@ const Navbar = (props: {
               <div className="ml-4 mt-3">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-bold text-navy-700 dark:text-white">
-                    👋 Hey, Adela
+                    👋 Hey, {user?.name}
                   </p>{" "}
                 </div>
               </div>
