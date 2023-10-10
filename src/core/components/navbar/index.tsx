@@ -73,17 +73,13 @@ const Navbar = (props: {
         {/* Profile & Dropdown */}
         <Dropdown
           button={
-            <img
-              className="h-10 w-10 rounded-full"
-              src={avatar}
-              alt="user"
-            />
+            <img className="h-10 w-10 rounded-full" src={avatar} alt="user" />
           }
           children={
-            <div className="flex h-32 w-56 flex-col justify-start rounded-[20px] bg-white bg-cover bg-no-repeat shadow-xl shadow-shadow-500 dark:!bg-navy-700 dark:text-white dark:shadow-none">
+            <div className="flex h-auto pb-1 w-56 flex-col justify-start rounded-[20px] bg-white bg-cover bg-no-repeat shadow-xl shadow-shadow-500 dark:!bg-navy-700 dark:text-white dark:shadow-none">
               <div className="ml-4 mt-3">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-bold text-navy-700 dark:text-white">
+                  <p className="text-ellipsis text-sm font-bold text-navy-700 dark:text-white">
                     👋 Hey, {user?.name}
                   </p>{" "}
                 </div>
@@ -104,7 +100,7 @@ const Navbar = (props: {
                     sessionStorage.clear();
                     navigate("/auth/sign-in");
                   }}
-                  className="text-left mt-3 text-sm font-medium text-red-500 hover:text-red-500"
+                  className="mt-3 text-left text-sm font-medium text-red-500 hover:text-red-500"
                 >
                   Log Out
                 </button>

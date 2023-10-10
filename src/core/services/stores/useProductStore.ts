@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import {
   addProducts,
   getProducts,
@@ -218,7 +218,7 @@ const useProductStore = create<ProductState>()(
           }
         },
       }),
-      { name: "productstate" }
+      { name: "productstate", storage: createJSONStorage(() => sessionStorage) }
     )
   )
 );

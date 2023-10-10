@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import notification from "core/services/notification";
 import {
   generateSales,
@@ -158,7 +158,7 @@ const useSaleStore = create<SaleState>()(
           }
         },
       }),
-      { name: "salestate" }
+      { name: "salestate", storage: createJSONStorage(() => sessionStorage) }
     )
   )
 );

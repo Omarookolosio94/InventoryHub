@@ -48,3 +48,4 @@ The project folder structure is as follows:
 - Add system and audit log pages
 - image upload functionality for products, store and user profiles
 - email notification system for query request
+- Add text editors for textarea input

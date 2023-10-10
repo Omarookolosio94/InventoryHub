@@ -138,9 +138,8 @@ export const openInNewTab = (url?: string) => {
     return;
   }
   var isChrome = navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
-  console.log(isChrome);
   if (isChrome) {
-    console.log("open in back");
+    // TODO: open new tab in background not working
     openNewBackgroundTab(url);
   } else {
     window.open(url, "_blank", "noopener,noreferrer");

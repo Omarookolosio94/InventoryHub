@@ -48,7 +48,7 @@ export const apicall = async ({
     paramsArray = paramsArray.filter((item) => item);
     url += `?${paramsArray.join("&")}`;
   }
-  
+
   if (auth) {
     var token = localStorage.getItem("token");
     if (token != null && token?.length > 0) {
@@ -82,10 +82,9 @@ export const apicall = async ({
         };
       } else if (error?.response?.status === 401) {
         // TODO: Move logic to zustand store
-        localStorage.clear();
-        localStorage.removeItem("store");
-        sessionStorage.clear();
-        (window as Window).location = "/";
+        // localStorage.clear();
+        // sessionStorage.clear();
+        // (window as Window).location = "/";
         return error?.response?.data;
       } else {
         return error?.response?.data;

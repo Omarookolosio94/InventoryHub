@@ -1,18 +1,19 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
-import notification from "core/services/notification";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import {
   addEmployee,
   addEmployer,
   assignEmployee,
   deleteEmployee,
   editEmployer,
+  getEmployees,
   getOtp,
   login,
   resetUserPassword,
   updateEmployeeStatus,
   verifyEmployer,
 } from "../api/userapi";
+import notification from "core/services/notification";
 
 // Zustand implementation
 type UserState = {
@@ -24,6 +25,7 @@ type UserState = {
   updateError: (name: string) => void;
   login: (email: string, password: string, isEmployer: boolean) => void;
   getOtp: (email: string) => void;
+  getEmployees: () => void;
   addEmployer: (employer: NewEmployer) => void;
   editEmployer: (name: string, about: string) => void;
   verifyEmployer: (email: string, otp: string) => void;
@@ -214,7 +216,14 @@ const useUserStore = create<UserState>()(
 
             const { success, statusCode, data, message }: any = response;
             if (success) {
-              set({ user: data });
+              set((state) => ({
+                user: {
+                  ...state.user,
+                  name: data?.name,
+                  about: data?.about,
+                  lastUpdated: data?.lastUpdated,
+                },
+              }));
               notification({
                 title: "",
                 message,
@@ -367,6 +376,21 @@ const useUserStore = create<UserState>()(
           });
           set({ isLoading: false });
         },
+        getEmployees: async () => {
+          set({ isLoading: true });
+          const response = await getEmployees();
+          const { success, statusCode, data, message } = response;
+          set({ employees: data });
+          if (statusCode === 400) {
+            set({ errors: data });
+            notification({
+              title: "",
+              message: message,
+              type: success ? "success" : "danger",
+            });
+          }
+          set({ isLoading: false });
+        },
         deleteEmployee: async (employeeId) => {
           try {
             set({ isLoading: true });
@@ -374,7 +398,9 @@ const useUserStore = create<UserState>()(
             const { success, statusCode, data, message }: any = response;
             if (success) {
               set((state) => ({
-                employees: state.employees.filter((employee: any) => employee.id !== employeeId),
+                employees: state.employees.filter(
+                  (employee: any) => employee.id !== employeeId
+                ),
               }));
               notification({
                 title: "",
@@ -405,7 +431,10 @@ const useUserStore = create<UserState>()(
           }
         },
       }),
-      { name: "userstate" }
+      {
+        name: "userstate",
+        storage: createJSONStorage(() => sessionStorage),
+      }
     )
   )
 );

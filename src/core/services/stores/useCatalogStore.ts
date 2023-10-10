@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import notification from "core/services/notification";
 import {
   addCatalog,
@@ -147,7 +147,7 @@ const useCatalogStore = create<CatalogState>()(
           }
         },
       }),
-      { name: "catalogstate" }
+      { name: "catalogstate", storage: createJSONStorage(() => sessionStorage) }
     )
   )
 );

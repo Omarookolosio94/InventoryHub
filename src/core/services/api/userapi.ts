@@ -20,7 +20,14 @@ export const getOtp = (email: string) =>
     method: "POST",
   });
 
-export const addEmployer = (employer: NewEmployer) => {
+export const getEmployees = () =>
+  apicall({
+    endpoint: "employees",
+    method: "GET",
+    auth: true,
+  });
+
+export const addEmployer = (employer: NewEmployer) =>
   apicall({
     endpoint: "employers",
     body: {
@@ -28,9 +35,8 @@ export const addEmployer = (employer: NewEmployer) => {
     },
     method: "POST",
   });
-};
 
-export const editEmployer = (name: string, about: string) => {
+export const editEmployer = (name: string, about: string) =>
   apicall({
     endpoint: "employers",
     body: {
@@ -40,9 +46,8 @@ export const editEmployer = (name: string, about: string) => {
     method: "PUT",
     auth: true,
   });
-};
 
-export const verifyEmployer = (email: string, otp: string) => {
+export const verifyEmployer = (email: string, otp: string) =>
   apicall({
     endpoint: "employers",
     param: "verify",
@@ -53,12 +58,11 @@ export const verifyEmployer = (email: string, otp: string) => {
     method: "PUT",
     auth: true,
   });
-};
 
 export const resetUserPassword = (
   resetPassword: ResetPassword,
   isEmployer: boolean = true
-) => {
+) =>
   apicall({
     endpoint: isEmployer ? "employers" : "employees",
     param: "auth/reset",
@@ -68,23 +72,22 @@ export const resetUserPassword = (
     method: "PUT",
     auth: true,
   });
-};
 
-export const addEmployee = (employee: NewEmployee) => {
+export const addEmployee = (employee: NewEmployee) =>
   apicall({
     endpoint: "employees",
     body: {
       ...employee,
     },
     method: "POST",
+    auth: true,
   });
-};
 
 export const assignEmployee = (
   roles: string[],
   stores: string[],
   employeeId: string
-) => {
+) =>
   apicall({
     endpoint: "employees",
     param: `${employeeId}/assignment`,
@@ -95,9 +98,8 @@ export const assignEmployee = (
     method: "PUT",
     auth: true,
   });
-};
 
-export const updateEmployeeStatus = (isActive: boolean, employeeId: string) => {
+export const updateEmployeeStatus = (isActive: boolean, employeeId: string) =>
   apicall({
     endpoint: "employees",
     param: `${employeeId}/status`,
@@ -107,13 +109,11 @@ export const updateEmployeeStatus = (isActive: boolean, employeeId: string) => {
     method: "PUT",
     auth: true,
   });
-};
 
-export const deleteEmployee = (employeeId: string) => {
+export const deleteEmployee = (employeeId: string) =>
   apicall({
     endpoint: "employees",
     param: `${employeeId}`,
     method: "DELETE",
     auth: true,
   });
-};

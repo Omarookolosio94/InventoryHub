@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import notification from "../notification";
 import {
   addCategories,
@@ -167,7 +167,10 @@ const useCategoryStore = create<CategoryState>()(
           }
         },
       }),
-      { name: "categorystate" }
+      {
+        name: "categorystate",
+        storage: createJSONStorage(() => sessionStorage),
+      }
     )
   )
 );
