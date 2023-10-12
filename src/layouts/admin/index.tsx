@@ -1,5 +1,11 @@
-import React from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import Navbar from "core/components/navbar";
 import Sidebar from "core/components/sidebar";
 import Footer from "core/components/footer/Footer";
@@ -8,15 +14,19 @@ import routes from "routes";
 export default function Admin(props: { [x: string]: any }) {
   const { ...rest } = props;
   const location = useLocation();
-  const [open, setOpen] = React.useState(true);
-  const [currentRoute, setCurrentRoute] = React.useState("Main Dashboard");
+  const [open, setOpen] = useState(true);
+  const [currentRoute, setCurrentRoute] = useState("Main Dashboard");
 
-  React.useEffect(() => {
+  var navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
     window.addEventListener("resize", () =>
       window.innerWidth < 1200 ? setOpen(false) : setOpen(true)
     );
   }, []);
-  React.useEffect(() => {
+
+  useEffect(() => {
     getActiveRoute(routes);
   }, [location.pathname]);
 
@@ -55,6 +65,13 @@ export default function Admin(props: { [x: string]: any }) {
       }
     });
   };
+
+  useEffect(() => {
+    if (token == null || token?.length < 1) {
+      navigate("/auth/");
+    }
+    console.log("rendering");
+  }, []);
 
   document.documentElement.dir = "ltr";
   return (

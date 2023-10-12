@@ -1,9 +1,12 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import routes from "routes";
 import Footer from "core/components/footer/FooterAuthDefault";
 import FixedPlugin from "core/components/fixedPlugin/FixedPlugin";
 
 export default function Auth() {
+  var navigate = useNavigate();
+  const token = localStorage.getItem("token");
   const getRoutes = (routes: RoutesType[]): any => {
     return routes.map((prop, key) => {
       if (prop.layout === "/auth") {
@@ -15,6 +18,13 @@ export default function Auth() {
       }
     });
   };
+
+  useEffect(() => {
+    if (token != null && token?.length > 1) {
+      navigate(-1);
+    }
+  }, []);
+
   document.documentElement.dir = "ltr";
   return (
     <div>

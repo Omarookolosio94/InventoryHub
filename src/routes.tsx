@@ -27,6 +27,7 @@ import Catalogs from "views/admin/stores/components/Catalogs";
 import PointOfSale from "views/admin/pos";
 import Invoice from "views/general/Invoice";
 import About from "views/general/About";
+import VerifyAccount from "views/auth/VerifyAccount";
 
 const routes = [
   {
@@ -35,6 +36,13 @@ const routes = [
     path: "register",
     icon: "",
     component: <Register />,
+  },
+  {
+    name: "Verify",
+    layout: "/auth",
+    path: "verify",
+    icon: "",
+    component: <VerifyAccount />,
   },
   {
     name: "Sign In",

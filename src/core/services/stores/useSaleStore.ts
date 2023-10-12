@@ -15,6 +15,7 @@ type SaleState = {
   errors: any | {};
   salesList: SaleList;
   sale: Sale;
+  reset: () => void;
   updateError: (name: string) => void;
   clearError: () => void;
   getBusinessSales: (param: StoreSearch) => void;
@@ -37,6 +38,20 @@ const useSaleStore = create<SaleState>()(
           totalPage: 0,
         },
         sale: null,
+        reset: () => {
+          set({
+            isLoading: false,
+            errors: {},
+            salesList: {
+              items: [],
+              currentPage: 0,
+              totalItem: 0,
+              totalPage: 0,
+            },
+            sale: null,
+          });
+          sessionStorage.removeItem("salestate");
+        },
         updateError: (name) =>
           set((state) => ({
             errors: {

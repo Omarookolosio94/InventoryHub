@@ -1,65 +1,52 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import InputField from "core/components/fields/InputField";
-import SelectField from "core/components/fields/SelectField";
 import useUserStore from "core/services/stores/useUserStore";
 import notification from "core/services/notification";
 
-export default function ResetPassword() {
+export default function VerifyAccount() {
   const navigate = useNavigate();
-  const errors = useUserStore((store) => store.errors);
-  const updateError = useUserStore((store) => store.updateError);
+  const errors = useUserStore((state) => state.errors);
+  const updateError = useUserStore((state) => state.updateError);
   const getOtpAction = useUserStore((state) => state.getOtp);
-  const resetPasswordAction = useUserStore((state) => state.resetPassword);
-
-  const [accessType, setAccessType] = useState("0");
-  const [resetForm, setResetForm] = useState({
+  const verifyEmployerAction = useUserStore((state) => state.verifyEmployer);
+  const [verifyForm, setVerifyForm] = useState({
     email: "",
-    newPassword: "",
     otp: "",
   });
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setResetForm({
-      ...resetForm,
+    setVerifyForm({
+      ...verifyForm,
       [name]: value,
     });
   };
 
   const getOtp = async () => {
-    if (resetForm?.email == null || resetForm?.email?.length < 1) {
+    if (verifyForm?.email == null || verifyForm?.email?.length < 1) {
       notification({
         title: "",
         type: "warning",
         message: "Please input an email",
       });
     }
-    await getOtpAction(resetForm?.email);
+
+    await getOtpAction(verifyForm?.email);
   };
 
-  const resetPassword = async (e: any) => {
+  const verifyEmployer = async (e: any) => {
     e.preventDefault();
-    if (accessType == null || accessType?.length < 1) {
-      notification({
-        title: "",
-        type: "warning",
-        message: "Please select a user type",
-      });
-    }
-
-    var status: boolean | any = await resetPasswordAction(
-      resetForm,
-      accessType === "1" ? true : false
+    var status: boolean | any = await verifyEmployerAction(
+      verifyForm?.email,
+      verifyForm?.otp
     );
 
     if (status) {
-      setResetForm({
+      setVerifyForm({
         email: "",
-        newPassword: "",
         otp: "",
       });
-
       navigate("/auth");
     }
   };
@@ -69,35 +56,14 @@ export default function ResetPassword() {
       {/* Sign in section */}
       <div className="mt-[10vh] w-full max-w-full flex-col items-center md:pl-4 lg:pl-0 xl:max-w-[420px]">
         <h4 className="mb-2.5 text-4xl font-bold text-navy-700 dark:text-white">
-          Reset Password
+          Verify Your Business Account
         </h4>
         <p className="mb-9 ml-1 text-base text-gray-600">
-          Enter your otp and email to reset password!
+          Enter your otp and email to verify your account!
         </p>
-        <form onSubmit={(e: any) => resetPassword(e)}>
-          <SelectField
-            label="Select Access"
-            extra="mb-3"
-            defaultName="Select Access Type"
-            defaultValue="0"
-            name="accessType"
-            options={[
-              {
-                name: "Employer",
-                value: "1",
-              },
-              {
-                name: "Employee",
-                value: "2",
-              },
-            ]}
-            value={accessType}
-            onChange={(e: any) => {
-              setAccessType(e.target?.value);
-            }}
-            showLabel={true}
-          />
 
+        <form onSubmit={(e: any) => verifyEmployer(e)}>
+          {/* Email */}
           <InputField
             variant="auth"
             extra="mb-3"
@@ -106,7 +72,7 @@ export default function ResetPassword() {
             id="email"
             type="text"
             name="email"
-            value={resetForm?.email}
+            value={verifyForm?.email}
             onChange={(e: any) => handleChange(e)}
             onFocus={() => {
               if (errors?.Email && errors?.Email?.length > 0) {
@@ -114,25 +80,6 @@ export default function ResetPassword() {
               }
             }}
             error={errors?.Email}
-          />
-
-          {/* Password */}
-          <InputField
-            variant="auth"
-            extra="mb-3"
-            label="New Password*"
-            placeholder=""
-            id="newPassword"
-            type="password"
-            name="newPassword"
-            value={resetForm?.newPassword}
-            onChange={(e: any) => handleChange(e)}
-            onFocus={() => {
-              if (errors?.NewPassword && errors?.NewPassword?.length > 0) {
-                updateError("NewPassword");
-              }
-            }}
-            error={errors?.NewPassword}
           />
 
           {/* OTP */}
@@ -145,7 +92,6 @@ export default function ResetPassword() {
               Generate Otp?
             </button>
           </div>
-
           <InputField
             variant="auth"
             extra="mb-3"
@@ -154,7 +100,7 @@ export default function ResetPassword() {
             placeholder=""
             type="text"
             name="otp"
-            value={resetForm?.otp}
+            value={verifyForm?.otp}
             onChange={(e: any) => handleChange(e)}
             onFocus={() => {
               if (errors?.Otp && errors?.Otp?.length > 0) {
@@ -163,9 +109,8 @@ export default function ResetPassword() {
             }}
             error={errors?.Otp}
           />
-
           <button className="linear mt-2 w-full rounded-md bg-brand-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-brand-600 active:bg-brand-700 dark:bg-brand-400 dark:text-white dark:hover:bg-brand-300 dark:active:bg-brand-200">
-            Reset Password
+            Verify Account
           </button>
         </form>
 

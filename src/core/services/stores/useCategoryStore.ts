@@ -13,6 +13,7 @@ type CategoryState = {
   isLoading: boolean;
   errors: any | {};
   categories: Category[];
+  reset: () => void;
   updateError: (name: string) => void;
   clearError: () => void;
   getCategory: (ownerId: string) => void;
@@ -28,6 +29,14 @@ const useCategoryStore = create<CategoryState>()(
         isLoading: false,
         errors: {},
         categories: [],
+        reset: () => {
+          set({
+            isLoading: false,
+            errors: {},
+            categories: [],
+          });
+          sessionStorage.removeItem("categorystate");
+        },
         updateError: (name) =>
           set((state) => ({
             errors: {

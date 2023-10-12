@@ -5,6 +5,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { RiMoonFill, RiSunFill } from "react-icons/ri";
 import avatar from "assets/img/avatars/avatar4.png";
 import useUserStore from "core/services/stores/useUserStore";
+import useShopStore from "core/services/stores/useShopStore";
+import useSaleStore from "core/services/stores/useSaleStore";
+import useProductStore from "core/services/stores/useProductStore";
+import useCategoryStore from "core/services/stores/useCategoryStore";
+import useCatalogStore from "core/services/stores/useCatalogStore";
 
 const Navbar = (props: {
   onOpenSidenav: () => void;
@@ -15,6 +20,23 @@ const Navbar = (props: {
   const [darkmode, setDarkmode] = React.useState(false);
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
+  const resetUser = useUserStore((state) => state.reset);
+  const resetShop = useShopStore((state) => state.reset);
+  const resetSale = useSaleStore((state) => state.reset);
+  const resetProduct = useProductStore((state) => state.reset);
+  const resetCategory = useCategoryStore((state) => state.reset);
+  const resetCatalog = useCatalogStore((state) => state.reset);
+
+  const logout = () => {
+    resetUser();
+    resetShop();
+    resetSale();
+    resetProduct();
+    resetCategory();
+    resetCatalog();
+    localStorage.removeItem("token");
+    navigate("/auth/sign-in");
+  };
 
   return (
     <nav className="sticky top-4 z-40 flex flex-row flex-wrap items-center justify-between rounded-md bg-white/10 p-2 backdrop-blur-xl dark:bg-[#0b14374d]">
@@ -76,7 +98,7 @@ const Navbar = (props: {
             <img className="h-10 w-10 rounded-full" src={avatar} alt="user" />
           }
           children={
-            <div className="flex h-auto pb-1 w-56 flex-col justify-start rounded-[20px] bg-white bg-cover bg-no-repeat shadow-xl shadow-shadow-500 dark:!bg-navy-700 dark:text-white dark:shadow-none">
+            <div className="flex h-auto w-56 flex-col justify-start rounded-[20px] bg-white bg-cover bg-no-repeat pb-1 shadow-xl shadow-shadow-500 dark:!bg-navy-700 dark:text-white dark:shadow-none">
               <div className="ml-4 mt-3">
                 <div className="flex items-center gap-2">
                   <p className="text-ellipsis text-sm font-bold text-navy-700 dark:text-white">
@@ -95,11 +117,7 @@ const Navbar = (props: {
                 </Link>
 
                 <button
-                  onClick={() => {
-                    localStorage.clear();
-                    sessionStorage.clear();
-                    navigate("/auth/sign-in");
-                  }}
+                  onClick={() => logout()}
                   className="mt-3 text-left text-sm font-medium text-red-500 hover:text-red-500"
                 >
                   Log Out

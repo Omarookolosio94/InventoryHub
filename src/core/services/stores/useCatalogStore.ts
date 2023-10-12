@@ -14,6 +14,7 @@ type CatalogState = {
   errors: any | {};
   catalogList: CatalogList;
   catalogs: Catalog[];
+  reset: () => void;
   updateError: (name: string) => void;
   clearError: () => void;
   getCatalogs: (storeId: string, param: SearchParam) => void;
@@ -35,6 +36,20 @@ const useCatalogStore = create<CatalogState>()(
           totalPage: 0,
         },
         catalogs: [],
+        reset: () => {
+          set({
+            isLoading: false,
+            errors: {},
+            catalogList: {
+              items: [],
+              currentPage: 0,
+              totalItem: 0,
+              totalPage: 0,
+            },
+            catalogs: [],
+          });
+          sessionStorage.removeItem("catalogstate");
+        },
         updateError: (name) =>
           set((state) => ({
             errors: {

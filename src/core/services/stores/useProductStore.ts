@@ -14,6 +14,7 @@ type ProductState = {
   isLoading: boolean;
   errors: any | {};
   productList: ProductList;
+  reset: () => void;
   updateError: (name: string) => void;
   clearError: () => void;
   getProducts: (ownerId: string, param: SearchParam) => void;
@@ -34,6 +35,19 @@ const useProductStore = create<ProductState>()(
           currentPage: 0,
           totalItem: 0,
           totalPage: 0,
+        },
+        reset: () => {
+          set({
+            isLoading: false,
+            errors: {},
+            productList: {
+              items: [],
+              currentPage: 0,
+              totalItem: 0,
+              totalPage: 0,
+            },
+          })
+          sessionStorage.removeItem('productstate')
         },
         updateError: (name) =>
           set((state) => ({

@@ -17,6 +17,7 @@ type ShopState = {
   errors: any | {};
   shops: Shop[];
   shop: {};
+  reset: () => void;
   updateError: (name: string) => void;
   getShops: (employerId: string) => void;
   getShop: (storeId: string) => void;
@@ -35,6 +36,16 @@ const useShopStore = create<ShopState>()(
         errors: {},
         shops: [],
         shop: {},
+        reset: () => {
+          set({
+            isLoading: false,
+            isEmployer: false,
+            errors: {},
+            shops: [],
+            shop: {},
+          });
+          sessionStorage.removeItem("shopstate");
+        },
         updateError: (name) =>
           set((state) => ({
             errors: {

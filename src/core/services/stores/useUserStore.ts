@@ -22,6 +22,7 @@ type UserState = {
   errors: any | {};
   user: any | {};
   employees: Employee[];
+  reset: () => void;
   updateError: (name: string) => void;
   login: (email: string, password: string, isEmployer: boolean) => void;
   getOtp: (email: string) => void;
@@ -49,6 +50,16 @@ const useUserStore = create<UserState>()(
         user: {},
         errors: {},
         employees: [],
+        reset: () => {
+          set({
+            isLoading: false,
+            isEmployer: false,
+            user: {},
+            errors: {},
+            employees: [],
+          });
+          sessionStorage.removeItem("userstate");
+        },
         updateError: (name) =>
           set((state) => ({
             errors: {

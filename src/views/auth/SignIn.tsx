@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import useShopStore from "core/services/stores/useUserStore";
 import notification from "core/services/notification";
 import InputField from "core/components/fields/InputField";
 import SelectField from "core/components/fields/SelectField";
+import useUserStore from "core/services/stores/useUserStore";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -11,9 +11,9 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [accessType, setAccessType] = useState("0");
 
-  const error = useShopStore((store) => store.errors);
-  const loginUser = useShopStore((store) => store.login);
-  const updateError = useShopStore((store) => store.updateError);
+  const error = useUserStore((store) => store.errors);
+  const loginUser = useUserStore((store) => store.login);
+  const updateError = useUserStore((store) => store.updateError);
 
   const login = async (e: any) => {
     e.preventDefault();
