@@ -1,12 +1,51 @@
-## INVENTORY HUB
+# INVENTORY HUB - Manage Your Business With Ease
 
-### Overview
+![InventoryHub](link_to_image)
+
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Getting Started as an Employer](#getting-started-as-an-employer)
+- [Getting Started as an Employee](#getting-started-as-an-employee)
+- [How to manage Shop Locations](#how-to-manage-shop-locations)
+- [How to add Products](#how-to-add-products)
+- [Setting Up Shop Catalogs](#setting-up-shop-catalogs)
+- [Making Sales](#making-sales)
+- [Employee management](#employee-management)
+- [Business Profile Management](#business-profile-management)
+- [Techical Documentation](#techical-documentation)
+- [Upcoming Features](#upcoming-features)
+
+## Overview
 
 An application that helps businesses manage sales and staff as well as the products and services that they offer.
 
-### Tech Stacks
+## Features
+- Employee Management
+- Store Management
+- Point of Sale System
+- Audit System
+- General Analytics
 
-The frontend application is built using the following tech stacks:
+## Getting Started as an Employer
+
+## Getting Started as an Employee
+
+## How to manage Shop Locations
+
+## How to add Products
+
+## Setting Up Shop Catalogs
+
+## Making Sales
+
+## Employee management
+
+## Business Profile Management
+
+## Techical Documentation
+
+The application is built using the following tech stacks and resources:
 
 - React
 - Zustand
@@ -14,38 +53,10 @@ The frontend application is built using the following tech stacks:
 - Tailwind
 - Horizon UI Template
 
-### Views
 
-- Registration
-- Login
-- Reset Password
-- Dashboard
-- User
-- Stores
-- Profiles
-- Products
-- Sales
-- Profile
-
-### Project Folder Structure
-
-The project folder structure is as follows:
-
-<code>
-├── /src
-│   └── assets
-│   └── core
-│   └── layouts
-│   └── views
-│   └── App.tsx
-│   └── index.css
-│   └── routes.tsx
-</code>
-
-
-### BackLog 
-- Redesign POS system : https://github1s.com/emsifa/tailwind-pos
+## Upcoming Features 
 - Add system and audit log pages
-- image upload functionality for products, store and user profiles
-- email notification system for query request
+- image upload functionality for products, shop location and user profiles
 - Add text editors for textarea input
+- customer service portal
+- Redesign for POS system to include product images : https://github1s.com/emsifa/tailwind-pos

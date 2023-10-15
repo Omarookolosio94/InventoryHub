@@ -25,7 +25,7 @@ const Sidebar = (props: {
         <HiX />
       </span>
 
-      <div className={`mx-[56px] mt-[48px] w-[180px] flex items-center`}>
+      <div className={`mx-[56px] mt-[48px] w-[160px] flex items-center`}>
         <div className="ml-1 mt-1 h-auto font-poppins text-[18px] font-bold uppercase text-navy-700 dark:text-white">
           <span>{isEmployer ? user?.name : user?.employer?.name}</span>
         </div>
