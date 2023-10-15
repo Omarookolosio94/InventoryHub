@@ -1,7 +1,5 @@
 # INVENTORY HUB - Manage Your Business With Ease
 
-![InventoryHub](link_to_image)
-
 ## Table of Contents
 
 - [Overview](#overview)
@@ -31,7 +29,9 @@ An application that helps businesses manage sales and staff as well as the produ
 
 ## Getting Started as an Employer
 
-<img src="https://onedrive.live.com/embed?resid=B8295C03D418D49B%21740&authkey=%21AMSZ8rVyOO2FbQ4&width=1920&height=866" width="1920" height="866" />
+<img src="https://onedrive.live.com/embed?resid=B8295C03D418D49B%21740&authkey=%21AMSZ8rVyOO2FbQ4&width=1920&height=866" width="1920" height="866"
+style="display: inline-block; margin: 0 auto; max-width: 300px"
+ />
 
 ## Getting Started as an Employee
 
