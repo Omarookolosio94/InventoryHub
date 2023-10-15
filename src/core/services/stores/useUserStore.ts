@@ -14,6 +14,7 @@ import {
   verifyEmployer,
 } from "../api/userapi";
 import notification from "core/services/notification";
+import { getAccess } from "../accessControls";
 
 // Zustand implementation
 type UserState = {
@@ -22,6 +23,7 @@ type UserState = {
   errors: any | {};
   user: any | {};
   employees: Employee[];
+  access: any | {};
   reset: () => void;
   updateError: (name: string) => void;
   login: (email: string, password: string, isEmployer: boolean) => void;
@@ -50,6 +52,7 @@ const useUserStore = create<UserState>()(
         user: {},
         errors: {},
         employees: [],
+        access: {},
         reset: () => {
           set({
             isLoading: false,
@@ -74,7 +77,7 @@ const useUserStore = create<UserState>()(
             const { success, statusCode, data, message } = response;
             set({ isEmployer: isEmployer });
             if (success) {
-              set({ user: data });
+              set({ user: data, access: getAccess(data?.roles) });
               localStorage.setItem("token", data?.token);
               notification({
                 title: "Successful Login",

@@ -26,12 +26,13 @@ import useCatalogStore from "core/services/stores/useCatalogStore";
 import useUserStore from "core/services/stores/useUserStore";
 
 const Catalogs = () => {
-  // TODO: Add access control
   const [expandedRows, setExpandedRows]: any = useState([]);
   const { storeId } = useParams();
   const navigate = useNavigate();
-  const [expandState, setExpandState] = useState({});
+  const [, setExpandState] = useState({});
   const user = useUserStore((store) => store.user);
+  const access = useUserStore((store) => store.access);
+  const isEmployer = useUserStore((store) => store.isEmployer);
   const errors = useCatalogStore((store) => store.errors);
   const updateError = useCatalogStore((store) => store.updateError);
   const clearError = useCatalogStore((store) => store.clearError);
@@ -136,7 +137,8 @@ const Catalogs = () => {
                   />
                   <TableRowData
                     value={
-                      catalog?.product
+                      catalog?.product?.category?.name != null &&
+                      catalog?.product?.category?.name?.length > 0
                         ? catalog?.product?.category?.name
                         : "no category"
                     }
@@ -194,21 +196,30 @@ const Catalogs = () => {
                         </>
                       )}
                     </Button>
-                    <Button
-                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
-                      onClick={() => {
-                        setSelected({ ...catalog });
-                        setUpdateCatalogForm({
-                          differentialPercent: catalog?.differentialPercent,
-                          isListed: catalog?.isListed,
-                          stock: catalog?.stock,
-                        });
-                        setOpenUpdateForm(true);
-                      }}
-                    >
-                      <AiFillEdit />
-                      <span className="text-xs">Edit</span>
-                    </Button>
+
+                    {isEmployer ||
+                    (access?.catalog?.includes("UPDATE") &&
+                      user?.assignedStoreIds.includes(
+                        catalog?.storeId?.toUpperCase()
+                      )) ? (
+                      <Button
+                        style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
+                        onClick={() => {
+                          setSelected({ ...catalog });
+                          setUpdateCatalogForm({
+                            differentialPercent: catalog?.differentialPercent,
+                            isListed: catalog?.isListed,
+                            stock: catalog?.stock,
+                          });
+                          setOpenUpdateForm(true);
+                        }}
+                      >
+                        <AiFillEdit />
+                        <span className="text-xs">Edit</span>
+                      </Button>
+                    ) : (
+                      <></>
+                    )}
                   </ActionRowData>
                 </tr>
                 {expandedRows.includes(catalog?.id) ? (

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ENDPOINTS } from "./endpoints";
+import notification from "../notification";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 
@@ -81,10 +82,11 @@ export const apicall = async ({
           data: {},
         };
       } else if (error?.response?.status === 401) {
-        // TODO: Move logic to zustand store
-        // localStorage.clear();
-        // sessionStorage.clear();
-        // (window as Window).location = "/";
+        notification({
+          title: "",
+          type: "warning",
+          message: "Please logout and sign in again",
+        });
         return error?.response?.data;
       } else {
         return error?.response?.data;

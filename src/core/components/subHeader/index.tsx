@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "core/components/button/Button";
 import InputField from "../fields/InputField";
 import SelectField from "../fields/SelectField";
@@ -83,5 +83,3 @@ export default function SubHeader(props: {
     </div>
   );
 }
-
-// TODO: Add loading state

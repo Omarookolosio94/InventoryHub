@@ -37,6 +37,8 @@ const Sales = () => {
   const navigate = useNavigate();
 
   const user = useUserStore((store) => store.user);
+  const access = useUserStore((store) => store.access);
+  const isEmployer = useUserStore((store) => store.isEmployer);
   const errors = useSaleStore((store) => store.errors);
   const updateError = useSaleStore((store) => store.updateError);
   const clearError = useSaleStore((store) => store.clearError);
@@ -58,6 +60,8 @@ const Sales = () => {
   const [search, setSearch] = useState({
     storeId: "",
     status: "",
+    page: 1,
+    count: 20,
   });
 
   const [selected, setSelected]: any = useState({});
@@ -74,24 +78,33 @@ const Sales = () => {
     setExpandedRows(newRows?.newExpandedRows);
   };
 
-  useEffect(() => {
-    if (salesList?.items?.length < 1) {
+  const fetchSales = (assignedStore: string, search: any) => {
+    if (isEmployer) {
       getBusinessSalesAction({
-        storeId: search?.storeId,
-        status: search?.status,
-        count: 20,
-        page: 1,
+        ...search,
       });
+    } else {
+      getStoreSalesAction(assignedStore, { ...search });
     }
+  };
 
+  useEffect(() => {
     if (shops?.length < 1) {
       getShopsAction(user?.employerId);
     }
   }, []);
 
+  useEffect(() => {
+    if (salesList?.items?.length < 1) {
+      fetchSales(isEmployer ? "" : user?.assignedStoreIds[0], {
+        ...search,
+      });
+    }
+  }, []);
+
   // TODO: Add action to view product details once they are clicked
-  // TODO: Add check for user roles
   // TODO: Print on page without navigating to url
+  // TODO: Change icons for status
 
   return (
     <div className="mt-3">
@@ -99,37 +112,39 @@ const Sales = () => {
         <SubHeader
           title="Sales Record"
           action="Make Sales"
+          showAction={access?.sale?.includes("WRITE")}
           actionFunc={() => navigate("/admin/pos")}
           icon={<GiReceiveMoney />}
         />
-        <SimpleTable
-          headers={[
-            "Inv. Code",
-            "Bill Type",
-            "Status",
-            "Total Amount",
-            "Paid With",
-            "Is Paid",
-            "Date Sold",
-            "Actions",
-          ]}
-        >
-          {salesList != null && salesList?.items?.length > 0 ? (
-            salesList.items.map((sale: any) => (
-              <>
-                <tr key={sale?.id}>
-                  <TableRowData
-                    onClick={() =>
-                      openInNewTab(`/general/invoice/${sale?.code}`)
-                    }
-                    enableAction
-                    style="min-w-[60px]"
-                    value={sale?.code}
-                  />
-                  <TableRowData style="min-w-[50px]" value={sale?.billType} />
-                  <ActionRowData style="min-w-[50px]">
-                    <div
-                      className={`flex dark:hover:text-white
+        {access?.sale?.includes("READ") ? (
+          <SimpleTable
+            headers={[
+              "Inv. Code",
+              "Bill Type",
+              "Status",
+              "Total Amount",
+              "Paid With",
+              "Is Paid",
+              "Date Sold",
+              "Actions",
+            ]}
+          >
+            {salesList != null && salesList?.items?.length > 0 ? (
+              salesList.items.map((sale: any) => (
+                <>
+                  <tr key={sale?.id}>
+                    <TableRowData
+                      onClick={() =>
+                        openInNewTab(`/general/invoice/${sale?.code}`)
+                      }
+                      enableAction
+                      style="min-w-[60px]"
+                      value={sale?.code}
+                    />
+                    <TableRowData style="min-w-[50px]" value={sale?.billType} />
+                    <ActionRowData style="min-w-[50px]">
+                      <div
+                        className={`flex dark:hover:text-white
                       ${
                         sale?.status == ORDER_STATUS[0] &&
                         "cursor-pointer text-yellow-500 hover:text-yellow-600"
@@ -143,258 +158,264 @@ const Sales = () => {
                         "cursor-not-allowed text-red-500 hover:text-red-600"
                       }
                       `}
-                      onClick={() => {
-                        if (sale?.status == ORDER_STATUS[0]) {
-                          setSelected({ ...sale });
-                          setSaleStatus(sale?.status);
-                          setOpenUpdateStatusForm(true);
+                        onClick={() => {
+                          if (
+                            access?.sale?.includes("UPDATE") &&
+                            sale?.status == ORDER_STATUS[0]
+                          ) {
+                            setSelected({ ...sale });
+                            setSaleStatus(sale?.status);
+                            setOpenUpdateStatusForm(true);
+                          }
+                        }}
+                      >
+                        <>
+                          <RiPriceTag3Fill className="mr-1" />
+                          <span className="text-xs">{sale?.status}</span>
+                        </>
+                      </div>
+                    </ActionRowData>
+                    <TableRowData
+                      style="min-w-[50px]"
+                      value={formatCurrency(sale?.totalPaid)}
+                    />
+                    <TableRowData
+                      style="min-w-[50px]"
+                      value={sale?.paymentMethod}
+                    />
+                    <ActionRowData style="min-w-[50px]">
+                      <div className="flex cursor-pointer">
+                        {sale?.isPaid ? (
+                          <>
+                            <MdCheckCircle className="mr-1 text-green-500 dark:text-green-300" />
+                            <span className="text-xs text-green-600">paid</span>
+                          </>
+                        ) : (
+                          <>
+                            <MdCancel className="me-1 text-red-500 dark:text-red-300" />
+                            <span className="text-xs text-red-600">unpaid</span>
+                          </>
+                        )}
+                      </div>
+                    </ActionRowData>
+                    <TableRowData
+                      style="min-w-[50px]"
+                      value={getDate(sale?.dateAdded, true, true)}
+                    />
+                    <ActionRowData>
+                      <Button
+                        style="flex gap-1 justify-items-center items-center bg-gray-500 hover:bg-gray-600 dark:text-white-300"
+                        onClick={(e: any) => handleExpandRow(e, sale?.id)}
+                      >
+                        {!expandedRows.includes(sale?.id) ? (
+                          <>
+                            <BsFillCaretDownFill />
+                            <span className="text-xs">View</span>
+                          </>
+                        ) : (
+                          <>
+                            <BsFillCaretUpFill />
+                            <span className="text-xs">Close</span>
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        style="flex gap-1 justify-items-center items-center bg-green-500 hover:bg-green-600 dark:text-white-300"
+                        onClick={() =>
+                          openInNewTab(`/general/invoice/${sale?.code}`)
                         }
-                      }}
-                    >
-                      <>
-                        <RiPriceTag3Fill className="mr-1" />
-                        <span className="text-xs">{sale?.status}</span>
-                      </>
-                    </div>
-                  </ActionRowData>
-                  <TableRowData
-                    style="min-w-[50px]"
-                    value={formatCurrency(sale?.totalPaid)}
-                  />
-                  <TableRowData
-                    style="min-w-[50px]"
-                    value={sale?.paymentMethod}
-                  />
-                  <ActionRowData style="min-w-[50px]">
-                    <div className="flex cursor-pointer">
-                      {sale?.isPaid ? (
-                        <>
-                          <MdCheckCircle className="mr-1 text-green-500 dark:text-green-300" />
-                          <span className="text-xs text-green-600">paid</span>
-                        </>
-                      ) : (
-                        <>
-                          <MdCancel className="me-1 text-red-500 dark:text-red-300" />
-                          <span className="text-xs text-red-600">unpaid</span>
-                        </>
-                      )}
-                    </div>
-                  </ActionRowData>
-                  <TableRowData
-                    style="min-w-[50px]"
-                    value={getDate(sale?.dateAdded, true, true)}
-                  />
-                  <ActionRowData>
-                    <Button
-                      style="flex gap-1 justify-items-center items-center bg-gray-500 hover:bg-gray-600 dark:text-white-300"
-                      onClick={(e: any) => handleExpandRow(e, sale?.id)}
-                    >
-                      {!expandedRows.includes(sale?.id) ? (
-                        <>
-                          <BsFillCaretDownFill />
-                          <span className="text-xs">View</span>
-                        </>
-                      ) : (
-                        <>
-                          <BsFillCaretUpFill />
-                          <span className="text-xs">Close</span>
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      style="flex gap-1 justify-items-center items-center bg-green-500 hover:bg-green-600 dark:text-white-300"
-                      onClick={() =>
-                        openInNewTab(`/general/invoice/${sale?.code}`)
-                      }
-                    >
-                      <MdReceiptLong />
-                      <span className="text-xs">Receipt</span>
-                    </Button>
-                  </ActionRowData>
-                </tr>
-                {expandedRows.includes(sale?.id) ? (
-                  <tr>
-                    <td
-                      className="border-[1px] border-gray-200 text-sm"
-                      colSpan={8}
-                    >
-                      <ul className="p-5">
-                        <li className="mb-5 flex gap-3">
-                          <div className="w-1/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Sold By:
-                            </span>
-                            <span>{sale?.soldBy}</span>
-                          </div>
-                          <div className="w-1/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Last Updated By:
-                            </span>
-                            <span>{sale?.updatedBy}</span>
-                          </div>
-                          <div className="w-1/4">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Last Update Date:
-                            </span>
-                            <span>
-                              {getDate(sale?.lastUpdated, true, true)}
-                            </span>
-                          </div>
-                        </li>
-                        <li className="mb-5 flex gap-3">
-                          <div className="w-1/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Store:
-                            </span>
-                            <span>{sale?.store?.storeName}</span>
-                          </div>
-                          <div className="w-2/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Location:
-                            </span>
-                            <span>{sale?.store?.address}</span>
-                          </div>
-                        </li>
-                        <li className="border-gry-500 mb-5 border-b p-1"></li>
-                        <li className="mb-5 flex gap-3">
-                          <div>
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Cart:
-                            </span>{" "}
-                            <br />
-                            {sale?.carts != null &&
-                              sale?.carts?.length > 0 &&
-                              sale?.carts?.map((cart: any) => (
-                                <>
-                                  <span>
-                                    {`
+                      >
+                        <MdReceiptLong />
+                        <span className="text-xs">Receipt</span>
+                      </Button>
+                    </ActionRowData>
+                  </tr>
+                  {expandedRows.includes(sale?.id) ? (
+                    <tr>
+                      <td
+                        className="border-[1px] border-gray-200 text-sm"
+                        colSpan={8}
+                      >
+                        <ul className="p-5">
+                          <li className="mb-5 flex gap-3">
+                            <div className="w-1/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Sold By:
+                              </span>
+                              <span>{sale?.soldBy}</span>
+                            </div>
+                            <div className="w-1/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Last Updated By:
+                              </span>
+                              <span>{sale?.updatedBy}</span>
+                            </div>
+                            <div className="w-1/4">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Last Update Date:
+                              </span>
+                              <span>
+                                {getDate(sale?.lastUpdated, true, true)}
+                              </span>
+                            </div>
+                          </li>
+                          <li className="mb-5 flex gap-3">
+                            <div className="w-1/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Store:
+                              </span>
+                              <span>{sale?.store?.storeName}</span>
+                            </div>
+                            <div className="w-2/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Location:
+                              </span>
+                              <span>{sale?.store?.address}</span>
+                            </div>
+                          </li>
+                          <li className="border-gry-500 mb-5 border-b p-1"></li>
+                          <li className="mb-5 flex gap-3">
+                            <div>
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Cart:
+                              </span>{" "}
+                              <br />
+                              {sale?.carts != null &&
+                                sale?.carts?.length > 0 &&
+                                sale?.carts?.map((cart: any) => (
+                                  <>
+                                    <span>
+                                      {`
                                   ${cart?.productName} * ${cart?.quantity} at
                                   ${formatCurrency(cart?.unitPriceAtPurchase)}
                                   =
                                   ${formatCurrency(
                                     cart?.quantity * cart?.unitPriceAtPurchase
                                   )}`}
-                                  </span>{" "}
-                                  <br />
-                                </>
-                              ))}
-                          </div>
-                        </li>
-                        <li className="mb-5 flex gap-3">
-                          <div className="w-1/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Cart Total:
-                            </span>
-                            <span>{formatCurrency(sale?.cartTotal)}</span>
-                          </div>
-                          <div className="w-1/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Tax:
-                            </span>
-                            <span>{formatCurrency(sale?.tax)}</span>
-                          </div>
-                          <div className="w-1/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Delivery Fee:
-                            </span>
-                            <span>{formatCurrency(sale?.deliveryFee)}</span>
-                          </div>
-                        </li>
-                        <li className="border-gry-500 mb-5 border-b p-1"></li>
-                        <li className="flex gap-3">
-                          <div className="w-3/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Customer
-                            </span>
-                          </div>
-                        </li>
-                        <li className="mb-5 flex gap-3">
-                          <div className="w-1/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Name:
-                            </span>
-                            <span>{sale?.customerName}</span>
-                          </div>
-                          <div className="w-1/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Email:
-                            </span>
-                            <span>{sale?.customerEmail}</span>
-                          </div>
-                          <div className="w-1/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Phone:
-                            </span>
-                            <span>{sale?.customerPhone}</span>
-                          </div>
-                        </li>
-                        <li className="mb-5 flex gap-3">
-                          <div className="w-3/3">
-                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Address:
-                            </span>
-                            <br />
-                            <span>{sale?.customerAddress}</span>
-                          </div>
-                        </li>
-                      </ul>
-                    </td>
-                  </tr>
-                ) : (
-                  <tr></tr>
-                )}
-              </>
-            ))
-          ) : (
-            <tr>
-              <TableRowData colSpan={8} value="No sales yet" />
-            </tr>
-          )}
+                                    </span>{" "}
+                                    <br />
+                                  </>
+                                ))}
+                            </div>
+                          </li>
+                          <li className="mb-5 flex gap-3">
+                            <div className="w-1/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Cart Total:
+                              </span>
+                              <span>{formatCurrency(sale?.cartTotal)}</span>
+                            </div>
+                            <div className="w-1/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Tax:
+                              </span>
+                              <span>{formatCurrency(sale?.tax)}</span>
+                            </div>
+                            <div className="w-1/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Delivery Fee:
+                              </span>
+                              <span>{formatCurrency(sale?.deliveryFee)}</span>
+                            </div>
+                          </li>
+                          <li className="border-gry-500 mb-5 border-b p-1"></li>
+                          <li className="flex gap-3">
+                            <div className="w-3/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Customer
+                              </span>
+                            </div>
+                          </li>
+                          <li className="mb-5 flex gap-3">
+                            <div className="w-1/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Name:
+                              </span>
+                              <span>{sale?.customerName}</span>
+                            </div>
+                            <div className="w-1/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Email:
+                              </span>
+                              <span>{sale?.customerEmail}</span>
+                            </div>
+                            <div className="w-1/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Phone:
+                              </span>
+                              <span>{sale?.customerPhone}</span>
+                            </div>
+                          </li>
+                          <li className="mb-5 flex gap-3">
+                            <div className="w-3/3">
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Address:
+                              </span>
+                              <br />
+                              <span>{sale?.customerAddress}</span>
+                            </div>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                  ) : (
+                    <tr></tr>
+                  )}
+                </>
+              ))
+            ) : (
+              <tr>
+                <TableRowData colSpan={8} value="No sales yet" />
+              </tr>
+            )}
 
-          <tr>
-            <TableRowData
-              colSpan={6}
-              value={`Showing ${salesList?.items?.length} of ${salesList?.totalItem} entries`}
-            />
-            <ActionRowData colSpan={2}>
-              <Button
-                disabled={salesList?.currentPage === 1}
-                style="flex gap-1 justify-items-center items-center"
-                onClick={() => {
-                  getBusinessSalesAction({
-                    status: search?.status,
-                    storeId: search?.storeId,
-                    page: salesList?.currentPage - 1,
-                    count: 20,
-                  });
-                }}
-              >
-                <BsChevronDoubleLeft className="" />
-                <span className="text-xs">Prev</span>
-              </Button>
-              <Button style="flex gap-1 bg-green-500 hover:bg-green-600">
-                <span className="text-xs">
-                  {salesList?.currentPage} / {salesList?.totalPage}
-                </span>
-              </Button>
-              <Button
-                disabled={salesList?.currentPage === salesList?.totalPage}
-                style="flex gap-1 justify-items-center items-center"
-                onClick={() => {
-                  getBusinessSalesAction({
-                    status: search?.status,
-                    storeId: search?.storeId,
-                    page: salesList?.currentPage + 1,
-                    count: 20,
-                  });
-                }}
-              >
-                <span className="text-xs">Next</span>
-                <BsChevronDoubleRight className="text-xs" />
-              </Button>
-            </ActionRowData>
-          </tr>
-        </SimpleTable>
+            <tr>
+              <TableRowData
+                colSpan={6}
+                value={`Showing ${salesList?.items?.length} of ${salesList?.totalItem} entries`}
+              />
+              <ActionRowData colSpan={2}>
+                <Button
+                  disabled={salesList?.currentPage === 1}
+                  style="flex gap-1 justify-items-center items-center"
+                  onClick={() => {
+                    fetchSales(isEmployer ? "" : user?.assignedStoreIds[0], {
+                      status: search?.status,
+                      storeId: search?.storeId,
+                      page: salesList?.currentPage - 1,
+                      count: 20,
+                    });
+                  }}
+                >
+                  <BsChevronDoubleLeft className="" />
+                  <span className="text-xs">Prev</span>
+                </Button>
+                <Button style="flex gap-1 bg-green-500 hover:bg-green-600">
+                  <span className="text-xs">
+                    {salesList?.currentPage} / {salesList?.totalPage}
+                  </span>
+                </Button>
+                <Button
+                  disabled={salesList?.currentPage === salesList?.totalPage}
+                  style="flex gap-1 justify-items-center items-center"
+                  onClick={() => {
+                    fetchSales(isEmployer ? "" : user?.assignedStoreIds[0], {
+                      status: search?.status,
+                      storeId: search?.storeId,
+                      page: salesList?.currentPage + 1,
+                      count: 20,
+                    });
+                  }}
+                >
+                  <span className="text-xs">Next</span>
+                  <BsChevronDoubleRight className="text-xs" />
+                </Button>
+              </ActionRowData>
+            </tr>
+          </SimpleTable>
+        ) : (
+          <p>You are not authorized to view sales record</p>
+        )}
       </Card>
 
       {openUpdateStatusForm && (

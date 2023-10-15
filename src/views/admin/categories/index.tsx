@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-redundant-roles */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/style-prop-object */
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import SimpleTable from "core/components/table/SimpleTable";
 import TableRowData from "core/components/table/TableRowData";
 import { expandRow, getDate } from "core/services/helpers";
@@ -14,17 +14,15 @@ import InputField from "core/components/fields/InputField";
 import { AiFillEdit } from "react-icons/ai";
 import { FiDelete } from "react-icons/fi";
 import useCategoryStore from "core/services/stores/useCategoryStore";
-import { getCategories } from "core/services/api/categoryapi";
 import TextField from "core/components/fields/TextField";
 import { BsFillCaretDownFill, BsFillCaretUpFill } from "react-icons/bs";
 import useUserStore from "core/services/stores/useUserStore";
 
 const Categories = () => {
-  // TODO: Add access control
   const [expandedRows, setExpandedRows]: any = useState([]);
-  const [expandState, setExpandState] = useState({});
-  const textfieldRef = useRef(null);
+  const [, setExpandState] = useState({});
   const user = useUserStore((state) => state.user);
+  const access = useUserStore((state) => state.access);
   const errors = useCategoryStore((store) => store.errors);
   const updateError = useCategoryStore((store) => store.updateError);
   const categories = useCategoryStore((store) => store.categories);
@@ -120,6 +118,7 @@ const Categories = () => {
         <SubHeader
           title="Categories"
           action="Add Category"
+          showAction={access?.category?.includes("WRITE")}
           actionFunc={() => setOpenAddForm(true)}
         />
         <SimpleTable
@@ -158,29 +157,34 @@ const Categories = () => {
                         </>
                       )}
                     </Button>
-                    <Button
-                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
-                      onClick={() => {
-                        setSelected({ ...category });
-                        setUpdateCategoryForm({
-                          name: category?.name,
-                          description: category?.description,
-                        });
-                        setOpenUpdateForm(true);
-                      }}
-                    >
-                      <AiFillEdit />
-                      <span className="text-xs">Edit</span>
-                    </Button>
-                    <Button
-                      style="flex gap-1 justify-items-center items-center bg-red-500 hover:bg-red-600 dark:text-white-300"
-                      onClick={(e: any) => {
-                        deleteCategory(e, category?.id);
-                      }}
-                    >
-                      <FiDelete />
-                      <span className="text-xs">Delete</span>
-                    </Button>
+                    {access?.category?.includes("UPDATE") && (
+                      <Button
+                        style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
+                        onClick={() => {
+                          setSelected({ ...category });
+                          setUpdateCategoryForm({
+                            name: category?.name,
+                            description: category?.description,
+                          });
+                          setOpenUpdateForm(true);
+                        }}
+                      >
+                        <AiFillEdit />
+                        <span className="text-xs">Edit</span>
+                      </Button>
+                    )}
+
+                    {access?.category?.includes("DELETE") && (
+                      <Button
+                        style="flex gap-1 justify-items-center items-center bg-red-500 hover:bg-red-600 dark:text-white-300"
+                        onClick={(e: any) => {
+                          deleteCategory(e, category?.id);
+                        }}
+                      >
+                        <FiDelete />
+                        <span className="text-xs">Delete</span>
+                      </Button>
+                    )}
                   </ActionRowData>
                 </tr>
                 {expandedRows.includes(category?.id) ? (
@@ -219,7 +223,7 @@ const Categories = () => {
 
       {openAddForm && (
         <Modal
-          styling="w-3/6 p-5"
+          styling="w-1/4 p-5"
           onClose={() => {
             setOpenAddForm(false);
           }}
@@ -280,7 +284,7 @@ const Categories = () => {
 
       {openUpdateForm && (
         <Modal
-          styling="w-3/6 p-5"
+          styling="w-1/4 p-5"
           onClose={() => {
             setOpenUpdateForm(false);
             setSelected({});

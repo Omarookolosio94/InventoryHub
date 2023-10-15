@@ -139,19 +139,34 @@ export const openInNewTab = (url?: string) => {
   }
   var isChrome = navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
   if (isChrome) {
-    // TODO: open new tab in background not working
     openNewBackgroundTab(url);
   } else {
     window.open(url, "_blank", "noopener,noreferrer");
   }
 };
 
+// TODO: Fix open new tab in background, current functon does not work
 export const openNewBackgroundTab = (url: string) => {
   var a = document.createElement("a");
   a.href = url;
-  var evt:any = document.createEvent("MouseEvents");
+  var evt: any = document.createEvent("MouseEvents");
   //the tenth parameter of initMouseEvent sets ctrl key
-  evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0,
-                              true, false, false, false, 0, null);
+  evt.initMouseEvent(
+    "click",
+    true,
+    true,
+    window,
+    0,
+    0,
+    0,
+    0,
+    0,
+    true,
+    false,
+    false,
+    false,
+    0,
+    null
+  );
   a.dispatchEvent(evt);
 };

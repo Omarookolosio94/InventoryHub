@@ -21,14 +21,17 @@ import { Link } from "react-router-dom";
 import { customBtn } from "core/const/const";
 import useUserStore from "core/services/stores/useUserStore";
 import useShopStore from "core/services/stores/useShopStore";
+import TextField from "core/components/fields/TextField";
 
 const Stores = () => {
   const [expandedRows, setExpandedRows]: any = useState([]);
   const [expandState, setExpandState] = useState({});
   const shops = useShopStore((store) => store.shops);
   const user = useUserStore((store) => store.user);
+  const isEmployer = useUserStore((store) => store.isEmployer);
   const getShopsAction = useShopStore((store) => store.getShops);
   const errors = useShopStore((store) => store.errors);
+  const access: any = useUserStore((state) => state.access);
   const updateError = useShopStore((store) => store.updateError);
   const addNewStore = useShopStore((store) => store.addStore);
   const updateStoreAction = useShopStore((store) => store.updateStore);
@@ -167,8 +170,6 @@ const Stores = () => {
     }
   }, []);
 
-  // TODO: Change description to textarea
-  // TODO: Change button coloration and styling
   // TODO: Change deactivation to switch
 
   return (
@@ -177,6 +178,7 @@ const Stores = () => {
         <SubHeader
           title="Your stores"
           action="Add Store"
+          showAction={access?.shop?.includes("WRITE")}
           actionFunc={() => setOpenForm(true)}
         />
         <SimpleTable
@@ -189,7 +191,8 @@ const Stores = () => {
             "Actions",
           ]}
         >
-          {shops?.length > 0 &&
+          {shops != null &&
+            shops?.length > 0 &&
             shops?.map((store: any) => (
               <>
                 <tr key={store?.id}>
@@ -199,15 +202,19 @@ const Stores = () => {
                   <TableRowData value={getDate(store?.lastUpdated)} />
                   <ActionRowData style="min-w-[50px]">
                     <div
-                      className="flex cursor-pointer"
+                      className={`flex ${
+                        isEmployer ? "cursor-pointer" : "cursor-not-allowed"
+                      }`}
                       onClick={() => {
-                        setSelected({ ...store });
-                        setUpdateStatusForm({
-                          id: store?.id,
-                          isActive: store?.isActive,
-                          isWareHouse: store?.isWareHouse,
-                        });
-                        setOpenUpdateStatusForm(true);
+                        if (isEmployer) {
+                          setSelected({ ...store });
+                          setUpdateStatusForm({
+                            id: store?.id,
+                            isActive: store?.isActive,
+                            isWareHouse: store?.isWareHouse,
+                          });
+                          setOpenUpdateStatusForm(true);
+                        }
                       }}
                     >
                       {store?.isActive ? (
@@ -247,26 +254,38 @@ const Stores = () => {
                       <FaClipboardList />
                       <span className="text-xs">Catalog</span>
                     </Link>
-                    <Button
-                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
-                      onClick={() => {
-                        setSelected({ ...store });
-                        setUpdateStoreForm({ ...store });
-                        setOpenUpdateForm(true);
-                      }}
-                    >
-                      <AiFillEdit />
-                      <span className="text-xs">Edit</span>
-                    </Button>
-                    <Button
-                      style="flex gap-1 justify-items-center items-center bg-red-500 hover:bg-red-600 dark:text-white-300"
-                      onClick={(e: any) => {
-                        deleteStore(e, store?.id);
-                      }}
-                    >
-                      <FiDelete />
-                      <span className="text-xs">Delete</span>
-                    </Button>
+                    {(!isEmployer &&
+                      access?.shop?.includes("UPDATE") &&
+                      user?.assignedStoreIds[0]?.toLowerCase() ==
+                        store?.id?.toLowerCase()) ||
+                    isEmployer ? (
+                      <>
+                        <Button
+                          style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
+                          onClick={() => {
+                            setSelected({ ...store });
+                            setUpdateStoreForm({ ...store });
+                            setOpenUpdateForm(true);
+                          }}
+                        >
+                          <AiFillEdit />
+                          <span className="text-xs">Edit</span>
+                        </Button>
+                        {isEmployer && (
+                          <Button
+                            style="flex gap-1 justify-items-center items-center bg-red-500 hover:bg-red-600 dark:text-white-300"
+                            onClick={(e: any) => {
+                              deleteStore(e, store?.id);
+                            }}
+                          >
+                            <FiDelete />
+                            <span className="text-xs">Delete</span>
+                          </Button>
+                        )}
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </ActionRowData>
                 </tr>
                 {expandedRows.includes(store?.id) ? (
@@ -545,9 +564,12 @@ const Stores = () => {
                 </span>
               </div>
             </div>
-            <InputField
-              variant="auth"
+
+            <TextField
+              ref={null}
               extra="mb-3"
+              rows={5}
+              variant="auth"
               label="Description"
               id="description"
               type="text"
@@ -555,6 +577,7 @@ const Stores = () => {
               value={storeForm?.description}
               onChange={handleChange}
             />
+
             <div className="flex gap-3">
               <Button
                 type="button"
@@ -693,9 +716,11 @@ const Stores = () => {
               </div>
             </div>
 
-            <InputField
-              variant="auth"
+            <TextField
+              ref={null}
               extra="mb-3"
+              rows={5}
+              variant="auth"
               label="Description"
               id="description"
               type="text"
@@ -703,6 +728,7 @@ const Stores = () => {
               value={updateStoreForm?.description}
               onChange={handleUpdateChange}
             />
+
             <div className="flex gap-3">
               <Button
                 type="button"

@@ -41,6 +41,8 @@ const Products = () => {
   const [expandState, setExpandState] = useState({});
   const errors = useProductStore((store) => store.errors);
   const user = useUserStore((store) => store.user);
+  const access = useUserStore((store) => store.access);
+  const isEmployer = useUserStore((store) => store.isEmployer);
   const updateError = useProductStore((store) => store.updateError);
   const clearError = useProductStore((store) => store.clearError);
   const productList = useProductStore((store) => store.productList);
@@ -196,7 +198,7 @@ const Products = () => {
       {
         ...updateDetailForm,
       },
-      selected?.id,
+      selected?.id
     );
   };
 
@@ -206,7 +208,7 @@ const Products = () => {
       {
         ...updatePriceForm,
       },
-      selected?.id,
+      selected?.id
     );
   };
 
@@ -216,7 +218,7 @@ const Products = () => {
       {
         isListed,
       },
-      selected?.id,
+      selected?.id
     );
   };
 
@@ -224,6 +226,32 @@ const Products = () => {
     var newRows = await expandRow(id, expandedRows);
     setExpandState(newRows?.obj);
     setExpandedRows(newRows?.newExpandedRows);
+  };
+
+  const getAssignedShops = (shops: any) => {
+    var shopList: any = [];
+
+    if (shops != null && shops?.length > 0) {
+      shopList = [
+        ...shops?.map((shop: any) => {
+          return {
+            name: `${shop?.name} - ${shop?.isActive ? "✅" : "❌"}`,
+            value: shop?.id,
+          };
+        }),
+      ];
+    }
+
+    if (shopList?.length > 0 && !isEmployer) {
+      shopList = [
+        ...shopList?.filter(
+          (list: any) =>
+            list?.value?.toLowerCase() ==
+            user?.assignedStoreIds[0]?.toLowerCase()
+        ),
+      ];
+    }
+    return shopList;
   };
 
   useEffect(() => {
@@ -247,6 +275,7 @@ const Products = () => {
         <SubHeader
           title="Your Products"
           action="Add Product"
+          showAction={access?.product?.includes("WRITE")}
           actionFunc={() => setOpenAddForm(true)}
         />
         <SimpleTable
@@ -267,20 +296,27 @@ const Products = () => {
                   <TableRowData value={product?.name} />
                   <TableRowData
                     value={
-                      product?.category
+                      product?.category?.name != null &&
+                      product?.category?.name?.length > 0
                         ? product?.category?.name
                         : "no category"
                     }
                   />
                   <ActionRowData style="min-w-[50px]">
                     <div
-                      className="flex cursor-pointer hover:text-brand-500 dark:hover:text-white"
+                      className={`flex ${
+                        access?.product?.includes("UPDATE")
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                      } hover:text-brand-500 dark:hover:text-white`}
                       onClick={() => {
-                        setSelected({ ...product });
-                        setUpdatePriceForm({
-                          ...product,
-                        });
-                        setOpenUpdatePriceForm(true);
+                        if (access?.product?.includes("UPDATE")) {
+                          setSelected({ ...product });
+                          setUpdatePriceForm({
+                            ...product,
+                          });
+                          setOpenUpdatePriceForm(true);
+                        }
                       }}
                     >
                       <>
@@ -294,13 +330,19 @@ const Products = () => {
 
                   <ActionRowData style="min-w-[50px]">
                     <div
-                      className="flex cursor-pointer hover:text-brand-500 dark:hover:text-white"
+                      className={`flex ${
+                        access?.product?.includes("UPDATE")
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                      } hover:text-brand-500 dark:hover:text-white`}
                       onClick={() => {
-                        setSelected({ ...product });
-                        setUpdatePriceForm({
-                          ...product,
-                        });
-                        setOpenUpdatePriceForm(true);
+                        if (access?.product?.includes("UPDATE")) {
+                          setSelected({ ...product });
+                          setUpdatePriceForm({
+                            ...product,
+                          });
+                          setOpenUpdatePriceForm(true);
+                        }
                       }}
                     >
                       <>
@@ -318,11 +360,17 @@ const Products = () => {
                   />
                   <ActionRowData style="min-w-[50px]">
                     <div
-                      className="flex cursor-pointer"
+                      className={`flex ${
+                        access?.product?.includes("UPDATE")
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                      }`}
                       onClick={() => {
-                        setSelected({ ...product });
-                        setIsListed(product?.isListed);
-                        setOpenUpdateListingForm(true);
+                        if (access?.product?.includes("UPDATE")) {
+                          setSelected({ ...product });
+                          setIsListed(product?.isListed);
+                          setOpenUpdateListingForm(true);
+                        }
                       }}
                     >
                       {product?.isListed ? (
@@ -355,37 +403,49 @@ const Products = () => {
                         </>
                       )}
                     </Button>
-                    <Button
-                      style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
-                      onClick={() => {
-                        setSelected({ ...product });
-                        setUpdateDetailForm({
-                          ...product,
-                          expiringDate: formatToFormDate(product?.expiringDate),
-                          manufacturingDate: formatToFormDate(
-                            product?.manufacturingDate
-                          ),
-                        });
-                        setOpenUpdateDetailForm(true);
-                      }}
-                    >
-                      <AiFillEdit />
-                      <span className="text-xs">Edit</span>
-                    </Button>
-                    <Button
-                      style="flex gap-1 justify-items-center items-center bg-green-500 hover:bg-green-600 dark:text-white-300"
-                      onClick={() => {
-                        setSelected({ ...product });
-                        setCatalogForm({
-                          ...catalogForm,
-                          productId: product?.id,
-                        });
-                        setOpenCatalogForm(true);
-                      }}
-                    >
-                      <FaClipboardList />
-                      <span className="text-xs">Catalog Item</span>
-                    </Button>
+                    {access?.product?.includes("UPDATE") && (
+                      <>
+                        <Button
+                          style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
+                          disabled={!access?.product?.includes("UPDATE")}
+                          onClick={() => {
+                            setSelected({ ...product });
+                            setUpdateDetailForm({
+                              ...product,
+                              expiringDate: formatToFormDate(
+                                product?.expiringDate
+                              ),
+                              manufacturingDate: formatToFormDate(
+                                product?.manufacturingDate
+                              ),
+                            });
+                            setOpenUpdateDetailForm(true);
+                          }}
+                        >
+                          <AiFillEdit />
+                          <span className="text-xs">Edit</span>
+                        </Button>
+                      </>
+                    )}
+
+                    {access?.product?.includes("UPDATE") &&
+                      product?.isListed && (
+                        <Button
+                          style="flex gap-1 justify-items-center items-center bg-green-500 hover:bg-green-600 dark:text-white-300"
+                          disabled={!access?.product?.includes("UPDATE")}
+                          onClick={() => {
+                            setSelected({ ...product });
+                            setCatalogForm({
+                              ...catalogForm,
+                              productId: product?.id,
+                            });
+                            setOpenCatalogForm(true);
+                          }}
+                        >
+                          <FaClipboardList />
+                          <span className="text-xs">Catalog Item</span>
+                        </Button>
+                      )}
                   </ActionRowData>
                 </tr>
                 {expandedRows.includes(product?.id) ? (
@@ -499,12 +559,15 @@ const Products = () => {
             ))
           ) : (
             <tr>
-              <TableRowData colSpan={7} value="No data yet" />
+              <TableRowData colSpan={7} value="No products yet" />
             </tr>
           )}
 
           <tr>
-            <TableRowData colSpan={5} value="Showing 20 entries" />
+            <TableRowData
+              colSpan={5}
+              value={`Showing ${productList?.items?.length} of ${productList?.totalItem} entries`}
+            />
             <ActionRowData colSpan={2}>
               <Button
                 disabled={productList?.currentPage === 1}
@@ -1162,18 +1225,7 @@ const Products = () => {
               defaultName="Select Shop"
               defaultValue="0"
               name="storeId"
-              options={
-                shops?.length > 0
-                  ? [
-                      ...shops?.map((shop: any) => {
-                        return {
-                          name: shop?.name,
-                          value: shop?.id,
-                        };
-                      }),
-                    ]
-                  : []
-              }
+              options={getAssignedShops(shops)}
               value={catalogForm?.storeId}
               onChange={(e: any) => onFormChange(e, "catalog")}
               showLabel={true}

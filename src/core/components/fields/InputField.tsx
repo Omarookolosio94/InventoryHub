@@ -79,7 +79,9 @@ function InputField(props: {
       {enableDataList && dataList?.length > 0 && (
         <datalist id={list}>
           {dataList.map((data: any) => (
-            <option value={data?.value}>{data?.name}</option>
+            <option key={data?.value} value={data?.value}>
+              {data?.name}
+            </option>
           ))}
         </datalist>
       )}

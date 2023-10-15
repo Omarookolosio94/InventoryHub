@@ -15,6 +15,7 @@ import useShopStore from "core/services/stores/useShopStore";
 import SelectField from "core/components/fields/SelectField";
 import { ROLES } from "core/const/const";
 import CheckField from "core/components/fields/CheckField";
+import { Roles } from "core/services/accessControls";
 
 const Employees = () => {
   const [selected, setSelected]: any = useState({});
@@ -23,6 +24,7 @@ const Employees = () => {
   const isEmployer = useUserStore((state) => state.isEmployer);
   const employees = useUserStore((state) => state.employees);
   const user: any = useUserStore((state) => state.user);
+  const access: any = useUserStore((state) => state.access);
 
   const shops: any = useShopStore((state) => state.shops);
   const getShopsAction = useShopStore((state) => state.getShops);
@@ -178,7 +180,7 @@ const Employees = () => {
         <SubHeader
           title="Your Staff"
           action="Add staff"
-          showAction={isEmployer || user?.roles === ROLES[2]}
+          showAction={access?.employee?.includes("WRITE")}
           actionFunc={() => {
             setAddModal(true);
           }}
@@ -213,7 +215,10 @@ const Employees = () => {
                   <>
                     {setFields(employee)}
 
-                    {(isEmployer || user?.roles === ROLES[2]) && (
+                    {isEmployer ||
+                    (!isEmployer &&
+                      employee?.id !== user?.id &&
+                      access?.employee?.includes("UPDATE")) ? (
                       <div className="absolute bottom-0 flex w-full justify-end gap-3">
                         <Button
                           style={`flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300`}
@@ -260,6 +265,8 @@ const Employees = () => {
                           </Button>
                         )}
                       </div>
+                    ) : (
+                      <></>
                     )}
                   </>
                 </div>
@@ -325,7 +332,9 @@ const Employees = () => {
                   ? [
                       ...shops?.map((shop: any) => {
                         return {
-                          name: shop?.name,
+                          name: `${shop?.name} - ${
+                            shop?.isActive ? "✅" : "❌"
+                          }`,
                           value: shop?.id,
                         };
                       }),
@@ -344,20 +353,38 @@ const Employees = () => {
               defaultValue="0"
               name="role"
               options={
-                ROLES?.length > 0
+                isEmployer
                   ? [
-                      ...ROLES?.map((role: any) => {
+                      ...ROLES?.filter((role: any) => role !== Roles.Ceo)?.map(
+                        (role: any) => {
+                          return {
+                            name: role,
+                            value: role,
+                          };
+                        }
+                      ),
+                    ]
+                  : [
+                      ...ROLES?.filter(
+                        (role: any) =>
+                          role !== Roles.Ceo && role !== Roles.Manager
+                      )?.map((role: any) => {
                         return {
                           name: role,
                           value: role,
                         };
                       }),
                     ]
-                  : []
               }
               value={employeeForm?.role}
               onChange={(e: any) => handleChange(e, "add")}
               showLabel={true}
+              onFocus={() => {
+                if (errors?.Roles && errors?.Roles?.length > 0) {
+                  updateError("Roles");
+                }
+              }}
+              error={errors?.Roles}
             />
 
             <div className="flex gap-3">
@@ -388,7 +415,7 @@ const Employees = () => {
         >
           <form onSubmit={(e) => assignEmployee(e)}>
             <p className="mb-5 font-bold dark:text-white">
-              Update Staff Assignment
+              Update {selected?.name} Assignment
             </p>
 
             <SelectField
@@ -402,7 +429,9 @@ const Employees = () => {
                   ? [
                       ...shops?.map((shop: any) => {
                         return {
-                          name: shop?.name,
+                          name: `${shop?.name} - ${
+                            shop?.isActive ? "✅" : "❌"
+                          }`,
                           value: shop?.id,
                         };
                       }),
@@ -421,20 +450,38 @@ const Employees = () => {
               defaultValue="0"
               name="role"
               options={
-                ROLES?.length > 0
+                isEmployer
                   ? [
-                      ...ROLES?.map((role: any) => {
+                      ...ROLES?.filter((role: any) => role !== Roles.Ceo)?.map(
+                        (role: any) => {
+                          return {
+                            name: role,
+                            value: role,
+                          };
+                        }
+                      ),
+                    ]
+                  : [
+                      ...ROLES?.filter(
+                        (role: any) =>
+                          role !== Roles.Ceo && role !== Roles.Manager
+                      )?.map((role: any) => {
                         return {
                           name: role,
                           value: role,
                         };
                       }),
                     ]
-                  : []
               }
               value={updateAssignmentForm?.role}
               onChange={(e: any) => handleChange(e, "assign")}
               showLabel={true}
+              onFocus={() => {
+                if (errors?.Roles && errors?.Roles?.length > 0) {
+                  updateError("Roles");
+                }
+              }}
+              error={errors?.Roles}
             />
 
             <div className="flex gap-3">
