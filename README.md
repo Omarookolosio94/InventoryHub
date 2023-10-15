@@ -159,7 +159,6 @@ After been profiled by an employer, an employee can sign in via their email and 
     />
 </div>
 
-
 ## Making Sales
 
 <div style="display: flex;">
@@ -176,18 +175,17 @@ After been profiled by an employer, an employee can sign in via their email and 
     />
 </div>
 
-<div style="display: flex; margin-top: 20px;">
+<div style="display: flex; justify-content: center; margin-top: 20px;">
  <img src="https://onedrive.live.com/embed?resid=B8295C03D418D49B%21760&authkey=%21AAPJ4aFNZ8VJ5DU&width=604&height=260" 
     style="display: inline-block; margin: 0 auto; width: 250px;"
     />
 </div>
 
-<div style="display: flex; margin-top: 20px;">
+<div style="display: flex; justify-content: center;  margin-top: 20px;">
      <img src="https://onedrive.live.com/embed?resid=B8295C03D418D49B%21761&authkey=%21ANHUGHmdZe3UINo&width=532&height=285" 
     style="display: inline-block; margin: 0 auto; width: 250px;"
     />
 </div>
-
 
 #### Final Sale Confirmation
 
@@ -205,7 +203,7 @@ After been profiled by an employer, an employee can sign in via their email and 
     />
 </div>
 
-<div style="display: flex; margin-top: 20px;">
+<div style="display: flex; justify-content: center;  margin-top: 20px;">
      <img src="https://onedrive.live.com/embed?resid=B8295C03D418D49B%21762&authkey=%21AMISprC4IIhmDDs&width=780&height=377" 
     style="display: inline-block; margin: 0 auto; width: 250px;"
     />
@@ -227,14 +225,14 @@ After been profiled by an employer, an employee can sign in via their email and 
     />
 </div>
 
-<div style="display: flex; margin-top: 20px;">
+<div style="display: flex; justify-content: center; margin-top: 20px;">
      <img src="https://onedrive.live.com/embed?resid=B8295C03D418D49B%21776&authkey=%21ALS3EFw444hnC4Y&width=772&height=335" 
     style="display: inline-block; margin: 0 auto; width: 250px;"
     />
 </div>
 
-
 #### Add New Employee
+
 <div style="display: flex;">
  <img src="https://onedrive.live.com/embed?resid=B8295C03D418D49B%21745&authkey=%21AHZyQztqVgRykss&width=1920&height=1539" 
     style="display: inline-block; margin: 0 auto; width: auto;"
@@ -242,6 +240,7 @@ After been profiled by an employer, an employee can sign in via their email and 
 </div>
 
 #### Reassign Employee
+
 <div style="display: flex;">
  <img src="https://onedrive.live.com/embed?resid=B8295C03D418D49B%21746&authkey=%21AOo-e5QgWkBQSzU&width=1920&height=1539" 
     style="display: inline-block; margin: 0 auto; width: auto;"
@@ -249,8 +248,8 @@ After been profiled by an employer, an employee can sign in via their email and 
 </div>
 
 #### Resign Employee
-When an employee is resigned, all records of the employee are cleared. A resigned employee will seize to have access to the business portal.
 
+When an employee is resigned, all records of the employee are cleared. A resigned employee will seize to have access to the business portal.
 
 ## Business Profile Management
 
