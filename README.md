@@ -3,6 +3,7 @@
 ![InventoryHub](link_to_image)
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Features](#features)
 - [Getting Started as an Employer](#getting-started-as-an-employer)
@@ -21,6 +22,7 @@
 An application that helps businesses manage sales and staff as well as the products and services that they offer.
 
 ## Features
+
 - Employee Management
 - Store Management
 - Point of Sale System
@@ -28,6 +30,8 @@ An application that helps businesses manage sales and staff as well as the produ
 - General Analytics
 
 ## Getting Started as an Employer
+
+<img src="https://onedrive.live.com/embed?resid=B8295C03D418D49B%21740&authkey=%21AMSZ8rVyOO2FbQ4&width=1920&height=866" width="1920" height="866" />
 
 ## Getting Started as an Employee
 
@@ -53,8 +57,8 @@ The application is built using the following tech stacks and resources:
 - Tailwind
 - Horizon UI Template
 
+## Upcoming Features
 
-## Upcoming Features 
 - Add system and audit log pages
 - image upload functionality for products, shop location and user profiles
 - Add text editors for textarea input
