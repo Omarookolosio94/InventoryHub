@@ -155,7 +155,12 @@ const Products = () => {
 
   const addProduct = async (e: any) => {
     e.preventDefault();
-    var status: any = await addProductAction({ ...productForm });
+    var status: any = await addProductAction({
+      ...productForm,
+      costPrice: Number(productForm?.costPrice),
+      sellingPrice: Number(productForm?.sellingPrice),
+      discountPercent: Number(productForm?.discountPercent),
+    });
     if (status) {
       setProductForm({
         name: "",
@@ -179,7 +184,11 @@ const Products = () => {
 
   const addCatalog = async (e: any) => {
     e.preventDefault();
-    var status: any = await addCatalogAction({ ...catalogForm });
+    var status: any = await addCatalogAction({
+      ...catalogForm,
+      differentialPercent: Number(catalogForm?.differentialPercent),
+      stock: Number(catalogForm?.stock),
+    });
     if (status) {
       setCatalogForm({
         stock: 0,
@@ -207,6 +216,9 @@ const Products = () => {
     await updateProductPriceAction(
       {
         ...updatePriceForm,
+        costPrice: Number(updatePriceForm?.costPrice),
+        sellingPrice: Number(updatePriceForm?.sellingPrice),
+        discountPercent: Number(updatePriceForm?.discountPercent),
       },
       selected?.id
     );

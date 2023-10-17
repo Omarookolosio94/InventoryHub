@@ -50,6 +50,10 @@ export default function Invoice() {
                 <div className="flex-grow">
                   {sale?.billType} No:{" "}
                   <span className="font-bold">{sale?.code}</span>
+                  <br />
+                  {sale?.customerName !== "Anonymous" && (
+                    <span>CUSTOMER: {sale?.customerName}</span>
+                  )}
                 </div>
                 <span>{getDate(sale?.dateAdded, true, true)}</span>
               </div>

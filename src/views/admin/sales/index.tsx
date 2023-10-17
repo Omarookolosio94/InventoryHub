@@ -105,6 +105,8 @@ const Sales = () => {
   // TODO: Add action to view product details once they are clicked
   // TODO: Print on page without navigating to url
   // TODO: Change icons for status
+  // TODO: Add Archive from Sales
+  // TODO: Hide dashboard from other users
 
   return (
     <div className="mt-3">

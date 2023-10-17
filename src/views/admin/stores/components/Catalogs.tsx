@@ -72,6 +72,8 @@ const Catalogs = () => {
     await updateCatalogAction(
       {
         ...updateCatalogForm,
+        differentialPercent: Number(updateCatalogForm?.differentialPercent),
+        stock: Number(updateCatalogForm?.stock),
       },
       selected?.id
     );

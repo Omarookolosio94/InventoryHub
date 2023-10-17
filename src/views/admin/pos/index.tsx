@@ -20,7 +20,7 @@ import {
   PAYMENT_METHOD,
   customBtn,
 } from "core/const/const";
-import { formatCurrency, openInNewTab } from "core/services/helpers";
+import { formatCurrency, getDate, openInNewTab } from "core/services/helpers";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FiMinus } from "react-icons/fi";
 import Modal from "core/components/modal/Modal";
@@ -36,6 +36,11 @@ const PointOfSale = () => {
   const catalogs: any = useCatalogStore((state) => state.catalogs);
   const searchCatalogAction = useCatalogStore((state) => state.searchCatalog);
   const generateSaleAction = useSaleStore((state) => state.generateSales);
+  const salesList = useSaleStore((state) => state.salesList);
+  const getBusinessSalesAction = useSaleStore(
+    (state) => state.getBusinessSales
+  );
+  const getStoreSalesAction = useSaleStore((state) => state.getStoreSales);
   const updateSaleStatusAction = useSaleStore(
     (state) => state.updateSaleStatus
   );
@@ -48,6 +53,13 @@ const PointOfSale = () => {
       quantity: 1,
     },
   ]);
+
+  const [search, setSearch] = useState({
+    storeId: "",
+    status: "",
+    page: 1,
+    count: 20,
+  });
 
   const onCartChange = (index: number, e: any) => {
     const { name, value }: any = e.target;
@@ -97,7 +109,18 @@ const PointOfSale = () => {
 
   const generateSale = async (e: any) => {
     e.preventDefault();
-    var response: any = await generateSaleAction(salesForm, salesForm?.storeId);
+    var response: any = await generateSaleAction(
+      {
+        ...salesForm,
+        carts: carts.map((cart: any) => {
+          return {
+            ...cart,
+            quantity: Number(cart?.quantity),
+          };
+        }),
+      },
+      salesForm?.storeId
+    );
 
     if (response?.success) {
       setGeneratedSale(response?.data);
@@ -106,18 +129,17 @@ const PointOfSale = () => {
   };
 
   const clearSale = () => {
-    setCarts([
-      {
-        catalogId: "",
-        searchProduct: "",
-        quantity: 1,
-      },
-    ]);
+    var emptyCart = {
+      catalogId: "",
+      searchProduct: "",
+      quantity: 1,
+    };
+    setCarts([{ ...emptyCart }]);
     setSalesForm((state) => ({
       ...state,
       paymentMethod: "",
       billType: "",
-      carts: carts,
+      carts: [{ ...emptyCart }],
       customerName: "",
       customerAddress: "",
       customerEmail: "",
@@ -135,6 +157,7 @@ const PointOfSale = () => {
       openInNewTab(`/general/invoice/${generatedSale?.code}`);
     }
     setOpenConfirmModal(false);
+    setGeneratedSale({});
     clearSale();
   };
 
@@ -164,6 +187,16 @@ const PointOfSale = () => {
     return shopList;
   };
 
+  const fetchSales = (assignedStore: string, search: any) => {
+    if (isEmployer) {
+      getBusinessSalesAction({
+        ...search,
+      });
+    } else {
+      getStoreSalesAction(assignedStore, { ...search });
+    }
+  };
+
   useEffect(() => {
     var activeShops = getAssignedShops(shops);
     if (activeShops?.length < 1) {
@@ -171,6 +204,14 @@ const PointOfSale = () => {
     } else {
       setSalesForm((state) => ({ ...state, storeId: activeShops[0]?.value }));
       searchCatalogAction(activeShops[0]?.value, "");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (salesList?.items?.length < 1) {
+      fetchSales(isEmployer ? "" : user?.assignedStoreIds[0], {
+        ...search,
+      });
     }
   }, []);
 
@@ -196,7 +237,13 @@ const PointOfSale = () => {
             setSalesForm({
               paymentMethod: "",
               billType: "",
-              carts: carts,
+              carts: [
+                {
+                  catalogId: "",
+                  searchProduct: "",
+                  quantity: 1,
+                },
+              ],
               customerName: "",
               customerAddress: "",
               customerEmail: "",
@@ -562,11 +609,101 @@ const PointOfSale = () => {
           }}
         >
           <div>
-            <p className="text-black mb-5 font-bold dark:text-white">
+            <p className="text-black mb-1 font-bold dark:text-white">
               Final Confirmation
             </p>
 
-            <p className="text-xs">
+            <div className="mx-auto overflow-hidden bg-white">
+              <div className="w-full overflow-auto p-6 text-left text-sm">
+                <div className="flex text-xs">
+                  <div className="flex-grow">
+                    {generatedSale?.billType} No:{" "}
+                    <span className="font-bold">{generatedSale?.code}</span>{" "}
+                    <br />
+                    {generatedSale?.customerName !== "Anonymous" && (
+                      <span>CUSTOMER: {generatedSale?.customerName}</span>
+                    )}
+                  </div>
+                  <span>{getDate(generatedSale?.dateAdded, true, true)}</span>
+                </div>
+                <hr className="my-2" />
+                <div>
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr>
+                        <th className="w-1/12 py-1 text-center">#</th>
+                        <th className="py-1 text-left">Item</th>
+                        <th className="w-2/12 py-1 text-center">Qty</th>
+                        <th className="w-3/12 py-1 text-right">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {generatedSale?.carts != null &&
+                        generatedSale?.carts?.length > 0 &&
+                        generatedSale?.carts?.map((cart: any) => (
+                          <tr>
+                            <td
+                              className="py-2 text-center"
+                              x-text="index+1"
+                            ></td>
+                            <td className="py-2 text-left">
+                              <span>{cart?.productName}</span>
+                              <br />
+                              <small>
+                                {formatCurrency(cart?.unitPriceAtPurchase)}
+                              </small>
+                            </td>
+                            <td className="py-2 text-center">
+                              {cart?.quantity}
+                            </td>
+                            <td className="py-2 text-right">
+                              {" "}
+                              {formatCurrency(
+                                cart?.unitPriceAtPurchase * cart?.quantity
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+                <hr className="my-2" />
+                <div>
+                  <div className="flex text-xs font-semibold">
+                    <div className="flex-grow">CART TOTAL</div>
+                    <div> {formatCurrency(generatedSale?.cartTotal)}</div>
+                  </div>
+                  <div className="flex text-xs font-semibold">
+                    <div className="flex-grow">TAX</div>
+                    <div> {formatCurrency(generatedSale?.tax)}</div>
+                  </div>
+                  <div className="flex text-xs font-semibold">
+                    <div className="flex-grow">DELIVERY FEE</div>
+                    <div> {formatCurrency(generatedSale?.deliveryFee)}</div>
+                  </div>
+                  <hr className="my-2" />
+
+                  <div className="flex font-semibold">
+                    <div className="flex-grow">TOTAL</div>
+                    <div>
+                      <span>{formatCurrency(generatedSale?.totalPaid)}</span>
+                    </div>
+                  </div>
+                  <hr className="my-2" />
+                  <div className="flex text-xs font-semibold">
+                    <div className="flex-grow">PAYMENT MODE</div>
+                    <div>{generatedSale?.paymentMethod}</div>
+                  </div>
+                  <div className="flex text-xs font-semibold">
+                    <div className="flex-grow">STATUS</div>
+                    <div>{generatedSale?.status}</div>
+                  </div>
+                </div>
+                <hr className="my-2" />
+              </div>
+            </div>
+
+            <p className="text-center text-xs">
               once confirmation is given, sales cannot be reversed, unless
               approved by the manager
             </p>
