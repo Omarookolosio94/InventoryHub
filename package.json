@@ -23,6 +23,7 @@
     "animate.css": "^4.1.1",
     "apexcharts": "^3.35.5",
     "axios": "^1.5.1",
+    "file-saver": "^2.0.5",
     "framer-motion": "^7.10.2",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
@@ -38,6 +39,7 @@
     "tailwindcss-rtl": "^0.9.0",
     "typescript": "^4.7.4",
     "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5",
     "zustand": "^4.4.1"
   },
   "scripts": {
@@ -66,9 +68,11 @@
     ]
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.6",
     "@types/react-calendar": "^3.5.2",
     "@types/react-router-dom": "^5.3.3",
     "@types/react-table": "^7.7.12",
+    "@types/xlsx": "^0.0.36",
     "autoprefixer": "^10.4.8",
     "postcss": "^8.4.16",
     "prettier": "^2.8.3",

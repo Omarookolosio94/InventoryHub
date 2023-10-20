@@ -26,13 +26,13 @@ export default function SignIn() {
       return;
     }
 
-    var status: boolean | any = await loginUser(
+    var response: any = await loginUser(
       email,
       password,
       accessType === "1" ? true : false
     );
-    if (status) {
-      navigate("/admin");
+    if (response != null && response?.success === true) {
+      accessType === "1" ? navigate("/admin") : navigate("/admin/pos");
     }
   };
 

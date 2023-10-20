@@ -130,6 +130,14 @@ declare global {
     totalItem: number;
   }
 
+  interface SalesForTax {
+    business: string;
+    sales: Sales[];
+    totalSales: number;
+    totalCost: number;
+    profitOrLossBeforeExpenseAndTax: number;
+  }
+
   interface NewEmployer {
     name: string;
     email: string;
@@ -151,4 +159,22 @@ declare global {
   }
 
   interface Employee {}
+
+  interface SaleAnalytics {
+    business: string;
+    frequency: string;
+    totalSales: number;
+    totalCost: number;
+    profitOrLossBeforeExpenseAndTax: number;
+    totalDeliveryFee: number;
+    totalTax: number;
+    salesRecords: SalesRecord[] | any;
+  }
+
+  interface SalesRecord {
+    productName: string;
+    totalCostPrice: number;
+    totalSellingPrice: number;
+    totalUnitsSold: number;
+  }
 }

@@ -6,3 +6,9 @@ export const PAYMENT_STATUS = ["PAID", "PRE_PAID", "UNPAID"];
 export const BILL_TYPE = ["RECEIPT", "INVOICE"];
 export const PAYMENT_METHOD = ["BANK TRANSFER", "CASH", "POS"];
 export const ROLES = ["INVENTORY", "SALES", "MANAGER", "CEO"];
+export const FREQUENCY = ["MONTHLY", "WEEKLY", "DAILY"];
+export const Frequency = {
+  MONTHLY: "MONTHLY",
+  WEEKLY: "WEEKLY",
+  DAILY: "DAILY",
+};

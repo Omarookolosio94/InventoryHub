@@ -4,7 +4,9 @@ import notification from "core/services/notification";
 import {
   generateSales,
   getBusinessSales,
+  getSalesAnalytics,
   getSalesById,
+  getSalesForTax,
   getStoreSales,
   updateSaleStatus,
 } from "../api/salesapi";
@@ -15,14 +17,18 @@ type SaleState = {
   errors: any | {};
   salesList: SaleList;
   sale: Sale;
+  analytics: SaleAnalytics;
+  salesForTax: SalesForTax;
   reset: () => void;
   updateError: (name: string) => void;
   clearError: () => void;
   getBusinessSales: (param: StoreSearch) => void;
+  getSaleAnalytics: (storeId: string, frequency: string, date: string) => void;
   getStoreSales: (storeId: string, param: StoreSearch) => void;
   generateSales: (invoice: Invoice, storeId: string) => void;
   updateSaleStatus: (status: string, salesId: string) => void;
   getSalesById: (invoiceId: string) => void;
+  getSaleForTax: (storeId: string, amount: number) => void;
 };
 
 const useSaleStore = create<SaleState>()(
@@ -37,7 +43,15 @@ const useSaleStore = create<SaleState>()(
           totalItem: 0,
           totalPage: 0,
         },
+        analytics: null,
         sale: null,
+        salesForTax: {
+          business: "",
+          profitOrLossBeforeExpenseAndTax: 0,
+          sales: [],
+          totalCost: 0,
+          totalSales: 0,
+        },
         reset: () => {
           set({
             isLoading: false,
@@ -48,7 +62,15 @@ const useSaleStore = create<SaleState>()(
               totalItem: 0,
               totalPage: 0,
             },
+            analytics: null,
             sale: null,
+            salesForTax: {
+              business: "",
+              profitOrLossBeforeExpenseAndTax: 0,
+              sales: [],
+              totalCost: 0,
+              totalSales: 0,
+            },
           });
           sessionStorage.removeItem("salestate");
         },
@@ -71,6 +93,15 @@ const useSaleStore = create<SaleState>()(
           }
           set({ isLoading: false });
         },
+        getSaleAnalytics: async (storeId, frequency, date) => {
+          set({ isLoading: true });
+          const response = await getSalesAnalytics(storeId, frequency, date);
+          const { success, data } = response;
+          if (success) {
+            set({ analytics: data });
+          }
+          set({ isLoading: false });
+        },
         getBusinessSales: async (param) => {
           set({ isLoading: true });
           const response = await getBusinessSales(param);
@@ -86,6 +117,15 @@ const useSaleStore = create<SaleState>()(
           const { success, data } = response;
           if (success) {
             set({ salesList: data });
+          }
+          set({ isLoading: false });
+        },
+        getSaleForTax: async (storeId, amount) => {
+          set({ isLoading: true });
+          const response = await getSalesForTax(storeId, amount);
+          const { success, data } = response;
+          if (success) {
+            set({ salesForTax: data });
           }
           set({ isLoading: false });
         },

@@ -88,7 +88,6 @@ const useUserStore = create<UserState>()(
               if (statusCode === 400) {
                 set({ errors: data });
               }
-
               notification({
                 title: "",
                 message: message,
@@ -96,7 +95,7 @@ const useUserStore = create<UserState>()(
               });
             }
             set({ isLoading: false });
-            return success;
+            return response;
           } catch (err) {
             set({ isLoading: false });
             notification({
@@ -104,7 +103,7 @@ const useUserStore = create<UserState>()(
               message: "An unknown error occured, please try again later",
               type: "danger",
             });
-            return false;
+            return null;
           }
         },
         addEmployee: async (employee) => {

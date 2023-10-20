@@ -1,16 +1,19 @@
 import React from "react";
-import Card from "core/components/card";
 
 export default function SimpleTable({
   children = <div></div>,
   headers = [""],
+  uniqueId = "",
 }: {
   children: any;
   headers: string[];
+  uniqueId?: string;
 }) {
   return (
     <>
-      <div className="overflow-x-scroll xl:overflow-x-hidden mt-8">
+      <div
+        className={`mt-8 overflow-x-scroll xl:overflow-x-hidden ${uniqueId}`}
+      >
         <table className="w-full">
           <thead>
             <tr className="!border-px !border-gray-400">

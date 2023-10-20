@@ -70,7 +70,6 @@ export default function Admin(props: { [x: string]: any }) {
     if (token == null || token?.length < 1) {
       navigate("/auth/");
     }
-    console.log("rendering");
   }, []);
 
   document.documentElement.dir = "ltr";

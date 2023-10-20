@@ -52,3 +52,32 @@ export const updateSaleStatus = (status: string, salesId: string) =>
     method: "PUT",
     auth: true,
   });
+
+export const getSalesAnalytics = (
+  storeId: string,
+  frequency: string,
+  date: string
+) =>
+  apicall({
+    endpoint: "sales",
+    param: "analytics",
+    method: "GET",
+    pQuery: {
+      storeId,
+      frequency,
+      date,
+    },
+    auth: true,
+  });
+
+export const getSalesForTax = (storeId: string, amount: number) =>
+  apicall({
+    endpoint: "tax",
+    param: "sales",
+    method: "GET",
+    pQuery: {
+      storeId,
+      amount,
+    },
+    auth: true,
+  });

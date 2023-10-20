@@ -21,13 +21,14 @@ import {
   MdOutlineProductionQuantityLimits,
   MdStore,
 } from "react-icons/md";
-import { FaUsers, FaUserCircle } from "react-icons/fa";
+import { FaUsers, FaUserCircle, FaFileArchive } from "react-icons/fa";
 import { GiReceiveMoney, GiWallet } from "react-icons/gi";
 import Catalogs from "views/admin/stores/components/Catalogs";
 import PointOfSale from "views/admin/pos";
 import Invoice from "views/general/Invoice";
 import About from "views/general/About";
 import VerifyAccount from "views/auth/VerifyAccount";
+import Archives from "views/admin/archives";
 
 const routes = [
   {
@@ -59,25 +60,11 @@ const routes = [
     component: <ResetPassword />,
   },
   {
-    name: "Dashboard",
+    name: "Analytics",
     layout: "/admin",
     path: "dashboard",
     icon: <MdHome className="h-6 w-6" />,
     component: <MainDashboard />,
-  },
-  {
-    name: "Stores",
-    layout: "/admin",
-    path: "store",
-    icon: <MdStore className="h-6 w-6" />,
-    component: <Stores />,
-  },
-  {
-    name: "Catalogs",
-    layout: "/admin",
-    path: "store/:storeId",
-    icon: "",
-    component: <Catalogs />,
   },
   {
     name: "Point Of Sale (POS)",
@@ -100,7 +87,6 @@ const routes = [
     icon: <MdOutlineProductionQuantityLimits className="h-6 w-6" />,
     component: <Products />,
   },
-
   {
     name: "Categories",
     layout: "/admin",
@@ -109,11 +95,18 @@ const routes = [
     component: <Categories />,
   },
   {
-    name: "Profile",
+    name: "Stores",
     layout: "/admin",
-    path: "profile",
-    icon: <FaUserCircle className="h-6 w-6" />,
-    component: <Profile />,
+    path: "store",
+    icon: <MdStore className="h-6 w-6" />,
+    component: <Stores />,
+  },
+  {
+    name: "Catalogs",
+    layout: "/admin",
+    path: "store/:storeId",
+    icon: "",
+    component: <Catalogs />,
   },
   {
     name: "Employees",
@@ -121,6 +114,20 @@ const routes = [
     path: "employees",
     icon: <FaUsers className="h-6 w-6" />,
     component: <Employees />,
+  },
+  {
+    name: "Archive",
+    layout: "/admin",
+    path: "archive",
+    icon: <FaFileArchive className="h-6 w-6" />,
+    component: <Archives />,
+  },
+  {
+    name: "Profile",
+    layout: "/admin",
+    path: "profile",
+    icon: <FaUserCircle className="h-6 w-6" />,
+    component: <Profile />,
   },
   {
     name: "Invoice",

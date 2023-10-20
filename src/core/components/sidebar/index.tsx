@@ -14,7 +14,7 @@ const Sidebar = (props: {
 
   return (
     <div
-      className={`sm:none duration-175 linear fixed !z-50 flex min-h-full flex-col bg-white pb-10 shadow-2xl shadow-white/5 transition-all dark:!bg-navy-800 dark:text-white md:!z-50 lg:!z-50 xl:!z-0 ${
+      className={`sm:none duration-175 linear hide-print fixed !z-50 flex min-h-full flex-col bg-white pb-10 shadow-2xl shadow-white/5 transition-all dark:!bg-navy-800 dark:text-white md:!z-50 lg:!z-50 xl:!z-0 ${
         open ? "translate-x-0" : "-translate-x-96"
       }`}
     >
@@ -25,7 +25,7 @@ const Sidebar = (props: {
         <HiX />
       </span>
 
-      <div className={`mx-[56px] mt-[48px] w-[160px] flex items-center`}>
+      <div className={`mx-[56px] mt-[48px] flex w-[160px] items-center`}>
         <div className="ml-1 mt-1 h-auto font-poppins text-[18px] font-bold uppercase text-navy-700 dark:text-white">
           <span>{isEmployer ? user?.name : user?.employer?.name}</span>
         </div>
@@ -34,7 +34,16 @@ const Sidebar = (props: {
       {/* Nav item */}
 
       <ul className="mb-auto pt-1">
-        <Links routes={routes} />
+        {isEmployer ? (
+          <Links routes={routes} />
+        ) : (
+          <Links
+            routes={routes.filter(
+              (route: any) =>
+                route.name != "Analytics" && route.name != "Archive"
+            )}
+          />
+        )}
       </ul>
       {/* Nav item end */}
     </div>

@@ -30,6 +30,7 @@ import { useNavigate } from "react-router-dom";
 import { ORDER_STATUS } from "core/const/const";
 import useUserStore from "core/services/stores/useUserStore";
 import useShopStore from "core/services/stores/useShopStore";
+import { FaFileArchive } from "react-icons/fa";
 
 const Sales = () => {
   const [expandedRows, setExpandedRows]: any = useState([]);

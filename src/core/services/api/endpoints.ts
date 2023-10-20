@@ -9,4 +9,5 @@ export const ENDPOINTS: any = {
   categories: "/categories",
   catelogs: "/catalogs",
   sales: "/sales",
+  tax: "/tax",
 } as const;

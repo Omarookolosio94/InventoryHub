@@ -170,3 +170,28 @@ export const openNewBackgroundTab = (url: string) => {
   );
   a.dispatchEvent(evt);
 };
+
+export const printSection = (section: string, title: string) => {
+  // Add a class to the section of the page that you want to print.
+  const sectionElement = document.querySelector("." + section);
+  sectionElement.classList.add("print-section");
+
+  const styleElement = document.createElement("style");
+  styleElement.textContent = `
+    body > *:not(.print-section) {
+      display: none;
+    }
+  `;
+
+  document.head.appendChild(styleElement);
+
+  const titleBefore = document.title;
+  document.title = title;
+
+  console.log(sectionElement);
+
+  window.print();
+
+  document.head.removeChild(styleElement);
+  document.title = titleBefore;
+};
