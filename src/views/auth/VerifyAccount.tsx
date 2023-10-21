@@ -83,15 +83,18 @@ export default function VerifyAccount() {
           />
 
           {/* OTP */}
-          <div className="flex items-center justify-between px-2">
-            <button
-              type="button"
-              className="text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
-              onClick={() => getOtp()}
-            >
-              Generate Otp?
-            </button>
-          </div>
+          {verifyForm?.email?.length > 0 && (
+            <div className="flex items-center justify-between px-2">
+              <button
+                type="button"
+                className="text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
+                disabled={verifyForm?.email?.length < 1}
+                onClick={() => getOtp()}
+              >
+                Generate Otp?
+              </button>
+            </div>
+          )}
           <InputField
             variant="auth"
             extra="mb-3"
