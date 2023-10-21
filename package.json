@@ -78,5 +78,6 @@
     "prettier": "^2.8.3",
     "prettier-plugin-tailwindcss": "^0.2.1",
     "tailwindcss": "^3.1.8"
-  }
+  },
+  "proxy": "http://usewebeffect-001-site1.itempurl.com"
 }
