@@ -137,6 +137,25 @@ export default function SignIn() {
               Create an account
             </Link>
           </div>
+          <div className="">
+            <span className="text-sm font-medium text-navy-700 dark:text-gray-600">
+              Not yet verified?
+            </span>
+            <Link
+              to="/auth/verify"
+              className="ml-1 text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
+            >
+              Verify account
+            </Link>
+          </div>
+          <div className="flex items-center justify-between">
+            <Link
+              to="/general/support"
+              className="text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
+            >
+              Support and Guides
+            </Link>
+          </div>
         </div>
       </div>
     </>

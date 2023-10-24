@@ -26,9 +26,9 @@ import { GiReceiveMoney, GiWallet } from "react-icons/gi";
 import Catalogs from "views/admin/stores/components/Catalogs";
 import PointOfSale from "views/admin/pos";
 import Invoice from "views/general/Invoice";
-import About from "views/general/About";
 import VerifyAccount from "views/auth/VerifyAccount";
 import Archives from "views/admin/archives";
+import Support from "views/general/Support";
 
 const routes = [
   {
@@ -137,11 +137,11 @@ const routes = [
     component: <Invoice />,
   },
   {
-    name: "About",
+    name: "Support",
     layout: "/general",
-    path: "about",
+    path: "support",
     icon: "",
-    component: <About />,
+    component: <Support />,
   },
 ];
 export default routes;
