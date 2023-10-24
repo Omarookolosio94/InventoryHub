@@ -35,6 +35,7 @@ const Navbar = (props: {
     resetCategory();
     resetCatalog();
     localStorage.removeItem("token");
+    localStorage.clear();
     navigate("/auth/sign-in");
   };
 

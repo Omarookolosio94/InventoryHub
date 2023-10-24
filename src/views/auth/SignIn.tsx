@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import notification from "core/services/notification";
 import InputField from "core/components/fields/InputField";
@@ -35,6 +35,10 @@ export default function SignIn() {
       accessType === "1" ? navigate("/admin") : navigate("/admin/pos");
     }
   };
+
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
 
   return (
     <>

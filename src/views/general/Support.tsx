@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from "react";
+import React, { useEffect } from "react";
 import FixedPlugin from "core/components/fixedPlugin/FixedPlugin";
 import Footer from "core/components/footer/FooterAuthDefault";
 import { BsFillArrowUpCircleFill } from "react-icons/bs";
@@ -7,6 +7,11 @@ import { Link } from "react-router-dom";
 
 export default function Support() {
   const urlStyling = "font-bold block mb-2 hover:text-brand-500";
+
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
+  
   return (
     <div className=" h-full min-h-screen w-full dark:!bg-navy-900 dark:text-white">
       <div className="relative mx-auto w-9/12 py-[50px]  dark:text-white">
@@ -421,9 +426,9 @@ export default function Support() {
             Have more questions? Submit a request
           </a>
         </section>
-        <div className="my-5 flex gap-3 items-center justify-start">
+        <div className="my-5 flex items-center justify-start gap-3">
           <Link
-            to="/auth"
+            to="/auth/sign-in"
             className="text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
           >
             Sign In
