@@ -20,6 +20,7 @@ function InputField(props: {
   enableDataList?: boolean;
   list?: string;
   showLabel?: boolean;
+  instruction?: string;
 }) {
   const {
     name,
@@ -40,6 +41,7 @@ function InputField(props: {
     enableDataList = false,
     list,
     showLabel = true,
+    instruction
   } = props;
 
   return (
@@ -85,6 +87,7 @@ function InputField(props: {
           ))}
         </datalist>
       )}
+      <span className="text-gray-500 text-xs">{instruction}</span>
       <span className="text-red-500 ">{error}</span>
     </div>
   );

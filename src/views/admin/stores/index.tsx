@@ -360,6 +360,7 @@ const Stores = () => {
                             </div>
                           )}
 
+                          {/*
                           <div className="w-1/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
                               Is Warehouse:
@@ -373,7 +374,7 @@ const Stores = () => {
                             >
                               {store?.isWareHouse ? "yes" : "no"}
                             </span>
-                          </div>
+                          </div> */}
                         </li>
                         {store?.decription != null &&
                           store?.description.length > 0 && (
@@ -538,6 +539,7 @@ const Stores = () => {
                   />
                 </span>
               </div>
+              {/*
               <div className="flex w-1/2 gap-3 dark:text-white">
                 <span>Is Warehouse:</span>
                 <span>
@@ -562,7 +564,7 @@ const Stores = () => {
                     onChange={handleChange}
                   />
                 </span>
-              </div>
+              </div> */}
             </div>
 
             <TextField

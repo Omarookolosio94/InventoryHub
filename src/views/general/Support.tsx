@@ -275,7 +275,7 @@ export default function Support() {
             Making Sale
           </h4>
           <p className="mb-5">
-            To make a sale, go to the Point of Sale (pos) page and click the
+            To make a sale, go to the Checkout page and click the
             Make Sale button. From here, you can select the customer, product,
             and quantity. Once you have entered all of the relevant information,
             click the Generate Receipt button to process the sale.
@@ -413,7 +413,7 @@ export default function Support() {
             </li>
             <li className="">customer service portal</li>
             <li className="">
-              Redesign for POS system to include product images
+              Redesign for Checkout system to include product images
             </li>
           </ol>
         </section>

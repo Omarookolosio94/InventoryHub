@@ -224,10 +224,10 @@ const PointOfSale = () => {
         <SubHeader
           title={`${
             salesForm?.storeId?.length > 0
-              ? `POS - ${
+              ? `Checkout - ${
                   shops?.filter((s: any) => s.id == salesForm?.storeId)[0]?.name
                 }`
-              : "POS"
+              : "Checkout"
           }`}
           showAction={false}
           showSelect={true}

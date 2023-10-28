@@ -32,7 +32,7 @@ export default function SignIn() {
       accessType === "1" ? true : false
     );
     if (response != null && response?.success === true) {
-      accessType === "1" ? navigate("/admin") : navigate("/admin/pos");
+      accessType === "1" ? navigate("/admin") : navigate("/admin/checkout");
     }
   };
 

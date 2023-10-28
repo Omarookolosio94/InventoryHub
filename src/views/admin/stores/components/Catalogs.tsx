@@ -287,12 +287,13 @@ const Catalogs = () => {
                           </div>
                         </li>
                         <li className="mb-5 flex gap-3">
+                          {/*
                           <div className="w-1/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
                               Tags:
                             </span>
                             <span>{catalog?.product?.tags ?? "no tags"}</span>
-                          </div>
+                          </div>*/}
                           <div className="w-1/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
                               Size:

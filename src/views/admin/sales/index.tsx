@@ -116,7 +116,7 @@ const Sales = () => {
           title="Sales Record"
           action="Make Sales"
           showAction={access?.sale?.includes("WRITE")}
-          actionFunc={() => navigate("/admin/pos")}
+          actionFunc={() => navigate("/admin/checkout")}
           icon={<GiReceiveMoney />}
         />
         {access?.sale?.includes("READ") ? (

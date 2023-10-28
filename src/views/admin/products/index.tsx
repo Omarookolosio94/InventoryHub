@@ -498,12 +498,13 @@ const Products = () => {
                           </div>
                         </li>
                         <li className="mb-5 flex gap-3">
+                          {/*
                           <div className="w-1/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
                               Tags:
                             </span>
                             <span>{product?.tags ?? "no tags"}</span>
-                          </div>
+                          </div> */}
                           <div className="w-1/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
                               Size:
@@ -747,6 +748,7 @@ const Products = () => {
                   showLabel={true}
                 />
               </div>
+              {/*
               <div className="w-1/2">
                 <InputField
                   variant="auth"
@@ -759,7 +761,7 @@ const Products = () => {
                   onChange={(e: any) => onFormChange(e, "product")}
                   error={errors?.Tags}
                 />
-              </div>
+              </div>*/}
             </div>
             <div className="flex gap-3">
               <div className="w-1/3">
@@ -957,6 +959,7 @@ const Products = () => {
                   showLabel={true}
                 />
               </div>
+              {/*
               <div className="w-1/2">
                 <InputField
                   variant="auth"
@@ -969,7 +972,7 @@ const Products = () => {
                   onChange={(e: any) => onFormChange(e, "updateDetail")}
                   error={errors?.Tags}
                 />
-              </div>
+              </div>*/}
             </div>
             <div className="flex gap-3">
               <div className="w-1/2">
@@ -1277,6 +1280,7 @@ const Products = () => {
                   updateError("DifferentialPercent");
                 }
               }}
+              instruction="* set custom pricing which can be a higher or lesser than the initial product price"
               error={errors?.DifferentialPercent}
             />
 

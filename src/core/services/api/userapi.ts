@@ -93,7 +93,7 @@ export const assignEmployee = (
     param: `${employeeId}/assignment`,
     body: {
       roles,
-      stores,
+      assignedStoreIds: stores,
     },
     method: "PUT",
     auth: true,

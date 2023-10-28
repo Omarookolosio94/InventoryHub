@@ -67,9 +67,9 @@ const routes = [
     component: <MainDashboard />,
   },
   {
-    name: "Point Of Sale (POS)",
+    name: "Checkout",
     layout: "/admin",
-    path: "pos",
+    path: "checkout",
     icon: <GiReceiveMoney className="h-6 w-6" />,
     component: <PointOfSale />,
   },

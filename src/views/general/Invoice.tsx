@@ -39,7 +39,7 @@ export default function Invoice() {
                        className="mb-3 inline-block h-8 w-8"
                      /> */}
                 <h2 className="text-xl font-semibold">
-                  {sale?.store?.storeName}
+                  {sale?.store?.owner}
                 </h2>
                 <p>{sale?.store?.address}</p>
                 <p className="text-xs">
@@ -129,9 +129,11 @@ export default function Invoice() {
                 </div>
               </div>
               <hr className="my-2" />
+              {/* 
               <p className="mt-5 text-center text-xs">
                 ©{new Date().getFullYear()} Inventory Hub. All Rights Reserved
               </p>
+              */}
             </div>
           </div>
           <Button

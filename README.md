@@ -15,7 +15,7 @@
 
 - Employee Management
 - Store Management
-- Point of Sale System
+- Checkout or Point of Sale System
 - Audit System
 - General Analytics
 
@@ -34,4 +34,4 @@ The application is built using the following tech stacks and resources:
 - Add system and audit log pages
 - image upload functionality for products, shop location and user profiles
 - customer service portal
-- Redesign for POS system to include product images : https://github1s.com/emsifa/tailwind-pos
+- Redesign for Checkout system to include product images : https://github1s.com/emsifa/tailwind-pos
