@@ -187,11 +187,7 @@ export const printSection = (section: string, title: string) => {
 
   const titleBefore = document.title;
   document.title = title;
-
-  console.log(sectionElement);
-
   window.print();
-
   document.head.removeChild(styleElement);
   document.title = titleBefore;
 };

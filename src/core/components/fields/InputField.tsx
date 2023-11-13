@@ -41,7 +41,7 @@ function InputField(props: {
     enableDataList = false,
     list,
     showLabel = true,
-    instruction
+    instruction,
   } = props;
 
   return (
@@ -68,6 +68,7 @@ function InputField(props: {
         placeholder={placeholder}
         value={value}
         list={list}
+        aria-autocomplete="none"
         className={`mt-2 flex h-12 w-full items-center justify-center rounded-md border bg-white/0 p-3 text-sm outline-none ${
           disabled === true
             ? "!border-none !bg-gray-100 dark:!bg-white/5 dark:placeholder:!text-[rgba(255,255,255,0.15)]"
@@ -87,7 +88,7 @@ function InputField(props: {
           ))}
         </datalist>
       )}
-      <span className="text-gray-500 text-xs">{instruction}</span>
+      <span className="text-xs text-gray-500">{instruction}</span>
       <span className="text-red-500 ">{error}</span>
     </div>
   );

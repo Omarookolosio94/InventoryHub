@@ -27,7 +27,7 @@ import { RiPriceTag3Fill } from "react-icons/ri";
 import useSaleStore from "core/services/stores/useSaleStore";
 import { GiReceiveMoney } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
-import { ORDER_STATUS } from "core/const/const";
+import { InvoiceSize, ORDER_STATUS } from "core/const/const";
 import useUserStore from "core/services/stores/useUserStore";
 import useShopStore from "core/services/stores/useShopStore";
 import { FaFileArchive } from "react-icons/fa";
@@ -138,7 +138,7 @@ const Sales = () => {
                   <tr key={sale?.id}>
                     <TableRowData
                       onClick={() =>
-                        openInNewTab(`/general/invoice/${sale?.code}`)
+                        openInNewTab(`/general/invoice/${sale?.code}/${InvoiceSize.LARGE}`)
                       }
                       enableAction
                       style="min-w-[60px]"
@@ -225,11 +225,20 @@ const Sales = () => {
                       <Button
                         style="flex gap-1 justify-items-center items-center bg-green-500 hover:bg-green-600 dark:text-white-300"
                         onClick={() =>
-                          openInNewTab(`/general/invoice/${sale?.code}`)
+                          openInNewTab(`/general/invoice/${sale?.code}/${InvoiceSize.LARGE}`)
                         }
                       >
                         <MdReceiptLong />
-                        <span className="text-xs">Receipt</span>
+                        <span className="text-xs">Receipt A4</span>
+                      </Button>
+                      <Button
+                        style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
+                        onClick={() =>
+                          openInNewTab(`/general/invoice/${sale?.code}/${InvoiceSize.SMALL}`)
+                        }
+                      >
+                        <MdReceiptLong />
+                        <span className="text-xs">Receipt Small</span>
                       </Button>
                     </ActionRowData>
                   </tr>
@@ -286,18 +295,26 @@ const Sales = () => {
                               {sale?.carts != null &&
                                 sale?.carts?.length > 0 &&
                                 sale?.carts?.map((cart: any) => (
-                                  <>
-                                    <span>
-                                      {`
-                                  ${cart?.productName} * ${cart?.quantity} at
-                                  ${formatCurrency(cart?.unitPriceAtPurchase)}
-                                  =
-                                  ${formatCurrency(
-                                    cart?.quantity * cart?.unitPriceAtPurchase
-                                  )}`}
-                                    </span>{" "}
+                                  <div className="mb-2">
+                                    <span className="mr-5">
+                                      {cart?.productName}
+                                    </span>
+                                    <span className="mr-5 font-bold">
+                                      {cart?.quantityNarration}
+                                    </span>
+                                    <span className="mr-5">
+                                      at {formatCurrency(
+                                        cart?.unitPriceAtPurchase
+                                      )}
+                                    </span>
+                                    <span className="mr-5 font-bold">
+                                      {formatCurrency(
+                                        cart?.quantity *
+                                          cart?.unitPriceAtPurchase
+                                      )}
+                                    </span>
                                     <br />
-                                  </>
+                                  </div>
                                 ))}
                             </div>
                           </li>

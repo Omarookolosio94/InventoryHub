@@ -132,7 +132,7 @@ const routes = [
   {
     name: "Invoice",
     layout: "/general",
-    path: "invoice/:invoiceId",
+    path: "invoice/:invoiceId/:size",
     icon: "",
     component: <Invoice />,
   },

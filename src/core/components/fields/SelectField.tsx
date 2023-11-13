@@ -65,9 +65,11 @@ export default function SelectField(props: {
             : "border-gray-200 dark:!border-white/10 dark:text-white"
         }`}
       >
-        <option key={defaultValue} value={defaultValue}>
-          {defaultName}
-        </option>
+        {defaultName?.length > 0 && (
+          <option key={defaultValue} value={defaultValue}>
+            {defaultName}
+          </option>
+        )}
         {options?.map((option: any) => (
           <option key={option.value} value={option.value}>
             {option.name}

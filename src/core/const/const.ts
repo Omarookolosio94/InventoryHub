@@ -12,3 +12,7 @@ export const Frequency = {
   WEEKLY: "WEEKLY",
   DAILY: "DAILY",
 };
+export const InvoiceSize = {
+  SMALL: "SMALL",
+  LARGE: "LARGE",
+};

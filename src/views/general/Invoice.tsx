@@ -1,4 +1,5 @@
 import Button from "core/components/button/Button";
+import { InvoiceSize } from "core/const/const";
 import { formatCurrency, getDate } from "core/services/helpers";
 import useSaleStore from "core/services/stores/useSaleStore";
 import { useEffect } from "react";
@@ -6,7 +7,7 @@ import { AiFillPrinter } from "react-icons/ai";
 import { useParams } from "react-router-dom";
 
 export default function Invoice() {
-  const { invoiceId } = useParams();
+  const { invoiceId, size } = useParams();
   const getSaleAction = useSaleStore((state) => state.getSalesById);
   const sale: any = useSaleStore((state) => state.sale);
 
@@ -26,10 +27,24 @@ export default function Invoice() {
   // TODO: Custom search for invoice
 
   return (
-    <div className="fixed left-0 top-0 z-10 flex w-full flex-col flex-wrap content-center justify-center gap-4 p-24">
+    <div className="left-0 top-0 z-10 flex w-full flex-col flex-wrap content-center justify-center gap-4 p-24">
       {sale != null ? (
         <>
-          <div id="receipt" className="z-10 w-[350px] overflow-hidden bg-white">
+          <Button
+            style={`flex gap-1 m-0 w-[350px] h-[50px] justify-center items-center bg-brand-500 hover:bg-brand-600 dark:text-white-300 hide-print`}
+            hidden={sale == null}
+            onClick={() => printReceipt()}
+          >
+            <AiFillPrinter />
+            <span>Print</span>
+          </Button>
+          <div
+            id="receipt"
+            style={{ height: "auto" }}
+            className={`z-10 bg-white ${
+              size === InvoiceSize.LARGE ? "w-11/12" : "w-[350px]"
+            }`}
+          >
             <div className="w-full overflow-auto p-6 text-left text-sm">
               <div className="text-center">
                 {/*
@@ -38,9 +53,7 @@ export default function Invoice() {
                        alt="Tailwind POS"
                        className="mb-3 inline-block h-8 w-8"
                      /> */}
-                <h2 className="text-xl font-semibold">
-                  {sale?.store?.owner}
-                </h2>
+                <h2 className="text-xl font-semibold">{sale?.store?.owner}</h2>
                 <p>{sale?.store?.address}</p>
                 <p className="text-xs">
                   {sale?.store.email} | {sale?.store?.phone}
@@ -65,18 +78,16 @@ export default function Invoice() {
                       <th className="w-1/12 py-1 text-center">#</th>
                       <th className="py-1 text-left">Item</th>
                       <th className="w-2/12 py-1 text-center">Qty</th>
+                      <th className="w-2/12 py-1 text-center">Unit</th>
                       <th className="w-3/12 py-1 text-right">Subtotal</th>
                     </tr>
                   </thead>
                   <tbody>
                     {sale?.carts != null &&
                       sale?.carts?.length > 0 &&
-                      sale?.carts?.map((cart: any) => (
+                      sale?.carts?.map((cart: any, index: number) => (
                         <tr>
-                          <td
-                            className="py-2 text-center"
-                            x-text="index+1"
-                          ></td>
+                          <td className="py-2 text-center">{index + 1}</td>
                           <td className="py-2 text-left">
                             <span>{cart?.productName}</span>
                             <br />
@@ -84,7 +95,16 @@ export default function Invoice() {
                               {formatCurrency(cart?.unitPriceAtPurchase)}
                             </small>
                           </td>
-                          <td className="py-2 text-center">{cart?.quantity}</td>
+                          <td className="py-2 text-center">
+                            <span>
+                              {cart?.unit?.length > 1 ? cart?.unit : "-"}
+                            </span>
+                          </td>
+                          <td className="py-2 text-center">
+                            <span>{cart?.quantity}</span>
+                            <br />
+                            <small>{cart?.quantityNarration}</small>
+                          </td>
                           <td className="py-2 text-right">
                             {" "}
                             {formatCurrency(
@@ -127,8 +147,47 @@ export default function Invoice() {
                   <div className="flex-grow">STATUS</div>
                   <div>{sale?.status}</div>
                 </div>
+                <hr className="my-2" />
+                {size === InvoiceSize.LARGE && (
+                  <>
+                    <div className="flex text-xs font-semibold">
+                      <div className="flex-grow">SALES OFFICER</div>
+                      <div>{sale?.soldBy}</div>
+                    </div>
+                    <hr className="my-5" />
+                    <div className="flex text-xs font-semibold">
+                      <div className="mb-3 flex-grow font-normal">
+                        *For Customer only
+                      </div>
+                      <div></div>
+                    </div>
+                    <div className="mb-3 flex text-xs font-semibold">
+                      <div className="flex-grow">NAME:</div>
+                      <div></div>
+                    </div>
+                    <div className="mb-3 flex text-xs font-semibold">
+                      <div className="flex-grow">SIGNATURE:</div>
+                      <div></div>
+                    </div>
+                    <hr className="my-5" />
+                    <div className="flex text-xs font-semibold">
+                      <div className="mb-3 flex-grow font-normal">
+                        *For Inventory Officer only
+                      </div>
+                      <div></div>
+                    </div>
+                    <div className="mb-3 flex text-xs font-semibold">
+                      <div className="flex-grow">NAME:</div>
+                      <div></div>
+                    </div>
+                    <div className="mb-3 flex text-xs font-semibold">
+                      <div className="flex-grow">SIGNATURE:</div>
+                      <div></div>
+                    </div>
+                  </>
+                )}
               </div>
-              <hr className="my-2" />
+              <hr className="mb-2 mt-5" />
               {/* 
               <p className="mt-5 text-center text-xs">
                 ©{new Date().getFullYear()} Inventory Hub. All Rights Reserved
@@ -136,14 +195,6 @@ export default function Invoice() {
               */}
             </div>
           </div>
-          <Button
-            style={`flex gap-1 m-0 h-[50px] justify-center items-center bg-brand-500 hover:bg-brand-600 dark:text-white-300 hide-print`}
-            hidden={sale == null}
-            onClick={() => printReceipt()}
-          >
-            <AiFillPrinter />
-            <span>Print</span>
-          </Button>
         </>
       ) : (
         <p>No record found for invoice provided</p>

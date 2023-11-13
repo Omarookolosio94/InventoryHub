@@ -78,6 +78,8 @@ const Products = () => {
     sellingPrice: 0,
     discountPercent: 0,
     isListed: true,
+    unit: "",
+    itemPerPack: 1,
     manufacturingDate: "",
     expiringDate: "",
   });
@@ -92,6 +94,8 @@ const Products = () => {
     manufacturedBy: "",
     size: "",
     color: "",
+    unit: "",
+    itemPerPack: 0,
     comments: "",
     manufacturingDate: "",
     expiringDate: "",
@@ -160,6 +164,7 @@ const Products = () => {
       costPrice: Number(productForm?.costPrice),
       sellingPrice: Number(productForm?.sellingPrice),
       discountPercent: Number(productForm?.discountPercent),
+      itemPerPack: Number(productForm.itemPerPack),
     });
     if (status) {
       setProductForm({
@@ -171,6 +176,8 @@ const Products = () => {
         size: "",
         color: "",
         comments: "",
+        unit: "",
+        itemPerPack: 0,
         costPrice: 0,
         sellingPrice: 0,
         discountPercent: 0,
@@ -206,6 +213,7 @@ const Products = () => {
     await updateProductDetailAction(
       {
         ...updateDetailForm,
+        itemPerPack: Number(updateDetailForm.itemPerPack),
       },
       selected?.id
     );
@@ -498,13 +506,18 @@ const Products = () => {
                           </div>
                         </li>
                         <li className="mb-5 flex gap-3">
-                          {/*
                           <div className="w-1/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                              Tags:
+                              Unit:
                             </span>
-                            <span>{product?.tags ?? "no tags"}</span>
-                          </div> */}
+                            <span>{product?.unit}</span>
+                          </div>
+                          <div className="w-1/3">
+                            <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                              Item per pack:
+                            </span>
+                            <span>{product?.itemPerPack}</span>
+                          </div>
                           <div className="w-1/3">
                             <span className="mr-1 font-bold text-brand-500 dark:text-white">
                               Size:
@@ -724,7 +737,7 @@ const Products = () => {
               </div>
             </div>
             <div className="flex gap-3">
-              <div className="w-1/2">
+              <div className="w-1/3">
                 <SelectField
                   label="Choose Category"
                   extra="mb-3"
@@ -748,20 +761,31 @@ const Products = () => {
                   showLabel={true}
                 />
               </div>
-              {/*
-              <div className="w-1/2">
+              <div className="w-1/3">
                 <InputField
                   variant="auth"
                   extra="mb-3"
-                  label="Tags"
-                  id="tags"
+                  label="Units"
+                  placeholder=""
+                  id="unit"
                   type="text"
-                  name="tags"
-                  value={productForm?.tags}
+                  name="unit"
+                  value={productForm?.unit}
                   onChange={(e: any) => onFormChange(e, "product")}
-                  error={errors?.Tags}
                 />
-              </div>*/}
+              </div>
+              <div className="w-1/3">
+                <InputField
+                  variant="auth"
+                  extra="mb-3"
+                  label="Items per pack"
+                  id="itemPerPack"
+                  type="number"
+                  name="itemPerPack"
+                  value={productForm?.itemPerPack}
+                  onChange={(e: any) => onFormChange(e, "product")}
+                />
+              </div>
             </div>
             <div className="flex gap-3">
               <div className="w-1/3">
@@ -935,7 +959,7 @@ const Products = () => {
             />
 
             <div className="flex gap-3">
-              <div className="w-1/2">
+              <div className="w-1/3">
                 <SelectField
                   label="Choose Category"
                   extra="mb-3"
@@ -959,20 +983,31 @@ const Products = () => {
                   showLabel={true}
                 />
               </div>
-              {/*
-              <div className="w-1/2">
+              <div className="w-1/3">
                 <InputField
                   variant="auth"
                   extra="mb-3"
-                  label="Tags"
-                  id="tags"
+                  label="Units"
+                  placeholder=""
+                  id="unit"
                   type="text"
-                  name="tags"
-                  value={updateDetailForm?.tags}
+                  name="unit"
+                  value={updateDetailForm?.unit}
                   onChange={(e: any) => onFormChange(e, "updateDetail")}
-                  error={errors?.Tags}
                 />
-              </div>*/}
+              </div>
+              <div className="w-1/3">
+                <InputField
+                  variant="auth"
+                  extra="mb-3"
+                  label="Items per pack"
+                  id="itemPerPack"
+                  type="number"
+                  name="itemPerPack"
+                  value={updateDetailForm?.itemPerPack}
+                  onChange={(e: any) => onFormChange(e, "updateDetail")}
+                />
+              </div>
             </div>
             <div className="flex gap-3">
               <div className="w-1/2">

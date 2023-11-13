@@ -69,6 +69,8 @@ declare global {
     size: string;
     color: string;
     comments: string;
+    unit: string,
+    itemPerPack: number;
     manufacturingDate: string;
     expiringDate: string;
   }

@@ -16,6 +16,7 @@ import Button from "core/components/button/Button";
 import { FaClipboardList } from "react-icons/fa";
 import {
   BILL_TYPE,
+  InvoiceSize,
   ORDER_STATUS,
   PAYMENT_METHOD,
   customBtn,
@@ -51,6 +52,7 @@ const PointOfSale = () => {
       catalogId: "",
       searchProduct: "",
       quantity: 1,
+      saleType: "WHOLE",
     },
   ]);
 
@@ -78,7 +80,10 @@ const PointOfSale = () => {
   };
 
   const addCartField = () => {
-    setCarts([...carts, { catalogId: "", searchProduct: "", quantity: 1 }]);
+    setCarts([
+      ...carts,
+      { catalogId: "", searchProduct: "", quantity: 1, saleType: "WHOLE" },
+    ]);
   };
 
   const removeCartField = (index: number) => {
@@ -86,6 +91,30 @@ const PointOfSale = () => {
     data.splice(index, 1);
     setCarts(data);
     setSalesForm((state: any) => ({ ...state, carts: data }));
+  };
+
+  const calculatePrice = (catalogId: string, index: number) => {
+    var qty = carts[index]?.["quantity"];
+    var catalog = catalogs?.filter((s: any) => s.id === catalogId)[0];
+    var price = formatCurrency(catalog?.sellingPrice * qty);
+
+    return price;
+  };
+
+  const calculateUnitPrice = (catalogId: string, index: number) => {
+    var catalog = catalogs?.filter((s: any) => s.id === catalogId)[0];
+    var qty = carts[index]["quantity"];
+    var price = "";
+
+    if (catalog?.product?.itemPerPack > 0) {
+      price = formatCurrency(
+        (catalog?.sellingPrice / catalog?.product?.itemPerPack) * qty
+      );
+    } else {
+      price = formatCurrency(catalog?.sellingPrice * qty);
+    }
+
+    return price;
   };
 
   const [salesForm, setSalesForm] = useState({
@@ -109,15 +138,23 @@ const PointOfSale = () => {
 
   const generateSale = async (e: any) => {
     e.preventDefault();
+
+    var finalCart = carts.map((cart: any) => {
+      var catalog = catalogs?.filter((s: any) => s.id === cart?.catalogId)[0];
+
+      return {
+        ...cart,
+        quantity:
+          cart?.saleType === "WHOLE"
+            ? Number(cart?.quantity)
+            : Number(cart?.quantity / catalog?.product?.itemPerPack),
+      };
+    });
+
     var response: any = await generateSaleAction(
       {
         ...salesForm,
-        carts: carts.map((cart: any) => {
-          return {
-            ...cart,
-            quantity: Number(cart?.quantity),
-          };
-        }),
+        carts: finalCart,
       },
       salesForm?.storeId
     );
@@ -132,9 +169,11 @@ const PointOfSale = () => {
     var emptyCart = {
       catalogId: "",
       searchProduct: "",
+      saleType: "WHOLE",
       quantity: 1,
     };
     setCarts([{ ...emptyCart }]);
+
     setSalesForm((state) => ({
       ...state,
       paymentMethod: "",
@@ -154,7 +193,9 @@ const PointOfSale = () => {
       generatedSale?.id
     );
     if (isSuccessful && status == ORDER_STATUS[1]) {
-      openInNewTab(`/general/invoice/${generatedSale?.code}`);
+      openInNewTab(
+        `/general/invoice/${generatedSale?.code}/${InvoiceSize.LARGE}`
+      );
     }
     setOpenConfirmModal(false);
     setGeneratedSale({});
@@ -242,6 +283,7 @@ const PointOfSale = () => {
                   catalogId: "",
                   searchProduct: "",
                   quantity: 1,
+                  saleType: "WHOLE",
                 },
               ],
               customerName: "",
@@ -254,6 +296,7 @@ const PointOfSale = () => {
               {
                 catalogId: "",
                 searchProduct: "",
+                saleType: "WHOLE",
                 quantity: 1,
               },
             ]);
@@ -353,13 +396,32 @@ const PointOfSale = () => {
                   </p>
                   {carts?.map((cart, index) => (
                     <div className="flex items-center gap-3" key={index}>
-                      <div className="w-1/4">
+                      <div className="w-1/5">
+                        <SelectField
+                          label=""
+                          extra="mb-3"
+                          defaultName=""
+                          defaultValue="1"
+                          name="saleType"
+                          options={[
+                            { name: "Whole", value: "WHOLE" },
+                            { name: "Single", value: "SINGLE" },
+                          ]}
+                          value={cart.saleType}
+                          onChange={(e: any) => onCartChange(index, e)}
+                        />
+                      </div>
+                      <div className="w-1/5">
                         <InputField
                           variant="auth"
                           extra="mb-3"
                           showLabel={false}
                           label="Product"
                           id="searchProduct"
+                          disabled={
+                            cart?.saleType !== "WHOLE" &&
+                            cart?.saleType !== "SINGLE"
+                          }
                           placeholder="Product"
                           name="searchProduct"
                           value={cart?.searchProduct}
@@ -370,8 +432,14 @@ const PointOfSale = () => {
                             catalogs?.length > 0
                               ? [
                                   ...catalogs?.map((cat: any) => {
+                                    var pUnit = cat?.product?.unit;
+                                    var pItemPerPack =
+                                      cat?.product?.itemPerPack;
+
                                     return {
-                                      name: cat?.product?.name,
+                                      name: `${
+                                        pItemPerPack > 0 ? pItemPerPack : 1
+                                      } ${pUnit != null ? pUnit : ""} per pack`,
                                       value: cat?.product?.name,
                                     };
                                   }),
@@ -380,7 +448,7 @@ const PointOfSale = () => {
                           }
                         />
                       </div>
-                      <div className="w-1/4">
+                      <div className="w-1/5">
                         <InputField
                           variant="auth"
                           extra="mb-3"
@@ -409,7 +477,7 @@ const PointOfSale = () => {
                           }
                         />
                       </div>
-                      <div className="w-1/4">
+                      <div className="w-1/5">
                         <InputField
                           variant="auth"
                           extra="mb-3"
@@ -419,16 +487,14 @@ const PointOfSale = () => {
                           type="text"
                           name="quantity"
                           value={
-                            formatCurrency(
-                              catalogs?.filter(
-                                (s: any) => s.id == cart.catalogId
-                              )[0]?.sellingPrice
-                            ) + " (unit price)"
+                            cart?.saleType === "WHOLE"
+                              ? calculatePrice(cart?.catalogId, index)
+                              : calculateUnitPrice(cart?.catalogId, index)
                           }
                           disabled
                         />
                       </div>
-                      <div className="flex w-1/4 gap-3">
+                      <div className="flex w-1/5 gap-3">
                         <Button
                           style="flex gap-1 m-0 justify-items-center items-center bg-brand-500 hover:bg-brand-600 dark:text-white-300 p-3"
                           onClick={() => {
@@ -606,6 +672,7 @@ const PointOfSale = () => {
           onClose={() => {
             setOpenConfirmModal(false);
             setGeneratedSale({});
+            clearSale();
           }}
         >
           <div>
@@ -633,6 +700,7 @@ const PointOfSale = () => {
                       <tr>
                         <th className="w-1/12 py-1 text-center">#</th>
                         <th className="py-1 text-left">Item</th>
+                        <th className="w-2/12 py-1 text-center">Unit</th>
                         <th className="w-2/12 py-1 text-center">Qty</th>
                         <th className="w-3/12 py-1 text-right">Subtotal</th>
                       </tr>
@@ -640,30 +708,38 @@ const PointOfSale = () => {
                     <tbody>
                       {generatedSale?.carts != null &&
                         generatedSale?.carts?.length > 0 &&
-                        generatedSale?.carts?.map((cart: any) => (
-                          <tr>
-                            <td
-                              className="py-2 text-center"
-                              x-text="index+1"
-                            ></td>
-                            <td className="py-2 text-left">
-                              <span>{cart?.productName}</span>
-                              <br />
-                              <small>
-                                {formatCurrency(cart?.unitPriceAtPurchase)}
-                              </small>
-                            </td>
-                            <td className="py-2 text-center">
-                              {cart?.quantity}
-                            </td>
-                            <td className="py-2 text-right">
-                              {" "}
-                              {formatCurrency(
-                                cart?.unitPriceAtPurchase * cart?.quantity
-                              )}
-                            </td>
-                          </tr>
-                        ))}
+                        generatedSale?.carts?.map(
+                          (cart: any, index: number) => (
+                            <tr>
+                              <td className="py-2 text-center">{index + 1}</td>
+                              <td className="py-2 text-left">
+                                <span>{cart?.productName}</span>
+                                <br />
+                                <small>
+                                  {formatCurrency(cart?.unitPriceAtPurchase)}
+                                </small>
+                              </td>
+                              <td className="py-2 text-center">
+                                <span>
+                                  {cart?.unit?.length > 1 ? cart?.unit : "-"}
+                                </span>
+                              </td>
+                              <td className="py-2 text-center">
+                                <span>{cart?.quantity}</span>
+                                <br />
+                                <small>{cart?.quantityNarration}</small>
+                              </td>
+                              <td className="py-2 text-right">
+                                <span>
+                                  {formatCurrency(
+                                    cart?.unitPriceAtPurchase * cart?.quantity
+                                  )}
+                                </span>
+                                <br />
+                              </td>
+                            </tr>
+                          )
+                        )}
                     </tbody>
                   </table>
                 </div>
@@ -716,6 +792,16 @@ const PointOfSale = () => {
               >
                 Cancel
               </Button>
+              <button
+                onClick={() => {
+                  setOpenConfirmModal(false);
+                  setGeneratedSale({});
+                  clearSale();
+                }}
+                className="linear mb-5 mt-3 w-full rounded-md bg-yellow-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-yellow-600 active:bg-yellow-700 dark:bg-yellow-400 dark:text-white dark:hover:bg-yellow-300 dark:active:bg-yellow-200"
+              >
+                Confirm Later
+              </button>
               <button
                 onClick={() => {
                   updateSaleStatus(ORDER_STATUS[1]);
