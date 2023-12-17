@@ -188,11 +188,6 @@ export default function Invoice() {
                 )}
               </div>
               <hr className="mb-2 mt-5" />
-              {/* 
-              <p className="mt-5 text-center text-xs">
-                ©{new Date().getFullYear()} Inventory Hub. All Rights Reserved
-              </p>
-              */}
             </div>
           </div>
         </>

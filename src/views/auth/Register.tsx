@@ -124,14 +124,6 @@ export default function Register() {
             Sign in
           </Link>
         </div>
-        <div className="flex items-center justify-between">
-          <Link
-            to="/general/support"
-            className="text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-white"
-          >
-            Support and Guides
-          </Link>
-        </div>
       </div>
     </div>
   );

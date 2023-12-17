@@ -28,7 +28,6 @@ import PointOfSale from "views/admin/pos";
 import Invoice from "views/general/Invoice";
 import VerifyAccount from "views/auth/VerifyAccount";
 import Archives from "views/admin/archives";
-import Support from "views/general/Support";
 
 const routes = [
   {
@@ -135,13 +134,6 @@ const routes = [
     path: "invoice/:invoiceId/:size",
     icon: "",
     component: <Invoice />,
-  },
-  {
-    name: "Support",
-    layout: "/general",
-    path: "support",
-    icon: "",
-    component: <Support />,
   },
 ];
 export default routes;
