@@ -7,9 +7,9 @@ import useUserStore from "core/services/stores/useUserStore";
 
 export default function SignIn() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [accessType, setAccessType] = useState("0");
+  const [email, setEmail] = useState("test@test.com");
+  const [password, setPassword] = useState("password");
+  const [accessType, setAccessType] = useState("1");
 
   const error = useUserStore((store) => store.errors);
   const loginUser = useUserStore((store) => store.login);
