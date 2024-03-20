@@ -28,6 +28,7 @@ import PointOfSale from "views/admin/pos";
 import Invoice from "views/general/Invoice";
 import VerifyAccount from "views/auth/VerifyAccount";
 import Archives from "views/admin/archives";
+import Websales from "views/admin/websales";
 
 const routes = [
   {
@@ -134,6 +135,13 @@ const routes = [
     path: "invoice/:invoiceId/:size",
     icon: "",
     component: <Invoice />,
+  },
+  {
+    name: "Web sales",
+    layout: "/admin",
+    path: "web-sales",
+    icon: <GiWallet className="h-6 w-6" />,
+    component: <Websales />,
   },
 ];
 export default routes;

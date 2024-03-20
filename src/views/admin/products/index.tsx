@@ -34,18 +34,28 @@ import { FaClipboardList } from "react-icons/fa";
 import useCatalogStore from "core/services/stores/useCatalogStore";
 import useShopStore from "core/services/stores/useShopStore";
 import useUserStore from "core/services/stores/useUserStore";
+import imgPlaceholder from "assets/svg/defaultProductImg.svg";
+import UploadField from "core/components/fields/UploadField";
+import { gallery } from "core/const/const";
+import notification from "core/services/notification";
 
 const Products = () => {
   // TODO: Add access control
   const [expandedRows, setExpandedRows]: any = useState([]);
   const [expandState, setExpandState] = useState({});
+
+  const [displayedImg, setDisplayedImg] = useState<any>("");
+  const [openGallery, setOpenGallery] = useState(false);
+
   const errors = useProductStore((store) => store.errors);
   const user = useUserStore((store) => store.user);
   const access = useUserStore((store) => store.access);
   const isEmployer = useUserStore((store) => store.isEmployer);
+
   const updateError = useProductStore((store) => store.updateError);
   const clearError = useProductStore((store) => store.clearError);
   const productList = useProductStore((store) => store.productList);
+
   const getProducts = useProductStore((store) => store.getProducts);
   const addProductAction = useProductStore((store) => store.addProduct);
   const categories = useCategoryStore((store) => store.categories);
@@ -59,12 +69,14 @@ const Products = () => {
   const updateProductListingAction = useProductStore(
     (store) => store.updateProductListing
   );
+  const updateGalleryAction = useProductStore((store) => store.updateGallery);
 
   const shops = useShopStore((store) => store.shops);
   const getShops = useShopStore((store) => store.getShops);
   const addCatalogAction = useCatalogStore((store) => store.addCatalog);
 
   const [selected, setSelected]: any = useState({});
+
   const [productForm, setProductForm] = useState({
     name: "",
     description: "",
@@ -82,6 +94,7 @@ const Products = () => {
     itemPerPack: 1,
     manufacturingDate: "",
     expiringDate: "",
+    gallery: [],
   });
 
   const [category, setCategory] = useState("");
@@ -95,7 +108,7 @@ const Products = () => {
     size: "",
     color: "",
     unit: "",
-    itemPerPack: 0,
+    itemPerPack: 1,
     comments: "",
     manufacturingDate: "",
     expiringDate: "",
@@ -121,6 +134,10 @@ const Products = () => {
   const [openUpdatePriceForm, setOpenUpdatePriceForm] = useState(false);
   const [openUpdateListingForm, setOpenUpdateListingForm] = useState(false);
   const [isListed, setIsListed] = useState(false);
+
+  const [updateGalleryForm, setUpdateGalleryForm] = useState({
+    gallery: [],
+  });
 
   const onFormChange = (e: any, form: string) => {
     const { name, value } = e.target;
@@ -157,6 +174,13 @@ const Products = () => {
     }
   };
 
+  const removeImage = (index: number) => {
+    setProductForm((state) => ({
+      ...state,
+      gallery: [...state?.gallery?.filter((file, i) => i !== index)],
+    }));
+  };
+
   const addProduct = async (e: any) => {
     e.preventDefault();
     var status: any = await addProductAction({
@@ -166,6 +190,7 @@ const Products = () => {
       discountPercent: Number(productForm?.discountPercent),
       itemPerPack: Number(productForm.itemPerPack),
     });
+
     if (status) {
       setProductForm({
         name: "",
@@ -177,13 +202,14 @@ const Products = () => {
         color: "",
         comments: "",
         unit: "",
-        itemPerPack: 0,
+        itemPerPack: 1,
         costPrice: 0,
         sellingPrice: 0,
         discountPercent: 0,
         isListed: true,
         manufacturingDate: "",
         expiringDate: "",
+        gallery: [],
       });
       setOpenAddForm(false);
     }
@@ -240,6 +266,25 @@ const Products = () => {
       },
       selected?.id
     );
+  };
+
+  const updateGallery = async (e: any) => {
+    e.preventDefault();
+
+    if (updateGalleryForm?.gallery?.length > 0) {
+      if (
+        window.confirm(
+          "All images in this product gallery, will be updated. Do you still want to proceed"
+        )
+      ) {
+        await updateGalleryAction(updateGalleryForm, selected?.id);
+      }
+    } else {
+      notification({
+        type: "error",
+        message: "Please upload images",
+      });
+    }
   };
 
   const handleExpandRow = async (event: any, id: string) => {
@@ -310,10 +355,29 @@ const Products = () => {
           ]}
         >
           {productList != null && productList?.items?.length > 0 ? (
-            productList.items.map((product: any) => (
+            productList.items.map((product) => (
               <>
                 <tr key={product?.id}>
-                  <TableRowData value={product?.name} />
+                  <ActionRowData style="min-w-[50px]">
+                    <div
+                      className="flex items-center gap-2 hover:cursor-pointer"
+                      onClick={() => {
+                        setSelected(product);
+                        setOpenGallery(true);
+                      }}
+                    >
+                      <img
+                        src={
+                          product?.gallery?.length > 0
+                            ? product?.gallery[0]?.url
+                            : imgPlaceholder
+                        }
+                        alt=""
+                        className="h-[50px] w-[50px] rounded-[5px]"
+                      />
+                      <p>{product?.name}</p>
+                    </div>
+                  </ActionRowData>
                   <TableRowData
                     value={
                       product?.category?.name != null &&
@@ -784,6 +848,15 @@ const Products = () => {
                   name="itemPerPack"
                   value={productForm?.itemPerPack}
                   onChange={(e: any) => onFormChange(e, "product")}
+                  onFocus={() => {
+                    if (
+                      errors?.ItemPerPack &&
+                      errors?.ItemPerPack?.length > 0
+                    ) {
+                      updateError("ItemPerPack");
+                    }
+                  }}
+                  error={errors?.ItemPerPack}
                 />
               </div>
             </div>
@@ -895,6 +968,28 @@ const Products = () => {
               value={productForm?.comments}
               onChange={(e: any) => onFormChange(e, "product")}
             />
+
+            <UploadField
+              boxStyle="mb-[24px]"
+              label="Upload picture of products"
+              name="gallery"
+              onChange={setProductForm}
+            />
+
+            <div className="mb-5 flex flex-wrap gap-2">
+              {productForm &&
+                productForm?.gallery?.length > 0 &&
+                Array.from(productForm?.gallery)?.map(
+                  (file: any, index: number) => (
+                    <div key={file?.name} className="h-[80px] w-[80px]">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`logo${index}`}
+                      />
+                    </div>
+                  )
+                )}
+            </div>
 
             <div className="flex gap-3">
               <Button
@@ -1357,6 +1452,96 @@ const Products = () => {
               </Button>
               <button className="linear mb-5 mt-3 w-full rounded-md bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
                 Add To Catalog
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {openGallery && (
+        <Modal
+          styling="w-4/6 p-5"
+          onClose={() => {
+            setOpenGallery(false);
+            setSelected({});
+            clearError();
+          }}
+        >
+          <div className="mb-5 flex w-full flex-col-reverse gap-3 sm:flex-row">
+            <div className="flex w-full justify-center gap-5 sm:block sm:w-[80px]">
+              <div
+                className={`${gallery}`}
+                onClick={() => setDisplayedImg(imgPlaceholder)}
+              >
+                <img src={imgPlaceholder} alt="" className="h-2/3 w-2/3" />
+              </div>
+              <div
+                className={`${gallery}`}
+                onClick={() => setDisplayedImg(imgPlaceholder)}
+              >
+                <img src={imgPlaceholder} alt="" className="h-2/3 w-2/3" />
+              </div>
+              <div
+                className={`${gallery}`}
+                onClick={() => setDisplayedImg(imgPlaceholder)}
+              >
+                <img src={imgPlaceholder} alt="" className="h-2/3 w-2/3" />
+              </div>
+              <div
+                className={`${gallery} !mb-0`}
+                onClick={() => setDisplayedImg(imgPlaceholder)}
+              >
+                <img src={imgPlaceholder} alt="" className="h-2/3 w-2/3" />
+              </div>
+            </div>
+            <div className="flex h-auto w-full items-center justify-center rounded-[4px] border bg-[#f5f5f5] py-5 sm:py-0">
+              <div className="flex items-center justify-center">
+                <img src={displayedImg} alt="" className="" />
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={(e) => updateGallery(e)}>
+            <p className="text-black mb-5 font-bold dark:text-white">
+              Product Gallery Update
+            </p>
+
+            <UploadField
+              boxStyle="mb-[24px]"
+              label="Upload picture of products"
+              name="gallery"
+              onChange={setUpdateGalleryForm}
+            />
+
+            <div className="mb-5 flex flex-wrap gap-2">
+              {updateGalleryForm &&
+                updateGalleryForm?.gallery?.length > 0 &&
+                Array.from(updateGalleryForm?.gallery)?.map(
+                  (file: any, index: number) => (
+                    <div key={file?.name} className="h-[80px] w-[80px]">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`logo${index}`}
+                      />
+                    </div>
+                  )
+                )}
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                onClick={() => {
+                  setOpenCatalogForm(false);
+                  setSelected({});
+                  clearError();
+                }}
+                style="linear mb-5 mt-3 w-full rounded-md bg-red-500 py-[12px] text-base font-medium text-white transition duration-200 hover:bg-red-600 active:bg-red-700 dark:bg-red-400 dark:text-white dark:hover:bg-red-300 dark:active:bg-red-200 text-xs"
+              >
+                Cancel
+              </Button>
+              <button className="linear mb-5 mt-3 w-full rounded-md bg-green-500 py-[12px] text-base text-xs font-medium text-white transition duration-200 hover:bg-green-600 active:bg-green-700 dark:bg-green-400 dark:text-white dark:hover:bg-green-300 dark:active:bg-green-200">
+                Update Gallery
               </button>
             </div>
           </form>

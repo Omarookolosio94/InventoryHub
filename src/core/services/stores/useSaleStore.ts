@@ -19,6 +19,7 @@ type SaleState = {
   sale: Sale;
   analytics: SaleAnalytics;
   salesForTax: SalesForTax;
+  websalesList: WebsaleList;
   reset: () => void;
   updateError: (name: string) => void;
   clearError: () => void;
@@ -38,6 +39,12 @@ const useSaleStore = create<SaleState>()(
         isLoading: false,
         errors: {},
         salesList: {
+          items: [],
+          currentPage: 0,
+          totalItem: 0,
+          totalPage: 0,
+        },
+        websalesList: {
           items: [],
           currentPage: 0,
           totalItem: 0,

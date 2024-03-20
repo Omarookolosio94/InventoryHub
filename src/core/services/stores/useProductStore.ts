@@ -3,6 +3,7 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import {
   addProducts,
   getProducts,
+  updateGallery,
   updateProductDetails,
   updateProductListing,
   updateProductPrice,
@@ -22,6 +23,7 @@ type ProductState = {
   updateProductDetail: (detail: ProductDetail, productId: string) => void;
   updateProductPrice: (price: ProductPrice, productId: string) => void;
   updateProductListing: (listing: ProductListing, productId: string) => void;
+  updateGallery: (gallery: any, productId: string) => void;
 };
 
 const useProductStore = create<ProductState>()(
@@ -46,8 +48,8 @@ const useProductStore = create<ProductState>()(
               totalItem: 0,
               totalPage: 0,
             },
-          })
-          sessionStorage.removeItem('productstate')
+          });
+          sessionStorage.removeItem("productstate");
         },
         updateError: (name) =>
           set((state) => ({
@@ -195,6 +197,46 @@ const useProductStore = create<ProductState>()(
           try {
             set({ isLoading: true });
             const response = await updateProductPrice(price, productId);
+
+            const { success, statusCode, data, message } = response;
+            if (success) {
+              set((state) => ({
+                productList: {
+                  ...state.productList,
+                  items: state.productList?.items?.map((product: any) =>
+                    product.id === productId ? { ...data } : product
+                  ),
+                },
+              }));
+              notification({
+                message,
+                type: "success",
+              });
+            } else {
+              if (statusCode === 400) {
+                set({ errors: data });
+              }
+
+              notification({
+                message: message,
+                type: "danger",
+              });
+            }
+            set({ isLoading: false });
+            return success;
+          } catch (err) {
+            set({ isLoading: false });
+            notification({
+              message: "An unknown error occured, please try again later",
+              type: "danger",
+            });
+            return false;
+          }
+        },
+        updateGallery: async (gallery, productId) => {
+          try {
+            set({ isLoading: true });
+            const response = await updateGallery(gallery, productId);
 
             const { success, statusCode, data, message } = response;
             if (success) {

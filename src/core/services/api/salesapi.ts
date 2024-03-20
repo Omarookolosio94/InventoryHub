@@ -81,3 +81,16 @@ export const getSalesForTax = (storeId: string, amount: number) =>
     },
     auth: true,
   });
+
+export const getWebsales = (employerId: string, param: WebsaleSearch) =>
+  apicall({
+    endpoint: "websales",
+    param: `${employerId}`,
+    pQuery: {
+      status: param?.status,
+      page: param?.page,
+      count: param?.count,
+    },
+    method: "GET",
+    auth: true,
+  });
