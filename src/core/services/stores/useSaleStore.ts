@@ -8,7 +8,11 @@ import {
   getSalesById,
   getSalesForTax,
   getStoreSales,
+  getWebsaleById,
+  getWebsales,
   updateSaleStatus,
+  updateWebsalePaymentStatus,
+  updateWebsaleStatus,
 } from "../api/salesapi";
 
 // Zustand implementation
@@ -17,6 +21,7 @@ type SaleState = {
   errors: any | {};
   salesList: SaleList;
   sale: Sale;
+  webSale: Websale;
   analytics: SaleAnalytics;
   salesForTax: SalesForTax;
   websalesList: WebsaleList;
@@ -25,59 +30,58 @@ type SaleState = {
   clearError: () => void;
   getBusinessSales: (param: StoreSearch) => void;
   getSaleAnalytics: (storeId: string, frequency: string, date: string) => void;
+  getWebsales: (employerId: string, param: WebsaleSearch) => void;
   getStoreSales: (storeId: string, param: StoreSearch) => void;
   generateSales: (invoice: Invoice, storeId: string) => void;
   updateSaleStatus: (status: string, salesId: string) => void;
+  updateWebsaleStatus: (
+    employerId: string,
+    websaleStatus: WebsaleStatus
+  ) => void;
+  updateWebsalePaymentStatus: (
+    employerId: string,
+    paymentStatus: WebsalePaymentStatus
+  ) => void;
   getSalesById: (invoiceId: string) => void;
+  getWebsaleById: (employerId: string, invoiceId: string) => void;
   getSaleForTax: (storeId: string, amount: number) => void;
+};
+
+const defaults: any = {
+  isLoading: false,
+  errors: {},
+  salesList: {
+    items: [],
+    currentPage: 0,
+    totalItem: 0,
+    totalPage: 0,
+  },
+  websalesList: {
+    items: [],
+    currentPage: 0,
+    totalItem: 0,
+    totalPage: 0,
+  },
+  analytics: null,
+  sale: null,
+  webSale: null,
+  salesForTax: {
+    business: "",
+    profitOrLossBeforeExpenseAndTax: 0,
+    sales: [],
+    totalCost: 0,
+    totalSales: 0,
+  },
 };
 
 const useSaleStore = create<SaleState>()(
   devtools(
     persist(
       (set, get): SaleState => ({
-        isLoading: false,
-        errors: {},
-        salesList: {
-          items: [],
-          currentPage: 0,
-          totalItem: 0,
-          totalPage: 0,
-        },
-        websalesList: {
-          items: [],
-          currentPage: 0,
-          totalItem: 0,
-          totalPage: 0,
-        },
-        analytics: null,
-        sale: null,
-        salesForTax: {
-          business: "",
-          profitOrLossBeforeExpenseAndTax: 0,
-          sales: [],
-          totalCost: 0,
-          totalSales: 0,
-        },
+        ...defaults,
         reset: () => {
           set({
-            isLoading: false,
-            errors: {},
-            salesList: {
-              items: [],
-              currentPage: 0,
-              totalItem: 0,
-              totalPage: 0,
-            },
-            analytics: null,
-            sale: null,
-            salesForTax: {
-              business: "",
-              profitOrLossBeforeExpenseAndTax: 0,
-              sales: [],
-              totalCost: 0,
-              totalSales: 0,
-            },
+            ...defaults,
           });
           sessionStorage.removeItem("salestate");
         },
@@ -97,6 +101,15 @@ const useSaleStore = create<SaleState>()(
           const { success, data } = response;
           if (success) {
             set({ sale: data });
+          }
+          set({ isLoading: false });
+        },
+        getWebsaleById: async (employerId, invoiceId) => {
+          set({ isLoading: true });
+          const response = await getWebsaleById(employerId, invoiceId);
+          const { success, data } = response;
+          if (success) {
+            set({ webSale: data });
           }
           set({ isLoading: false });
         },
@@ -124,6 +137,15 @@ const useSaleStore = create<SaleState>()(
           const { success, data } = response;
           if (success) {
             set({ salesList: data });
+          }
+          set({ isLoading: false });
+        },
+        getWebsales: async (employerId, param) => {
+          set({ isLoading: true });
+          const response = await getWebsales(employerId, param);
+          const { success, data } = response;
+          if (success) {
+            set({ websalesList: data });
           }
           set({ isLoading: false });
         },
@@ -191,6 +213,92 @@ const useSaleStore = create<SaleState>()(
                   ...state.salesList,
                   items: state.salesList?.items?.map((sale: any) =>
                     sale.id === salesId ? { ...data } : sale
+                  ),
+                },
+              }));
+              notification({
+                message,
+                type: "success",
+              });
+            } else {
+              if (statusCode === 400) {
+                set({ errors: data });
+              }
+
+              notification({
+                message: message,
+                type: "danger",
+              });
+            }
+            set({ isLoading: false });
+            return success;
+          } catch (err) {
+            set({ isLoading: false });
+            notification({
+              message: "An unknown error occured, please try again later",
+              type: "danger",
+            });
+            return false;
+          }
+        },
+        updateWebsaleStatus: async (employerId, websaleStatus) => {
+          try {
+            set({ isLoading: true });
+            const response = await updateWebsaleStatus(
+              employerId,
+              websaleStatus
+            );
+
+            const { success, statusCode, data, message } = response;
+            if (success) {
+              set((state) => ({
+                websalesList: {
+                  ...state.websalesList,
+                  items: state.websalesList?.items?.map((sale) =>
+                    sale.id === websaleStatus?.saleId ? { ...data } : sale
+                  ),
+                },
+              }));
+              notification({
+                message,
+                type: "success",
+              });
+            } else {
+              if (statusCode === 400) {
+                set({ errors: data });
+              }
+
+              notification({
+                message: message,
+                type: "danger",
+              });
+            }
+            set({ isLoading: false });
+            return success;
+          } catch (err) {
+            set({ isLoading: false });
+            notification({
+              message: "An unknown error occured, please try again later",
+              type: "danger",
+            });
+            return false;
+          }
+        },
+        updateWebsalePaymentStatus: async (employerId, paymentStatus) => {
+          try {
+            set({ isLoading: true });
+            const response = await updateWebsalePaymentStatus(
+              employerId,
+              paymentStatus
+            );
+
+            const { success, statusCode, data, message } = response;
+            if (success) {
+              set((state) => ({
+                websalesList: {
+                  ...state.websalesList,
+                  items: state.websalesList?.items?.map((sale) =>
+                    sale.id === paymentStatus?.saleId ? { ...data } : sale
                   ),
                 },
               }));

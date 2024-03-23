@@ -449,7 +449,7 @@ const Sales = () => {
         >
           <form onSubmit={(e) => updateSaleStatus(e)}>
             <p className="text-black mb-5 font-bold dark:text-white">
-              Update Product Detail
+              Update Sales
             </p>
 
             <SelectField

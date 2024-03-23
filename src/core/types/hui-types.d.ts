@@ -63,6 +63,20 @@ declare global {
     gallery: Blob[] | any;
   }
 
+  interface UpdateEmployer {
+    name: string;
+    logo: Blob[] | any;
+    about: string;
+    caption: string;
+    services: string;
+    termsAndConditions: string;
+    privacyPolicy: string;
+    legalDocument: string;
+    headOfficeAddress: string;
+    contactLine: string;
+    weblink: string;
+  }
+
   interface AddCategory {
     name: string;
     description: string;
@@ -191,7 +205,7 @@ declare global {
     tax: number;
     deliveryFee: number;
     totalPaid: number;
-    status: number;
+    status: string;
     paymentMethod: string;
     deliveryMethod: string;
     isPaid: boolean;
@@ -208,6 +222,33 @@ declare global {
     timeLine: TimeLine[];
     lastUpdatedBy: string;
     employerId: string;
+    employer: Employer;
+  }
+
+  interface Employer {
+    id: string;
+    name: string;
+    email: string;
+    logo: BusinessGallery[];
+    about: string;
+    caption: string;
+    services: string;
+    termsAndConditions: string;
+    privacyPolicy: string;
+    legalDocument: string;
+    headOfficeAddress: string;
+    contactLine: string;
+    weblink: string;
+    isVerified: true;
+    dateRegistered: string;
+    lastUpdated: string;
+  }
+
+  interface BusinessGallery {
+    id: string;
+    name: string;
+    url: string;
+    isDefault: true;
   }
 
   interface WebsaleList {
@@ -269,5 +310,17 @@ declare global {
     status: string;
     page: number;
     count: number;
+  }
+
+  interface WebsaleStatus {
+    saleId: string;
+    status: string;
+    instruction: string;
+    deliveryFee: number;
+  }
+
+  interface WebsalePaymentStatus {
+    saleId: string;
+    isPaid: boolean;
   }
 }

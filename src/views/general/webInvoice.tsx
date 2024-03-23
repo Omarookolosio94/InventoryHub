@@ -6,25 +6,23 @@ import { useEffect } from "react";
 import { AiFillPrinter } from "react-icons/ai";
 import { useParams } from "react-router-dom";
 
-export default function Invoice() {
-  const { invoiceId, size } = useParams();
-  const getSaleAction = useSaleStore((state) => state.getSalesById);
-  const sale: any = useSaleStore((state) => state.sale);
+export default function WebInvoice() {
+  const { employerId, invoiceId, size } = useParams();
+  const getSaleAction = useSaleStore((state) => state.getWebsaleById);
+  const sale = useSaleStore((state) => state.webSale);
 
   const printReceipt = () => {
     const titleBefore = document.title;
-    document.title = `${sale?.billType}-${sale?.code}`;
+    document.title = `${sale?.customerName}-${sale?.code}`;
     window.print();
     document.title = titleBefore;
   };
 
   useEffect(() => {
     if (sale == null || sale?.code != invoiceId) {
-      getSaleAction(invoiceId);
+      getSaleAction(employerId, invoiceId);
     }
   }, []);
-
-  // TODO: Custom search for invoice
 
   return (
     <div className="left-0 top-0 z-10 flex w-full flex-col flex-wrap content-center justify-center gap-4 p-24">
@@ -53,16 +51,17 @@ export default function Invoice() {
                        alt="Tailwind POS"
                        className="mb-3 inline-block h-8 w-8"
                      /> */}
-                <h2 className="text-xl font-semibold">{sale?.store?.owner}</h2>
-                <p>{sale?.store?.address}</p>
+                <h2 className="text-xl font-semibold">
+                  {sale?.employer?.name}
+                </h2>
+                <p>{sale?.employer?.headOfficeAddress}</p>
                 <p className="text-xs">
-                  {sale?.store?.email} | {sale?.store?.phone}
+                  {sale?.employer?.email} | {sale?.employer?.contactLine}
                 </p>
               </div>
               <div className="mt-4 flex text-xs">
                 <div className="flex-grow">
-                  {sale?.billType} No:{" "}
-                  <span className="font-bold">{sale?.code}</span>
+                  No: <span className="font-bold">{sale?.code}</span>
                   <br />
                   {sale?.customerName !== "Anonymous" && (
                     <span>CUSTOMER: {sale?.customerName}</span>
@@ -83,9 +82,9 @@ export default function Invoice() {
                     </tr>
                   </thead>
                   <tbody>
-                    {sale?.carts != null &&
-                      sale?.carts?.length > 0 &&
-                      sale?.carts?.map((cart: any, index: number) => (
+                    {sale?.cart != null &&
+                      sale?.cart?.length > 0 &&
+                      sale?.cart?.map((cart, index: number) => (
                         <tr>
                           <td className="py-2 text-center">{index + 1}</td>
                           <td className="py-2 text-left">
@@ -140,9 +139,10 @@ export default function Invoice() {
                 </div>
                 <hr className="my-2" />
                 <div className="flex text-xs font-semibold">
-                  <div className="flex-grow">PAYMENT MODE</div>
-                  <div>{sale?.paymentMethod}</div>
+                  <div className="flex-grow">DELIVERY MODE</div>
+                  <div>{sale?.deliveryMethod}</div>
                 </div>
+
                 <div className="flex text-xs font-semibold">
                   <div className="flex-grow">STATUS</div>
                   <div>{sale?.status}</div>
@@ -151,8 +151,8 @@ export default function Invoice() {
                 {size === InvoiceSize.LARGE && (
                   <>
                     <div className="flex text-xs font-semibold">
-                      <div className="flex-grow">SALES OFFICER</div>
-                      <div>{sale?.soldBy}</div>
+                      <div className="flex-grow">SALES PLATFORM</div>
+                      <div>Store Front</div>
                     </div>
                     <hr className="my-5" />
                     <div className="flex text-xs font-semibold">

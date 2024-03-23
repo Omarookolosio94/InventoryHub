@@ -94,3 +94,43 @@ export const getWebsales = (employerId: string, param: WebsaleSearch) =>
     method: "GET",
     auth: true,
   });
+
+export const getWebsaleById = (employerId: string, saleId: string) =>
+  apicall({
+    endpoint: "websales",
+    param: `${employerId}/${saleId}`,
+    method: "GET",
+    auth: true,
+  });
+
+export const updateWebsaleStatus = (
+  employerId: string,
+  websaleStatus: WebsaleStatus
+) =>
+  apicall({
+    endpoint: "websales",
+    param: `${employerId}/status`,
+    body: {
+      saleId: websaleStatus?.saleId,
+      status: websaleStatus?.status,
+      instruction: websaleStatus?.instruction,
+      deliveryFee: +websaleStatus?.deliveryFee,
+    },
+    method: "PUT",
+    auth: true,
+  });
+
+export const updateWebsalePaymentStatus = (
+  employerId: string,
+  paymentStatus: WebsalePaymentStatus
+) =>
+  apicall({
+    endpoint: "websales",
+    param: `${employerId}/payment-status`,
+    body: {
+      saleId: paymentStatus?.saleId,
+      isPaid: paymentStatus?.isPaid,
+    },
+    method: "PUT",
+    auth: true,
+  });

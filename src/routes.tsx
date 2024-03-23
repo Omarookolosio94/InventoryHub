@@ -29,6 +29,7 @@ import Invoice from "views/general/Invoice";
 import VerifyAccount from "views/auth/VerifyAccount";
 import Archives from "views/admin/archives";
 import Websales from "views/admin/websales";
+import WebInvoice from "views/general/webInvoice";
 
 const routes = [
   {
@@ -79,6 +80,13 @@ const routes = [
     path: "sales",
     icon: <GiWallet className="h-6 w-6" />,
     component: <Sales />,
+  },
+  {
+    name: "Web sales",
+    layout: "/admin",
+    path: "web-sales",
+    icon: <GiWallet className="h-6 w-6" />,
+    component: <Websales />,
   },
   {
     name: "Products",
@@ -137,11 +145,11 @@ const routes = [
     component: <Invoice />,
   },
   {
-    name: "Web sales",
-    layout: "/admin",
-    path: "web-sales",
-    icon: <GiWallet className="h-6 w-6" />,
-    component: <Websales />,
-  },
+    name: "Web Invoice",
+    layout: "/general",
+    path: "web-invoice/:employerId/:invoiceId/:size",
+    icon: "",
+    component: <WebInvoice />,
+  }
 ];
 export default routes;
