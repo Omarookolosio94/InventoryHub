@@ -27,12 +27,17 @@ import { RiPriceTag3Fill } from "react-icons/ri";
 import useSaleStore from "core/services/stores/useSaleStore";
 import { GiReceiveMoney } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
-import { InvoiceSize, ORDER_STATUS } from "core/const/const";
+import {
+  InvoiceSize,
+  ORDER_STATUS,
+  PAYMENT_STATUS,
+  WEB_ORDER_STATUS,
+} from "core/const/const";
 import useUserStore from "core/services/stores/useUserStore";
-import useShopStore from "core/services/stores/useShopStore";
-import { FaFileArchive } from "react-icons/fa";
+import TextField from "core/components/fields/TextField";
+import InputField from "core/components/fields/InputField";
 
-const Sales = () => {
+const Websales = () => {
   const [expandedRows, setExpandedRows]: any = useState([]);
   const [expandState, setExpandState] = useState({});
   const navigate = useNavigate();
@@ -40,26 +45,35 @@ const Sales = () => {
   const user = useUserStore((store) => store.user);
   const access = useUserStore((store) => store.access);
   const isEmployer = useUserStore((store) => store.isEmployer);
+
   const errors = useSaleStore((store) => store.errors);
   const updateError = useSaleStore((store) => store.updateError);
   const clearError = useSaleStore((store) => store.clearError);
 
-  const salesList = useSaleStore((store) => store.salesList);
-  const getBusinessSalesAction = useSaleStore(
-    (store) => store.getBusinessSales
+  const salesList = useSaleStore((store) => store.websalesList);
+  const getSalesAction = useSaleStore((store) => store.getWebsales);
+  const updateSalesAction = useSaleStore((store) => store.updateWebsaleStatus);
+  const updatePaymentStatusAction = useSaleStore(
+    (store) => store.updateWebsalePaymentStatus
   );
-  const getStoreSalesAction = useSaleStore((store) => store.getStoreSales);
-  const generateSalesAction = useSaleStore((store) => store.generateSales);
-  const updateSalesAction = useSaleStore((store) => store.updateSaleStatus);
 
-  const shops: any = useShopStore((store) => store.shops);
-  const singleshop = useShopStore((store) => store.shop);
-  const getShopsAction = useShopStore((store) => store.getShops);
-  const getShopAction = useShopStore((store) => store.getShop);
+  const [saleStatus, setSaleStatus] = useState<WebsaleStatus>({
+    saleId: "",
+    status: "",
+    instruction: "",
+    deliveryFee: 0,
+  });
 
-  const [saleStatus, setSaleStatus] = useState("");
+  const handleStatusChange = (e: any) => {
+    const { name, value } = e?.target;
+
+    setSaleStatus((state) => ({
+      ...state,
+      [name]: value,
+    }));
+  };
+
   const [search, setSearch] = useState({
-    storeId: "",
     status: "",
     page: 1,
     count: 20,
@@ -70,7 +84,32 @@ const Sales = () => {
 
   const updateSaleStatus = async (e: any) => {
     e.preventDefault();
-    await updateSalesAction(saleStatus, selected?.id);
+    await updateSalesAction(user?.employerId, { ...saleStatus });
+  };
+
+  const updatePaymentStatus = async (saleId: string, isPaid: boolean) => {
+    if (
+      window.confirm(
+        `This order will be marked as ${
+          isPaid ? "Paid" : "Unpaid"
+        }, Do you still want to proceed?`
+      )
+    ) {
+      await updatePaymentStatusAction(user?.employerId, {
+        saleId,
+        isPaid,
+      });
+    }
+  };
+
+  const getStatusesWithHigherIndex = (status: string) => {
+    const updatedIndex = WEB_ORDER_STATUS.indexOf(status);
+
+    if (updatedIndex === -1) {
+      return [];
+    }
+
+    return WEB_ORDER_STATUS.slice(updatedIndex);
   };
 
   const handleExpandRow = async (event: any, id: string) => {
@@ -79,41 +118,23 @@ const Sales = () => {
     setExpandedRows(newRows?.newExpandedRows);
   };
 
-  const fetchSales = (assignedStore: string, search: any) => {
-    if (isEmployer) {
-      getBusinessSalesAction({
-        ...search,
-      });
-    } else {
-      getStoreSalesAction(assignedStore, { ...search });
-    }
+  const fetchSales = (employerId: string, search: any) => {
+    getSalesAction(employerId, { ...search });
   };
 
   useEffect(() => {
-    if (shops?.length < 1) {
-      getShopsAction(user?.employerId);
-    }
-  }, []);
-
-  useEffect(() => {
     if (salesList?.items?.length < 1) {
-      fetchSales(isEmployer ? "" : user?.assignedStoreIds[0], {
+      fetchSales(user?.employerId, {
         ...search,
       });
     }
   }, []);
-
-  // TODO: Add action to view product details once they are clicked
-  // TODO: Print on page without navigating to url
-  // TODO: Change icons for status
-  // TODO: Add Archive from Sales
-  // TODO: Hide dashboard from other users
 
   return (
     <div className="mt-3">
       <Card extra={"w-full h-full mx-4 px-6 pb-6 sm:overflow-x-auto"}>
         <SubHeader
-          title="Sales Record"
+          title="Web Sales Record"
           action="Make Sales"
           showAction={access?.sale?.includes("WRITE")}
           actionFunc={() => navigate("/admin/checkout")}
@@ -123,51 +144,70 @@ const Sales = () => {
           <SimpleTable
             headers={[
               "Inv. Code",
-              "Bill Type",
+              "Customer",
               "Status",
               "Total Amount",
-              "Paid With",
               "Is Paid",
               "Date Sold",
+              "Delivery Mode",
               "Actions",
             ]}
           >
             {salesList != null && salesList?.items?.length > 0 ? (
-              salesList.items.map((sale: any) => (
+              salesList.items.map((sale) => (
                 <>
                   <tr key={sale?.id}>
                     <TableRowData
                       onClick={() =>
-                        openInNewTab(`/general/invoice/${sale?.code}/${InvoiceSize.LARGE}`)
+                        openInNewTab(
+                          `/general/invoice/${sale?.code}/${InvoiceSize.LARGE}`
+                        )
                       }
                       enableAction
                       style="min-w-[60px]"
                       value={sale?.code}
                     />
-                    <TableRowData style="min-w-[50px]" value={sale?.billType} />
+                    <TableRowData
+                      style="min-w-[50px]"
+                      value={sale?.customerName}
+                    />
                     <ActionRowData style="min-w-[50px]">
                       <div
                         className={`flex dark:hover:text-white
                       ${
-                        sale?.status == ORDER_STATUS[0] &&
-                        "cursor-pointer text-yellow-500 hover:text-yellow-600"
+                        sale?.status == WEB_ORDER_STATUS[0] &&
+                        "cursor-pointer text-gray-500 hover:text-gray-600"
                       }
                       ${
-                        sale?.status == ORDER_STATUS[1] &&
-                        "cursor-not-allowed text-green-500 hover:text-green-600"
+                        sale?.status == WEB_ORDER_STATUS[1] &&
+                        "cursor-not-allowed text-blue-500 hover:text-blue-600"
                       }
                       ${
-                        sale?.status == ORDER_STATUS[2] &&
+                        sale?.status == WEB_ORDER_STATUS[2] &&
+                        "cursor-not-allowed text-yellow-500 hover:text-yellow-600"
+                      }
+                      ${
+                        sale?.status == WEB_ORDER_STATUS[3] &&
                         "cursor-not-allowed text-red-500 hover:text-red-600"
+                      }
+                      ${
+                        sale?.status == WEB_ORDER_STATUS[4] &&
+                        "cursor-not-allowed text-green-500 hover:text-green-600"
                       }
                       `}
                         onClick={() => {
                           if (
                             access?.sale?.includes("UPDATE") &&
-                            sale?.status == ORDER_STATUS[0]
+                            sale?.status !== WEB_ORDER_STATUS[4] &&
+                            sale?.status !== WEB_ORDER_STATUS[3]
                           ) {
                             setSelected({ ...sale });
-                            setSaleStatus(sale?.status);
+                            setSaleStatus({
+                              saleId: sale?.id,
+                              status: sale?.status,
+                              instruction: "",
+                              deliveryFee: 0,
+                            });
                             setOpenUpdateStatusForm(true);
                           }
                         }}
@@ -182,12 +222,13 @@ const Sales = () => {
                       style="min-w-[50px]"
                       value={formatCurrency(sale?.totalPaid)}
                     />
-                    <TableRowData
-                      style="min-w-[50px]"
-                      value={sale?.paymentMethod}
-                    />
                     <ActionRowData style="min-w-[50px]">
-                      <div className="flex cursor-pointer">
+                      <div
+                        className="flex cursor-pointer"
+                        onClick={() =>
+                          updatePaymentStatus(sale?.id, !sale?.isPaid)
+                        }
+                      >
                         {sale?.isPaid ? (
                           <>
                             <MdCheckCircle className="mr-1 text-green-500 dark:text-green-300" />
@@ -201,10 +242,17 @@ const Sales = () => {
                         )}
                       </div>
                     </ActionRowData>
+
                     <TableRowData
                       style="min-w-[50px]"
                       value={getDate(sale?.dateAdded, true, true)}
                     />
+
+                    <TableRowData
+                      style="min-w-[50px]"
+                      value={sale?.deliveryMethod}
+                    />
+
                     <ActionRowData>
                       <Button
                         style="flex gap-1 justify-items-center items-center bg-gray-500 hover:bg-gray-600 dark:text-white-300"
@@ -225,16 +273,20 @@ const Sales = () => {
                       <Button
                         style="flex gap-1 justify-items-center items-center bg-green-500 hover:bg-green-600 dark:text-white-300"
                         onClick={() =>
-                          openInNewTab(`/general/invoice/${sale?.code}/${InvoiceSize.LARGE}`)
+                          openInNewTab(
+                            `/general/web-invoice/${user?.employerId}/${sale?.code}/${InvoiceSize.LARGE}`
+                          )
                         }
                       >
                         <MdReceiptLong />
                         <span className="text-xs">Receipt A4</span>
                       </Button>
                       <Button
-                        style="flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
+                        style="flex gap-1 justify-items-cenßter items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300"
                         onClick={() =>
-                          openInNewTab(`/general/invoice/${sale?.code}/${InvoiceSize.SMALL}`)
+                          openInNewTab(
+                            `/general/web-invoice/${user?.employerId}/${sale?.code}/${InvoiceSize.SMALL}`
+                          )
                         }
                       >
                         <MdReceiptLong />
@@ -252,15 +304,17 @@ const Sales = () => {
                           <li className="mb-5 flex gap-3">
                             <div className="w-1/3">
                               <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                                Sold By:
+                                Date Sold:
                               </span>
-                              <span>{sale?.soldBy}</span>
+                              <span>
+                                {getDate(sale?.dateAdded, true, true)}
+                              </span>
                             </div>
                             <div className="w-1/3">
                               <span className="mr-1 font-bold text-brand-500 dark:text-white">
                                 Last Updated By:
                               </span>
-                              <span>{sale?.updatedBy}</span>
+                              <span>{sale?.lastUpdatedBy}</span>
                             </div>
                             <div className="w-1/4">
                               <span className="mr-1 font-bold text-brand-500 dark:text-white">
@@ -271,20 +325,7 @@ const Sales = () => {
                               </span>
                             </div>
                           </li>
-                          <li className="mb-5 flex gap-3">
-                            <div className="w-1/3">
-                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                                Store:
-                              </span>
-                              <span>{sale?.store?.storeName}</span>
-                            </div>
-                            <div className="w-2/3">
-                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                                Location:
-                              </span>
-                              <span>{sale?.store?.address}</span>
-                            </div>
-                          </li>
+
                           <li className="border-gry-500 mb-5 border-b p-1"></li>
                           <li className="mb-5 flex gap-3">
                             <div>
@@ -292,9 +333,9 @@ const Sales = () => {
                                 Cart:
                               </span>{" "}
                               <br />
-                              {sale?.carts != null &&
-                                sale?.carts?.length > 0 &&
-                                sale?.carts?.map((cart: any) => (
+                              {sale?.cart != null &&
+                                sale?.cart?.length > 0 &&
+                                sale?.cart?.map((cart: any) => (
                                   <div className="mb-2">
                                     <span className="mr-5">
                                       {cart?.productName}
@@ -303,7 +344,8 @@ const Sales = () => {
                                       {cart?.quantityNarration}
                                     </span>
                                     <span className="mr-5">
-                                      at {formatCurrency(
+                                      at{" "}
+                                      {formatCurrency(
                                         cart?.unitPriceAtPurchase
                                       )}
                                     </span>
@@ -369,10 +411,41 @@ const Sales = () => {
                           <li className="mb-5 flex gap-3">
                             <div className="w-3/3">
                               <span className="mr-1 font-bold text-brand-500 dark:text-white">
-                                Address:
+                                Delivery Address:
                               </span>
                               <br />
-                              <span>{sale?.customerAddress}</span>
+                              <span>{sale?.deliveryAddress}</span>
+                            </div>
+                          </li>
+                          {sale?.businessName?.length > 1 && (
+                            <li className="mb-5 flex gap-3">
+                              <div className="w-3/3">
+                                <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                  Business Name:
+                                </span>
+                                <br />
+                                <span>{sale?.businessName}</span>
+                              </div>
+                            </li>
+                          )}
+
+                          <li className="mb-5 flex gap-3">
+                            <div>
+                              <span className="mr-1 font-bold text-brand-500 dark:text-white">
+                                Order TimeLine:
+                              </span>{" "}
+                              <br />
+                              {sale?.timeLine != null &&
+                                sale?.timeLine?.length > 0 &&
+                                sale?.timeLine?.map((act, index) => (
+                                  <div className="mb-2 w-full" key={index}>
+                                    <p className="font-bold">
+                                      {index + 1} {act?.process}
+                                    </p>
+                                    <p>Initiated By: {act?.initiatedBy}</p>
+                                    <p>{act?.instruction}</p>
+                                  </div>
+                                ))}
                             </div>
                           </li>
                         </ul>
@@ -399,9 +472,8 @@ const Sales = () => {
                   disabled={salesList?.currentPage === 1}
                   style="flex gap-1 justify-items-center items-center"
                   onClick={() => {
-                    fetchSales(isEmployer ? "" : user?.assignedStoreIds[0], {
+                    fetchSales(user?.employerId, {
                       status: search?.status,
-                      storeId: search?.storeId,
                       page: salesList?.currentPage - 1,
                       count: 20,
                     });
@@ -421,7 +493,6 @@ const Sales = () => {
                   onClick={() => {
                     fetchSales(isEmployer ? "" : user?.assignedStoreIds[0], {
                       status: search?.status,
-                      storeId: search?.storeId,
                       page: salesList?.currentPage + 1,
                       count: 20,
                     });
@@ -449,7 +520,7 @@ const Sales = () => {
         >
           <form onSubmit={(e) => updateSaleStatus(e)}>
             <p className="text-black mb-5 font-bold dark:text-white">
-              Update Sales
+              Update Sales Status
             </p>
 
             <SelectField
@@ -459,20 +530,49 @@ const Sales = () => {
               defaultValue="0"
               name="status"
               options={
-                ORDER_STATUS?.length > 0
+                WEB_ORDER_STATUS?.length > 0
                   ? [
-                      ...ORDER_STATUS?.map((stat: any) => {
-                        return {
-                          name: stat,
-                          value: stat,
-                        };
-                      }),
+                      ...getStatusesWithHigherIndex(selected?.status)?.map(
+                        (stat: any) => {
+                          return {
+                            name: stat,
+                            value: stat,
+                          };
+                        }
+                      ),
                     ]
                   : []
               }
-              value={saleStatus}
-              onChange={(e: any) => setSaleStatus(e.target.value)}
+              value={saleStatus?.status}
+              onChange={handleStatusChange}
               showLabel={true}
+            />
+
+            {WEB_ORDER_STATUS.indexOf(saleStatus.status) == 1 && (
+              <InputField
+                variant="auth"
+                extra="mb-3"
+                label="Delivery Fee"
+                id="deliveryFee"
+                type="number"
+                name="deliveryFee"
+                value={saleStatus.deliveryFee}
+                disabled={saleStatus.status != WEB_ORDER_STATUS[1]}
+                onChange={handleStatusChange}
+              />
+            )}
+
+            <TextField
+              ref={null}
+              extra="mb-3"
+              rows={5}
+              variant="auth"
+              label="Instruction"
+              id="instruction"
+              type="text"
+              name="instruction"
+              value={saleStatus?.instruction}
+              onChange={handleStatusChange}
             />
 
             <div className="flex gap-3">
@@ -498,4 +598,4 @@ const Sales = () => {
   );
 };
 
-export default Sales;
+export default Websales;

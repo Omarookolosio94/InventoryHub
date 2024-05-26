@@ -10,6 +10,7 @@ import { AiFillEdit } from "react-icons/ai";
 import Modal from "core/components/modal/Modal";
 import InputField from "core/components/fields/InputField";
 import TextField from "core/components/fields/TextField";
+import UploadField from "core/components/fields/UploadField";
 
 const Profile = () => {
   const errors = useUserStore((state) => state.errors);
@@ -17,22 +18,59 @@ const Profile = () => {
   const user = useUserStore((state) => state.user);
   const isEmployer = useUserStore((state) => state.isEmployer);
   const updateProfileAction = useUserStore((state) => state.editEmployer);
-  const [name, setName] = useState("");
-  const [about, setAbout] = useState("");
   const [fields, setFields] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
 
+  const [profile, setProfile] = useState<UpdateEmployer>({
+    name: "",
+    about: "",
+    caption: "",
+    contactLine: "",
+    headOfficeAddress: "",
+    legalDocument: "",
+    logo: [],
+    privacyPolicy: "",
+    services: "",
+    termsAndConditions: "",
+    weblink: "",
+  });
+
+  const handleProfileChange = (e: any) => {
+    const { name, value } = e?.target;
+
+    setProfile((state) => ({
+      ...state,
+      [name]: value,
+    }));
+  };
+
   const updateProfile = async (e: any) => {
     e.preventDefault();
-    await updateProfileAction(name, about);
+    await updateProfileAction(profile);
   };
 
   useEffect(() => {
+    console.log("set profile");
+
+    console.log(user);
+
     if (isEmployer) {
       setFields([
         {
           name: "Email",
           value: user?.email,
+        },
+        {
+          name: "Head Office Address",
+          value: user?.headOfficeAddress,
+        },
+        {
+          name: "Contact Line",
+          value: user?.contactLine,
+        },
+        {
+          name: "Store Front Link",
+          value: user?.weblink,
         },
         {
           name: "Date Registered",
@@ -91,25 +129,38 @@ const Profile = () => {
           </div>
         </Card>
         <Card extra={"w-3/5 h-full p-6 sm:overflow-x-auto"}>
-          <div className="h-[250px] relative">
+          <div className="relative h-[250px]">
             <>
               {fields != null &&
                 fields?.length > 0 &&
                 fields?.map((field) => (
                   <div className="mb-3">
                     <span className="text-gray-500">{field?.name}: </span>
-                    <span>{field?.value}</span>
+                    {field?.name == "Store Front Link" ? (
+                      <a
+                        className="text-brand inline-block underline"
+                        href={field?.value}
+                        referrerPolicy="no-referrer"
+                        target="_blank"
+                      >
+                        {field?.value}
+                      </a>
+                    ) : (
+                      <span>{field?.value}</span>
+                    )}
                   </div>
                 ))}
 
               {isEmployer && (
-                <div className="flex justify-end gap-3 absolute bottom-0 w-full">
+                <div className="absolute bottom-0 flex w-full justify-end gap-3">
                   <Button
                     style={`flex gap-1 justify-items-center items-center bg-yellow-500 hover:bg-yellow-600 dark:text-white-300`}
                     onClick={() => {
-                      setName(user?.name);
-                      setAbout(user?.about);
                       setOpenEditModal(true);
+                      setProfile((state) => ({
+                        ...state,
+                        ...user,
+                      }));
                     }}
                   >
                     <AiFillEdit />
@@ -121,7 +172,8 @@ const Profile = () => {
           </div>
         </Card>
       </div>
-      <Card extra={"w-full h-full p-6 sm:overflow-x-auto"}>
+
+      <Card extra={"w-full h-full p-6 sm:overflow-x-auto mb-5"}>
         <p className="mr-1 font-bold text-brand-500 dark:text-white">About:</p>
         {isEmployer ? (
           <p>
@@ -138,6 +190,91 @@ const Profile = () => {
         )}
       </Card>
 
+      <Card extra={"w-full h-full p-6 sm:overflow-x-auto mb-5"}>
+        <p className="mr-1 font-bold text-brand-500 dark:text-white">
+          Business Caption:
+        </p>
+
+        {isEmployer ? (
+          <p>
+            {user?.caption == null || user?.caption?.length < 1
+              ? "no Business Caption yet"
+              : user?.caption}
+          </p>
+        ) : (
+          <p>
+            {user?.employer?.caption == null ||
+            user?.employer?.caption?.length < 1
+              ? "no Business Caption yet"
+              : user?.employer?.caption}
+          </p>
+        )}
+      </Card>
+
+      <Card extra={"w-full h-full p-6 sm:overflow-x-auto mb-5"}>
+        <p className="mr-1 font-bold text-brand-500 dark:text-white">
+          Services:
+        </p>
+
+        {isEmployer ? (
+          <p>
+            {user?.services == null || user?.services?.length < 1
+              ? "No services yet"
+              : user?.services}
+          </p>
+        ) : (
+          <p>
+            {user?.employer?.services == null ||
+            user?.employer?.services?.length < 1
+              ? "No services yet"
+              : user?.services}
+          </p>
+        )}
+      </Card>
+
+      <Card extra={"w-full h-full p-6 sm:overflow-x-auto mb-5"}>
+        <p className="mr-1 font-bold text-brand-500 dark:text-white">
+          Terms and Conditions:
+        </p>
+
+        {isEmployer ? (
+          <p>
+            {user?.termsAndConditions == "null" ||
+            user?.termsAndConditions?.length < 1
+              ? "No Terms yet"
+              : user?.termsAndConditions}
+          </p>
+        ) : (
+          <p>
+            {user?.termsAndConditions == "null" ||
+            user?.termsAndConditions?.length < 1
+              ? "no business Terms"
+              : user?.termsAndConditions}
+          </p>
+        )}
+      </Card>
+
+      <Card extra={"w-full h-full p-6 sm:overflow-x-auto mb-5"}>
+        <p className="mr-1 font-bold text-brand-500 dark:text-white">
+          Privacy Policy:
+        </p>
+
+        {isEmployer ? (
+          <p>
+            {user?.privacyPolicy == "null" || user?.privacyPolicy?.length < 1
+              ? "No business privacy policy"
+              : user?.privacyPolicy}
+          </p>
+        ) : (
+          <p>
+            {user?.employer?.privacyPolicy == "null" ||
+            user?.employer?.privacyPolicy?.length < 1
+              ? "no business privacy policy"
+              : user?.employer?.privacyPolicy}
+          </p>
+        )}
+      </Card>
+
       {openEditModal && (
         <Modal
           styling="w-3/6 p-5"
@@ -147,6 +284,7 @@ const Profile = () => {
         >
           <form onSubmit={(e) => updateProfile(e)}>
             <p className="text-black mb-5 font-bold">Update Profile</p>
+
             <InputField
               variant="auth"
               extra="mb-3"
@@ -154,14 +292,47 @@ const Profile = () => {
               id="name"
               type="text"
               name="name"
-              value={name}
-              onChange={(e: any) => setName(e?.target?.value)}
+              value={profile?.name}
+              onChange={handleProfileChange}
               onFocus={() => {
                 if (errors?.Name && errors?.Name?.length > 0) {
                   updateError("Name");
                 }
               }}
               error={errors?.Name}
+            />
+
+            <InputField
+              variant="auth"
+              extra="mb-3"
+              label="Head Office Address"
+              id="headOfficeAddress"
+              type="text"
+              name="headOfficeAddress"
+              value={profile?.headOfficeAddress}
+              onChange={handleProfileChange}
+            />
+
+            <InputField
+              variant="auth"
+              extra="mb-3"
+              label="Contact Line"
+              id="contactLine"
+              type="text"
+              name="contactLine"
+              value={profile?.contactLine}
+              onChange={handleProfileChange}
+            />
+
+            <InputField
+              variant="auth"
+              extra="mb-3"
+              label="Store Front Link"
+              id="weblink"
+              type="text"
+              name="weblink"
+              value={profile?.weblink}
+              onChange={handleProfileChange}
             />
 
             <TextField
@@ -173,9 +344,83 @@ const Profile = () => {
               id="about"
               type="text"
               name="about"
-              value={about}
-              onChange={(e: any) => setAbout(e?.target?.value)}
+              value={profile?.about}
+              onChange={handleProfileChange}
             />
+
+            <TextField
+              ref={null}
+              extra="mb-3"
+              rows={5}
+              variant="auth"
+              label="Business Caption"
+              id="caption"
+              type="text"
+              name="caption"
+              value={profile?.caption}
+              onChange={handleProfileChange}
+            />
+
+            <TextField
+              ref={null}
+              extra="mb-3"
+              rows={5}
+              variant="auth"
+              label="Services"
+              id="services"
+              type="text"
+              name="services"
+              value={profile?.services}
+              onChange={handleProfileChange}
+            />
+
+            <TextField
+              ref={null}
+              extra="mb-3"
+              rows={5}
+              variant="auth"
+              label="Terms and Conditions"
+              id="termsAndConditions"
+              type="text"
+              name="termsAndConditions"
+              value={profile?.termsAndConditions}
+              onChange={handleProfileChange}
+            />
+
+            <TextField
+              ref={null}
+              extra="mb-3"
+              rows={5}
+              variant="auth"
+              label="Privacy Policy"
+              id="privacyPolicy"
+              type="text"
+              name="privacyPolicy"
+              value={profile?.privacyPolicy}
+              onChange={handleProfileChange}
+            />
+
+            <UploadField
+              boxStyle="mb-[24px]"
+              label="Upload Logo of Business"
+              name="logo"
+              onChange={setProfile}
+            />
+
+            <div className="mb-5 flex flex-wrap gap-2">
+              {profile &&
+                profile?.logo?.length > 0 &&
+                Array.from(profile?.logo)?.map(
+                  (file: any, index: number) => (
+                    <div key={file?.name} className="h-[80px] w-[80px]">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`logo${index}`}
+                      />
+                    </div>
+                  )
+                )}
+            </div>
 
             <div className="flex gap-3">
               <Button

@@ -30,7 +30,7 @@ type UserState = {
   getOtp: (email: string) => void;
   getEmployees: () => void;
   addEmployer: (employer: NewEmployer) => void;
-  editEmployer: (name: string, about: string) => void;
+  editEmployer: (employer: UpdateEmployer) => void;
   verifyEmployer: (email: string, otp: string) => void;
   resetPassword: (resetPassword: ResetPassword, isEmployer: boolean) => void;
   addEmployee: (employee: NewEmployee) => void;
@@ -222,19 +222,17 @@ const useUserStore = create<UserState>()(
             return false;
           }
         },
-        editEmployer: async (name, about) => {
+        editEmployer: async (employer) => {
           try {
             set({ isLoading: true });
-            const response = await editEmployer(name, about);
+            const response = await editEmployer(employer);
 
             const { success, statusCode, data, message }: any = response;
             if (success) {
               set((state) => ({
                 user: {
                   ...state.user,
-                  name: data?.name,
-                  about: data?.about,
-                  lastUpdated: data?.lastUpdated,
+                  ...data,
                 },
               }));
               notification({
