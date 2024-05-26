@@ -1,3 +1,3 @@
 MIT License
 
-Copyright (c) 2023 Seachems Ng
+Copyright (c) 2023 Inventory Hub Ng

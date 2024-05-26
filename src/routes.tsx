@@ -30,6 +30,7 @@ import VerifyAccount from "views/auth/VerifyAccount";
 import Archives from "views/admin/archives";
 import Websales from "views/admin/websales";
 import WebInvoice from "views/general/webInvoice";
+import Support from "views/general/Support";
 
 const routes = [
   {
@@ -150,6 +151,13 @@ const routes = [
     path: "web-invoice/:employerId/:invoiceId/:size",
     icon: "",
     component: <WebInvoice />,
-  }
+  },
+  {
+    name: "Support",
+    layout: "/general",
+    path: "support",
+    icon: "",
+    component: <Support />,
+  },
 ];
 export default routes;
